@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import { fmtDate, fmtTime } from '../lib/format'
 import { useAuth } from '../lib/auth'
 import { useT } from '../lib/i18n'
 import { LOG_SELECT, LogCard, LogForm } from '../components/TrainingLog'
@@ -9,7 +11,7 @@ import { Empty, ErrorText, Icon, confirmDelete } from '../components/ui'
 const COLORS = ['#e03131', '#f08c00', '#2f9e44', '#1c7ed6', '#7048e8', '#c2255c', '#0c8599', '#5c5f66']
 
 export default function Training() {
-  const { t } = useT()
+  const { t, lang } = useT()
   const { user, isTrainer, canEdit, nameOf } = useAuth()
   const [logs, setLogs] = useState([])
   const [cats, setCats] = useState([])
@@ -52,6 +54,8 @@ export default function Training() {
     load()
   }
 
+  const logged = new Set(logs.map((l) => l.event_id).filter(Boolean))
+  const unlogged = events.filter((e) => new Date(e.starts_at) <= new Date() && !logged.has(e.id)).slice(0, 8)
   const shown = filter ? logs.filter((l) => l.training_log_items?.some((i) => i.category_id === filter)) : logs
   const done = () => { setModal(null); load() }
 
@@ -69,6 +73,22 @@ export default function Training() {
 
       <div className="training-layout">
         <section>
+          {isTrainer && unlogged.length > 0 && (
+            <div className="card unlogged">
+              <h3>{t('training.unlogged')}</h3>
+              <p className="muted small">{t('training.unloggedHint')}</p>
+              <ul className="event-list">
+                {unlogged.map((e) => (
+                  <li key={e.id}>
+                    <div className="unlogged-row">
+                      <Link to={`/events/${e.id}`} className="ev-main"><span>{fmtDate(e.starts_at, lang)} {fmtTime(e.starts_at, lang)}</span><span className="meta">{e.title}</span></Link>
+                      <button className="btn primary small" onClick={() => setModal({ forEvent: e.id })}><Icon name="edit" size={14} /> {t('training.writeFor')}</button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
           <div className="chip-filter">
             <button className={!filter ? 'on' : ''} onClick={() => setFilter('')}>{t('common.all')}</button>
             {cats.map((c) => (
@@ -122,6 +142,7 @@ export default function Training() {
         </aside>
       </div>
 
+      {modal?.forEvent && <LogForm eventId={modal.forEvent} categories={cats} events={events} onClose={() => setModal(null)} onSaved={done} />}
       {modal === 'log' && <LogForm categories={cats} events={events} onClose={() => setModal(null)} onSaved={done} />}
       {modal?.log && <LogForm log={modal.log} categories={cats} events={events} onClose={() => setModal(null)} onSaved={done} />}
       {modal === 'event' && <EventForm defaultType="training" onClose={() => setModal(null)} onSaved={done} />}

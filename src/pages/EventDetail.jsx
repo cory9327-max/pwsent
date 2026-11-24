@@ -9,7 +9,7 @@ import CheckIn, { isAttendanceEvent } from '../components/CheckIn'
 import { POLL_SELECT, PollCard, PollForm } from '../components/Polls'
 import { LOG_SELECT, LogCard, LogForm } from '../components/TrainingLog'
 import { DriveButtons, FileTable } from '../components/FileList'
-import { Empty, ErrorText, Icon, RoleBadge, StatusPill, TypeBadge, confirmDelete } from '../components/ui'
+import { Empty, ErrorText, Icon, Modal, RoleBadge, StatusPill, TypeBadge, confirmDelete } from '../components/ui'
 
 export default function EventDetail() {
   const { id } = useParams()
@@ -59,10 +59,14 @@ export default function EventDetail() {
     load()
   }
 
-  async function remove() {
-    if (!confirmDelete(t)) return
-    const { error } = await supabase.from('events').delete().eq('id', ev.id)
-    if (error) return setError(error)
+  async function remove(following = false) {
+    if (ev.series_id && modal !== 'delete') return setModal('delete')
+    if (!ev.series_id && !confirmDelete(t)) return
+    const q = supabase.from('events').delete()
+    const { error } = following
+      ? await q.eq('series_id', ev.series_id).gte('starts_at', ev.starts_at)
+      : await q.eq('id', ev.id)
+    if (error) { setModal(null); return setError(error) }
     nav('/schedule')
   }
 
@@ -77,14 +81,14 @@ export default function EventDetail() {
       <Link to="/schedule" className="back"><Icon name="chevL" size={16} /> {t('nav.schedule')}</Link>
       <div className={`card event-hero type-l-${ev.type}`}>
         <div className="hero-top">
-          <TypeBadge type={ev.type} />
+          <span className="row-actions"><TypeBadge type={ev.type} kind={ev.match_kind} />{ev.series_id && <span className="badge type-general-soft">{t('event.repeating')}</span>}</span>
           <div className="row-actions">
             <button className="btn ghost small" onClick={copyLink}><Icon name="share" size={14} /> {copied ? t('event.copied') : t('event.copyLink')}</button>
             <a className="btn ghost small" href={googleCalendarUrl(ev)} target="_blank" rel="noreferrer"><Icon name="calendar" size={14} /> {t('event.addGcal')}</a>
             <button className="btn ghost small" onClick={() => downloadIcs(ev)}><Icon name="download" size={14} /> .ics</button>
             {canEdit(ev.created_by) && <>
               <button className="icon-btn" onClick={() => setModal('edit')} aria-label={t('common.edit')}><Icon name="edit" size={16} /></button>
-              <button className="icon-btn danger" onClick={remove} aria-label={t('common.delete')}><Icon name="trash" size={16} /></button>
+              <button className="icon-btn danger" onClick={() => remove()} aria-label={t('common.delete')}><Icon name="trash" size={16} /></button>
             </>}
           </div>
         </div>
@@ -163,6 +167,16 @@ export default function EventDetail() {
         <FileTable files={files} showEvent={false} onChange={load} />
       </section>
 
+      {modal === 'delete' && (
+        <Modal title={t('event.deleteSeries')} onClose={() => setModal(null)}>
+          <p className="muted">{t('event.deleteSeriesBody')}</p>
+          <div className="stack">
+            <button className="btn ghost" onClick={() => remove(false)}>{t('event.deleteOne')}</button>
+            <button className="btn danger" onClick={() => remove(true)}>{t('event.deleteFollowing')}</button>
+            <button className="btn ghost" onClick={() => setModal(null)}>{t('common.cancel')}</button>
+          </div>
+        </Modal>
+      )}
       {modal === 'edit' && <EventForm event={ev} onClose={() => setModal(null)} onSaved={() => { setModal(null); load() }} />}
       {modal === 'poll' && <PollForm eventId={ev.id} events={[ev]} onClose={() => setModal(null)} onSaved={() => { setModal(null); load() }} />}
       {modal?.poll && <PollForm poll={modal.poll} events={[ev]} onClose={() => setModal(null)} onSaved={() => { setModal(null); load() }} />}

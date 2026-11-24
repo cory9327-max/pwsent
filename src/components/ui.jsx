@@ -56,9 +56,9 @@ export function Modal({ title, onClose, children, wide }) {
   )
 }
 
-export function TypeBadge({ type }) {
+export function TypeBadge({ type, kind }) {
   const { t } = useT()
-  return <span className={`badge type-${type}`}>{t(`etype.${type}`)}</span>
+  return <span className={`badge type-${type}`}>{t(`etype.${type}`)}{kind ? ` · ${kind}` : ''}</span>
 }
 
 export function RoleBadge({ role }) {

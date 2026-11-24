@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/auth'
 import { useT } from '../lib/i18n'
 import { fmtDate, fmtTime, localeOf, seoulDate } from '../lib/format'
+import { EVENT_TYPES } from '../lib/presets'
 import EventForm from '../components/EventForm'
 import CalendarSubscribe from '../components/CalendarSubscribe'
 import { Empty, Icon, Modal, TypeBadge } from '../components/ui'
@@ -72,10 +73,10 @@ export default function Schedule() {
           <button className="icon-btn" onClick={() => move(1)} aria-label="next"><Icon name="chevR" /></button>
           <button className="btn ghost small" onClick={() => { setYm({ y: now.getFullYear(), m: now.getMonth() }); setSelected(today) }}>{t('cal.today')}</button>
         </div>
-        <div className="seg small">
-          {['all', 'general', 'training', 'match'].map((f) => (
+        <div className="chips">
+          {['all', ...EVENT_TYPES].map((f) => (
             <button key={f} className={filter === f ? 'on' : ''} onClick={() => setFilter(f)}>
-              {f === 'all' ? t('common.all') : t(`etype.${f}`)}
+              {f !== 'all' && <i className={`dot type-bg-${f}`} />}{f === 'all' ? t('common.all') : t(`etype.${f}`)}
             </button>
           ))}
         </div>
@@ -109,7 +110,7 @@ export default function Schedule() {
                   <Link to={`/events/${e.id}`}>
                     <div className="ev-date"><strong>{fmtTime(e.starts_at, lang)}</strong></div>
                     <div className="ev-main"><span>{e.title}</span><span className="meta">{e.location || nameOf(e.created_by)}</span></div>
-                    <TypeBadge type={e.type} />
+                    <TypeBadge type={e.type} kind={e.match_kind} />
                   </Link>
                 </li>
               ))}
@@ -123,7 +124,7 @@ export default function Schedule() {
                   <Link to={`/events/${e.id}`}>
                     <div className="ev-date"><strong>{fmtDate(e.starts_at, lang)}</strong><span>{fmtTime(e.starts_at, lang)}</span></div>
                     <div className="ev-main"><span>{e.title}</span></div>
-                    <TypeBadge type={e.type} />
+                    <TypeBadge type={e.type} kind={e.match_kind} />
                   </Link>
                 </li>
               ))}

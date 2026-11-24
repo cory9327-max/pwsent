@@ -18,7 +18,7 @@ export function fmtDate(d, lang, opts = {}) {
 
 export function fmtTime(d, lang) {
   if (!d) return ''
-  return new Intl.DateTimeFormat(localeOf(lang), { hour: '2-digit', minute: '2-digit' }).format(new Date(d))
+  return new Intl.DateTimeFormat(localeOf(lang), { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(new Date(d))
 }
 
 export function fmtDateTime(d, lang) {

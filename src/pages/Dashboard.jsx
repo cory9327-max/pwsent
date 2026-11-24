@@ -78,7 +78,7 @@ export default function Dashboard() {
             {todays.map((e) => (
               <div key={e.id} className={`card today type-l-${e.type}`}>
                 <Link to={`/events/${e.id}`} className="today-main">
-                  <TypeBadge type={e.type} />
+                  <TypeBadge type={e.type} kind={e.match_kind} />
                   <h3>{e.title}</h3>
                   <div className="meta"><Icon name="clock" size={14} /> {fmtTime(e.starts_at, lang)}{e.location && <> · <Icon name="pin" size={14} /> {e.location}</>}</div>
                 </Link>
@@ -102,7 +102,7 @@ export default function Dashboard() {
                   <Link to={`/events/${e.id}`}>
                     <div className="ev-date"><strong>{fmtDate(e.starts_at, lang)}</strong><span>{fmtTime(e.starts_at, lang)}</span></div>
                     <div className="ev-main"><span>{e.title}</span>{e.location && <span className="meta">{e.location}</span>}</div>
-                    <TypeBadge type={e.type} />
+                    <TypeBadge type={e.type} kind={e.match_kind} />
                   </Link>
                 </li>
               ))}

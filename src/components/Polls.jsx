@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/auth'
 import { useT } from '../lib/i18n'
 import { fmtDateTime, fromLocalInput, toLocalInput } from '../lib/format'
+import { DateTimeInput } from './inputs'
 import { ErrorText, Field, Icon, Modal, confirmDelete } from './ui'
 
 export const POLL_SELECT = '*, poll_options(*), poll_votes(*)'
@@ -185,9 +186,9 @@ export function PollForm({ poll, eventId, events = [], onClose, onSaved }) {
             </button>
           </div>
         </Field>
-        <div className="row2">
+        <div className="form">
           <Field label={t('poll.deadline')} hint={t('poll.deadlineHint')}>
-            <input type="datetime-local" value={f.closes_at} onChange={(e) => setF({ ...f, closes_at: e.target.value })} />
+            <DateTimeInput value={f.closes_at} onChange={(v) => setF({ ...f, closes_at: v })} />
           </Field>
           <Field label={t('poll.linkEvent')}>
             <select value={f.event_id} onChange={(e) => setF({ ...f, event_id: e.target.value })}>
