@@ -38,9 +38,9 @@ export default function Training() {
     const evs = (e.data || []).filter((x) => x.status !== 'tentative') // 확정된 훈련만
     setLogs(l.data || []); setCats(c.data || []); setEvents(evs)
     const ids = evs.map((x) => x.id)
-    const { data: att } = ids.length ? await supabase.from('attendance').select('event_id').in('event_id', ids) : { data: [] }
+    const { data: att } = ids.length ? await supabase.from('attendance').select('event_id, status').in('event_id', ids) : { data: [] }
     const n = {}
-    for (const a of att || []) n[a.event_id] = (n[a.event_id] || 0) + 1
+    for (const a of att || []) if (a.status !== 'absent') n[a.event_id] = (n[a.event_id] || 0) + 1
     setAttCount(n)
   }, [])
   useEffect(() => { load() }, [load])

@@ -55,15 +55,18 @@ export default function EventDetail() {
   const past = seoulDate(ev.starts_at) < seoulDate()
   const roster = members.filter((m) => m.status === 'approved' && m.track_attendance)
   const notYet = seoulDate(ev.starts_at) > seoulDate()
+  const attended = att.filter((a) => a.status !== 'absent').length
   const closable = ev.type === 'training' && ev.status !== 'tentative' && 'completed_at' in ev
   const statusOf = (uid) => attMap[uid]?.status || (past ? 'absent' : 'none')
   const counts = roster.reduce((c, m) => ({ ...c, [statusOf(m.id)]: (c[statusOf(m.id)] || 0) + 1 }), {})
 
   async function setStatus(uid, status) {
     setError(null)
-    const r = status === 'absent' || status === 'none'
-      ? await supabase.from('attendance').delete().match({ event_id: ev.id, user_id: uid })
+    const clear = () => supabase.from('attendance').delete().match({ event_id: ev.id, user_id: uid })
+    let r = status === 'none' ? await clear()
       : await supabase.from('attendance').upsert({ event_id: ev.id, user_id: uid, status, marked_by: user.id })
+    // '불참' 기록을 아직 지원하지 않는 DB(12 SQL 실행 전)에서는 기록을 지우는 것으로 대신함
+    if (r.error && status === 'absent' && /enum/i.test(r.error.message)) r = await clear()
     if (r.error) setError(r.error)
     load()
   }
@@ -173,7 +176,7 @@ export default function EventDetail() {
               {ev.completed_at && can('training_log') && <button className="btn ghost small" onClick={() => setComplete(false)}>{t('done.undo')}</button>}
             </div>
             <ol className="steps">
-              <li className={att.length ? 'ok' : ''}><b>1</b><span>{t('done.step1')}</span><em>{t('done.attN', { n: att.length })}</em></li>
+              <li className={attended ? 'ok' : ''}><b>1</b><span>{t('done.step1')}</span><em>{t('done.attN', { n: attended })}</em></li>
               <li className={logs.length ? 'ok' : ''}>
                 <b>2</b><span>{t('done.step2')}</span>
                 {logs.length ? <em>{t('done.logYes')}</em>
@@ -220,7 +223,8 @@ export default function EventDetail() {
             <div className="att-summary">
               <StatusPill status="present" /> {counts.present || 0}
               <StatusPill status="late" /> {counts.late || 0}
-              <StatusPill status={past ? 'absent' : 'none'} /> {(counts.absent || 0) + (counts.none || 0)}
+              <StatusPill status="absent" /> {counts.absent || 0}
+              {!past && <><StatusPill status="none" /> {counts.none || 0}</>}
             </div>
           </div>
           {canAtt && (
@@ -239,10 +243,11 @@ export default function EventDetail() {
                   <RoleBadge role={m.role} />
                   <span className="roster-time muted small">{attMap[m.id] && fmtTime(attMap[m.id].checked_at, lang)}</span>
                   {canAtt ? (
-                    <select className={`att-select att-${s}`} value={s === 'none' ? 'absent' : s} onChange={(e) => setStatus(m.id, e.target.value)}>
+                    <select className={`att-select att-${s}`} value={s} onChange={(e) => setStatus(m.id, e.target.value)}>
                       <option value="present">{t('att.present')}</option>
                       <option value="late">{t('att.late')}</option>
-                      <option value="absent">{past ? t('att.absent') : t('att.none')}</option>
+                      <option value="absent">{t('att.absent')}</option>
+                      {!past && <option value="none">{t('att.none')}</option>}
                     </select>
                   ) : <StatusPill status={s} />}
                 </div>
