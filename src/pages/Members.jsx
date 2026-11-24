@@ -3,13 +3,16 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/auth'
 import { useT } from '../lib/i18n'
 import { fmtDate } from '../lib/format'
-import { Empty, ErrorText, Icon, RoleBadge, confirmDelete } from '../components/ui'
+import { Empty, ErrorText, Icon, confirmDelete, useRoleLabel } from '../components/ui'
 
-const ROLES = ['admin', 'trainer', 'player', 'staff']
 
-export default function Members() {
+export default function Members({ embedded }) {
   const { t, lang } = useT()
-  const { user, refresh } = useAuth()
+  const { user, profile, refresh, roles, permsOf } = useAuth()
+  const roleLabel = useRoleLabel()
+  const mine = permsOf(profile.role)
+  // 자신보다 권한이 많은 직급은 줄 수 없음 (서버에서도 막힘)
+  const ROLES = roles.filter((r) => r.perms.every((p) => mine.includes(p)) || r.key === 'admin' && mine.length >= 9).map((r) => r.key)
   const [rows, setRows] = useState([])
   const [tab, setTab] = useState('pending')
   const [roleFor, setRoleFor] = useState({})
@@ -45,13 +48,8 @@ export default function Members() {
   const shown = q ? list.filter((r) => `${r.display_name} ${r.email}`.toLowerCase().includes(q.toLowerCase())) : list
 
   return (
-    <div className="page">
-      <div className="page-head">
-        <div>
-          <h1>{t('nav.members')}</h1>
-          <p className="muted">{t('members.hint')}</p>
-        </div>
-      </div>
+    <div className={embedded ? 'stack' : 'page'}>
+      <p className="muted small no-margin">{t('members.hint')}</p>
       <div className="tabs">
         <button className={tab === 'pending' ? 'on' : ''} onClick={() => setTab('pending')}>{t('members.pending')} {pending.length > 0 && <span className="nav-count">{pending.length}</span>}</button>
         <button className={tab === 'approved' ? 'on' : ''} onClick={() => setTab('approved')}>{t('members.approved')}</button>
@@ -74,7 +72,7 @@ export default function Members() {
               </div>
               <div className="approve-row">
                 <select value={roleFor[m.id] || 'player'} onChange={(e) => setRoleFor({ ...roleFor, [m.id]: e.target.value })}>
-                  {ROLES.map((r) => <option key={r} value={r}>{t(`role.${r}`)}</option>)}
+                  {ROLES.map((r) => <option key={r} value={r}>{roleLabel(r)}</option>)}
                 </select>
                 <button className="btn primary" disabled={!m.display_name} onClick={() => update(m.id, { status: 'approved', role: roleFor[m.id] || 'player' })}>
                   {t('members.approve')}
@@ -113,8 +111,9 @@ export default function Members() {
                   </td>
                   <td className="muted small">{m.email}</td>
                   <td>
-                    <select value={m.role} onChange={(e) => update(m.id, { role: e.target.value })}>
-                      {ROLES.map((r) => <option key={r} value={r}>{t(`role.${r}`)}</option>)}
+                    <select value={m.role} disabled={!ROLES.includes(m.role)} onChange={(e) => update(m.id, { role: e.target.value })}>
+                      {!ROLES.includes(m.role) && <option value={m.role}>{roleLabel(m.role)}</option>}
+                      {ROLES.map((r) => <option key={r} value={r}>{roleLabel(r)}</option>)}
                     </select>
                   </td>
                   <td>
@@ -132,9 +131,6 @@ export default function Members() {
           </table>
         </div>
       )}
-      <div className="legend muted small">
-        {ROLES.map((r) => <span key={r}><RoleBadge role={r} /> {t(`roleDesc.${r}`)}</span>)}
-      </div>
     </div>
   )
 }

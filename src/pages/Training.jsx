@@ -14,7 +14,8 @@ const COLORS = ['#e03131', '#f08c00', '#2f9e44', '#1c7ed6', '#7048e8', '#c2255c'
 
 export default function Training() {
   const { t, lang } = useT()
-  const { user, isTrainer, canEdit, nameOf } = useAuth()
+  const { user, can, canEdit, nameOf } = useAuth()
+  const isTrainer = can('training_log')
   const [logs, setLogs] = useState([])
   const [cats, setCats] = useState([])
   const [events, setEvents] = useState([])
@@ -68,8 +69,8 @@ export default function Training() {
         <h1>{t('nav.training')}</h1>
         {isTrainer && (
           <div className="head-actions">
-            {weekly.available && <button className="btn ghost" onClick={() => setModal('weeks')}><Icon name="calendar" size={16} /> {t('wk.open')}</button>}
-            <button className="btn ghost" onClick={() => setModal('event')}><Icon name="plus" size={16} /> {t('training.newSession')}</button>
+            {weekly.available && can('sessions') && <button className="btn ghost" onClick={() => setModal('weeks')}><Icon name="calendar" size={16} /> {t('wk.open')}</button>}
+            {can('sessions') && <button className="btn ghost" onClick={() => setModal('event')}><Icon name="plus" size={16} /> {t('training.newSession')}</button>}
             <button className="btn primary" onClick={() => setModal('log')}><Icon name="plus" size={16} /> {t('training.newLog')}</button>
           </div>
         )}

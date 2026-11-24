@@ -9,12 +9,12 @@ import { ErrorText, Icon } from './ui'
  * 기본 목록에서 고르거나 직접 입력하는 칸. 기본 목록은 관리자가 이 자리에서 추가·이름 수정·삭제.
  * table: 'locations'(장소) 또는 'match_kinds'(경기 구분)
  */
-export default function ManagedChoice({ table, fallback = [], value, onChange, recent = [], placeholder, allowEmpty = true }) {
+export default function ManagedChoice({ table, fallback = [], value, onChange, recent = [], placeholder, allowEmpty = true, manageOnly = false }) {
   const { t } = useT()
-  const { isAdmin } = useAuth()
+  const { can } = useAuth()
   const [list, setList] = useState(null) // null = 불러오는 중
   const [managedByDb, setManagedByDb] = useState(false)
-  const [manage, setManage] = useState(false)
+  const [manage, setManage] = useState(manageOnly)
   const [name, setName] = useState('')
   const [error, setError] = useState(null)
 
@@ -54,23 +54,24 @@ export default function ManagedChoice({ table, fallback = [], value, onChange, r
 
   if (!list) return <div className="muted small">…</div>
   const names = list.map((l) => l.name)
-  const canAdmin = isAdmin && managedByDb
+  const canAdmin = can('settings') && managedByDb
   const canSave = canAdmin && value.trim() && !names.includes(value.trim())
 
   return (
     <div className="choice">
-      <ChoiceInput options={names} extra={recent} value={value} onChange={onChange} placeholder={placeholder} allowEmpty={allowEmpty} />
-      {canSave && (
+      {manageOnly && !managedByDb && <div className="empty">{t('admin.needSql', { f: table === 'locations' ? '04_locations.sql' : '05_types.sql' })}</div>}
+      {!manageOnly && <ChoiceInput options={names} extra={recent} value={value} onChange={onChange} placeholder={placeholder} allowEmpty={allowEmpty} />}
+      {!manageOnly && canSave && (
         <button type="button" className="link-btn small left" onClick={() => add(value)}>
           + {t('list.saveThis', { name: value.trim() })}
         </button>
       )}
-      {canAdmin && (
+      {canAdmin && !manageOnly && (
         <button type="button" className="link-btn small left muted-link" onClick={() => setManage(!manage)}>
           {manage ? t('list.closeManage') : t('list.manage')}
         </button>
       )}
-      {manage && (
+      {manage && canAdmin && (
         <div className="loc-manage">
           {list.map((l) => (
             <div className="opt-row" key={l.id}>

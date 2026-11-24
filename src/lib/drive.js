@@ -7,7 +7,11 @@ const APP_ID = import.meta.env.VITE_GOOGLE_APP_ID
 export const FOLDER_ID = import.meta.env.VITE_DRIVE_FOLDER_ID
 
 export const driveConfigured = Boolean(CLIENT_ID && API_KEY && FOLDER_ID)
-export const folderUrl = FOLDER_ID ? `https://drive.google.com/drive/folders/${FOLDER_ID}` : null
+export const ADMIN_FOLDER_ID = import.meta.env.VITE_ADMIN_DRIVE_FOLDER_ID
+export const adminDriveConfigured = Boolean(CLIENT_ID && API_KEY && ADMIN_FOLDER_ID)
+const urlOf = (id) => (id ? `https://drive.google.com/drive/folders/${id}` : null)
+export const folderUrl = urlOf(FOLDER_ID)
+export const adminFolderUrl = urlOf(ADMIN_FOLDER_ID)
 
 const SCOPE = 'https://www.googleapis.com/auth/drive.file'
 const scripts = {}
@@ -52,15 +56,16 @@ async function getToken() {
  * 피커 열기. 업로드 탭(공유 폴더로 업로드) + 폴더 안 파일 선택 탭.
  * @returns {Promise<Array<{id,name,url,mimeType,sizeBytes}>>}
  */
-export async function openDrivePicker(lang = 'ko') {
-  if (!driveConfigured) throw new Error('drive_not_configured')
+export async function openDrivePicker(lang = 'ko', admin = false) {
+  const FOLDER = admin ? ADMIN_FOLDER_ID : FOLDER_ID
+  if (!(CLIENT_ID && API_KEY && FOLDER)) throw new Error('drive_not_configured')
   const accessToken = await getToken()
   await loadScript('https://apis.google.com/js/api.js')
   await new Promise((r) => window.gapi.load('picker', r))
   const p = window.google.picker
 
-  const upload = new p.DocsUploadView().setParent(FOLDER_ID).setIncludeFolders(true)
-  const browse = new p.DocsView(p.ViewId.DOCS).setParent(FOLDER_ID).setIncludeFolders(true).setEnableDrives(true)
+  const upload = new p.DocsUploadView().setParent(FOLDER).setIncludeFolders(true)
+  const browse = new p.DocsView(p.ViewId.DOCS).setParent(FOLDER).setIncludeFolders(true).setEnableDrives(true)
 
   return new Promise((resolve) => {
     const builder = new p.PickerBuilder()

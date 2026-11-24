@@ -125,6 +125,19 @@ const ko = {
 
   'poll.voted': '응답 완료', 'poll.notVoted': '미응답', 'poll.count': '{n}명 참여',
 
+  'nav.admin': '관리자 설정', 'admin.hint': '직급과 권한, 회원, 기본 목록을 관리합니다.', 'admin.tab.roles': '직급·권한', 'admin.tab.members': '회원', 'admin.tab.lists': '기본 목록', 'admin.tab.drive': '드라이브',
+  'admin.needSql': '이 기능을 쓰려면 Supabase에서 {f} 을(를) 먼저 실행해야 합니다.', 'admin.locations': '장소', 'admin.types': '일정 종류', 'admin.slots': '훈련 시간표',
+  'admin.driveShared': '모든 회원이 올리고 보는 공유 폴더입니다.', 'admin.driveAdmin': '관리자 드라이브 권한이 있는 직급만 사이트에서 보고 올릴 수 있습니다. 구글 드라이브에서도 이 폴더는 해당 계정에만 공유해 두세요.',
+  'roles.hint': '직급마다 할 수 있는 일을 체크하세요. 바꾸면 그 직급의 회원 전원에게 바로 적용됩니다.', 'roles.count': '회원 {n}명', 'roles.adminNote': '항상 모든 권한',
+  'roles.new': '새 직급', 'roles.newPh': '직급 이름 (예: 코치)', 'roles.create': '직급 만들기', 'roles.newHint': '만든 뒤 권한을 체크하고, 회원 탭에서 회원에게 지정하세요.',
+  'roles.giveAll': '모든 권한 주기 (관리자급)', 'roles.inUse': '이 직급인 회원이 있어 삭제할 수 없습니다. 회원의 직급을 먼저 바꿔주세요.',
+  'perm.post': '일정 등록 · 투표 만들기 · 드라이브 올리기', 'perm.sessions': '훈련·경기 등 출석 일정 등록, 주간 훈련 열기, 시간표 수정', 'perm.attendance': '출석 수정, 근태 집계 보기',
+  'perm.training_log': '훈련 기록 작성, 훈련 항목 관리', 'perm.edit_all': '남이 올린 글 수정·삭제 (비공개 일정도 모두 보임)', 'perm.members': '회원 승인, 직급 지정',
+  'perm.settings': '직급·권한 설정, 기본 목록 관리', 'perm.foreign': '해외선수 일정·비용 보기와 관리', 'perm.admin_drive': '관리자 드라이브 보기와 올리기',
+  'err.forbiddenRole': '자신보다 권한이 많은 직급은 지정하거나 변경할 수 없습니다',
+  'event.visibility': '공개 범위', 'event.visAll': '전체 공개', 'event.visHint': '선택한 직급과 등록자, 관리자급에게만 보입니다. 달력·홈·캘린더 연동·딸린 투표와 파일도 함께 가려집니다.', 'event.visibleTo': '{roles}만 볼 수 있음',
+  'files.tabShared': '공유 드라이브', 'files.tabAdmin': '관리자 드라이브', 'files.adminHint': '관리자 드라이브 권한이 있는 직급만 볼 수 있는 파일입니다.', 'files.adminNotConfigured': '관리자 드라이브 폴더가 아직 연결되지 않았습니다 (VITE_ADMIN_DRIVE_FOLDER_ID 설정 필요)',
+
   'me.nameLocked': '이름 변경은 관리자에게 요청하세요.', 'me.language': '언어', 'me.myAttendance': '내 출석', 'me.last60': '최근 60일',
 }
 
@@ -252,6 +265,19 @@ const en = {
 
   'poll.voted': 'Answered', 'poll.notVoted': 'Not answered', 'poll.count': '{n} voted',
 
+  'nav.admin': 'Admin settings', 'admin.hint': 'Manage roles and permissions, members and default lists.', 'admin.tab.roles': 'Roles', 'admin.tab.members': 'Members', 'admin.tab.lists': 'Default lists', 'admin.tab.drive': 'Drive',
+  'admin.needSql': 'Run {f} in Supabase first to use this.', 'admin.locations': 'Locations', 'admin.types': 'Event types', 'admin.slots': 'Training timetable',
+  'admin.driveShared': 'The shared folder every member can upload to and see.', 'admin.driveAdmin': 'Only roles with the admin Drive permission can see and upload here. Share this folder in Google Drive with those accounts only.',
+  'roles.hint': 'Tick what each role can do. Changes apply to everyone in that role right away.', 'roles.count': '{n} member(s)', 'roles.adminNote': 'always has every permission',
+  'roles.new': 'New role', 'roles.newPh': 'Role name (e.g. Coach)', 'roles.create': 'Create role', 'roles.newHint': 'After creating it, tick its permissions and assign it in the Members tab.',
+  'roles.giveAll': 'Give every permission (admin-grade)', 'roles.inUse': 'Members still have this role. Change their role first.',
+  'perm.post': 'Post events, create polls, upload to Drive', 'perm.sessions': 'Post attendance events (training, shows), open weekly training, edit timetable', 'perm.attendance': 'Edit attendance, view reports',
+  'perm.training_log': 'Write training logs, manage drill categories', 'perm.edit_all': "Edit and delete others' posts (also sees restricted events)", 'perm.members': 'Approve members, assign roles',
+  'perm.settings': 'Roles and permissions, default lists', 'perm.foreign': 'View and manage foreign talent bookings and costs', 'perm.admin_drive': 'See and upload to the admin Drive',
+  'err.forbiddenRole': 'You cannot assign or change a role with more permissions than your own',
+  'event.visibility': 'Visible to', 'event.visAll': 'Everyone', 'event.visHint': 'Only the selected roles, the creator and admin-grade roles can see it. It is also hidden from the calendar, home, calendar sync and its polls and files.', 'event.visibleTo': 'Only visible to {roles}',
+  'files.tabShared': 'Shared Drive', 'files.tabAdmin': 'Admin Drive', 'files.adminHint': 'Files only roles with the admin Drive permission can see.', 'files.adminNotConfigured': 'The admin Drive folder is not connected yet (set VITE_ADMIN_DRIVE_FOLDER_ID)',
+
   'me.nameLocked': 'Ask an admin to change your name.', 'me.language': 'Language', 'me.myAttendance': 'My attendance', 'me.last60': 'Last 60 days',
 }
 
@@ -378,6 +404,19 @@ const ja = {
   'wk.deleteWeek': 'この週をすべて削除', 'wk.deleteWeekConfirm': 'この週の練習 {n}件と投票をすべて削除しますか？元に戻せません。', 'wk.deleteDayConfirm': '{d} の練習と投票を削除しますか？', 'wk.editTitle': '練習を編集', 'wk.slots': '枠', 'wk.addSlot': '枠を追加', 'wk.slotsDayHint': 'この日だけに適用されます。枠を削除すると、その枠の投票は集計から外れます。',
 
   'poll.voted': '回答済み', 'poll.notVoted': '未回答', 'poll.count': '{n}人が投票',
+
+  'nav.admin': '管理者設定', 'admin.hint': '役職と権限、会員、基本リストを管理します。', 'admin.tab.roles': '役職・権限', 'admin.tab.members': '会員', 'admin.tab.lists': '基本リスト', 'admin.tab.drive': 'ドライブ',
+  'admin.needSql': 'この機能を使うには、先に Supabase で {f} を実行してください。', 'admin.locations': '場所', 'admin.types': '予定の種類', 'admin.slots': '練習の時間割',
+  'admin.driveShared': '全会員がアップロード・閲覧できる共有フォルダです。', 'admin.driveAdmin': '管理者ドライブの権限がある役職だけが閲覧・アップロードできます。Google ドライブでもこのフォルダは該当アカウントだけに共有してください。',
+  'roles.hint': '役職ごとにできることをチェックしてください。変更はその役職の全会員にすぐ適用されます。', 'roles.count': '会員 {n}人', 'roles.adminNote': '常にすべての権限',
+  'roles.new': '新しい役職', 'roles.newPh': '役職名（例：コーチ）', 'roles.create': '役職を作成', 'roles.newHint': '作成後に権限をチェックし、会員タブで会員に割り当ててください。',
+  'roles.giveAll': 'すべての権限を付与（管理者級）', 'roles.inUse': 'この役職の会員がいるため削除できません。先に会員の役職を変更してください。',
+  'perm.post': '予定の登録・投票の作成・ドライブへのアップロード', 'perm.sessions': '練習・試合など出席予定の登録、週間練習を開く、時間割の編集', 'perm.attendance': '出席の修正、勤怠集計の閲覧',
+  'perm.training_log': '練習記録の作成、練習項目の管理', 'perm.edit_all': '他人の投稿の編集・削除（非公開の予定もすべて見える）', 'perm.members': '会員の承認、役職の指定',
+  'perm.settings': '役職・権限の設定、基本リストの管理', 'perm.foreign': '海外選手の予定・費用の閲覧と管理', 'perm.admin_drive': '管理者ドライブの閲覧とアップロード',
+  'err.forbiddenRole': '自分より権限の多い役職は指定・変更できません',
+  'event.visibility': '公開範囲', 'event.visAll': '全体公開', 'event.visHint': '選んだ役職と登録者、管理者級にだけ表示されます。カレンダー・ホーム・カレンダー連携・関連する投票とファイルも非表示になります。', 'event.visibleTo': '{roles} のみ閲覧可',
+  'files.tabShared': '共有ドライブ', 'files.tabAdmin': '管理者ドライブ', 'files.adminHint': '管理者ドライブの権限がある役職だけが見られるファイルです。', 'files.adminNotConfigured': '管理者ドライブのフォルダがまだ接続されていません（VITE_ADMIN_DRIVE_FOLDER_ID の設定が必要）',
 
   'me.nameLocked': '名前の変更は管理者に依頼してください。', 'me.language': '言語', 'me.myAttendance': '自分の出席', 'me.last60': '直近60日',
 }

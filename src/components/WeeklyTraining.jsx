@@ -240,7 +240,7 @@ function TimeSelect({ value, onChange, optional }) {
 /* ------------------------------------------------------------------ */
 /*  시간표 수정 (트레이너 이상)                                          */
 /* ------------------------------------------------------------------ */
-function SlotEditor({ slots, minPeople, onChange }) {
+export function SlotEditor({ slots, minPeople, onChange }) {
   const { t } = useT()
   const [n, setN] = useState({ name: '', start_time: '17:00', end_time: '' })
   const [error, setError] = useState(null)

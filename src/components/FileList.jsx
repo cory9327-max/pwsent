@@ -3,13 +3,15 @@ import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/auth'
 import { useT } from '../lib/i18n'
-import { driveConfigured, folderUrl, openDrivePicker } from '../lib/drive'
+import { adminDriveConfigured, adminFolderUrl, driveConfigured, folderUrl, openDrivePicker } from '../lib/drive'
 import { fmtBytes, fmtDate } from '../lib/format'
 import { Empty, ErrorText, Icon, confirmDelete } from './ui'
 
-export function DriveButtons({ eventId, onAdded }) {
+export function DriveButtons({ eventId, onAdded, admin = false }) {
   const { t, lang } = useT()
-  const { user } = useAuth()
+  const { user, can } = useAuth()
+  const ready = admin ? adminDriveConfigured : driveConfigured
+  const url = admin ? adminFolderUrl : folderUrl
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState(null)
   const [done, setDone] = useState(0)
@@ -17,11 +19,11 @@ export function DriveButtons({ eventId, onAdded }) {
   async function pick() {
     setBusy(true); setError(null); setDone(0)
     try {
-      const docs = await openDrivePicker(lang)
+      const docs = await openDrivePicker(lang, admin)
       if (docs.length) {
         const { error } = await supabase.from('shared_files').insert(docs.map((d) => ({
           name: d.name, drive_file_id: d.id, url: d.url, mime_type: d.mimeType, size_bytes: d.sizeBytes,
-          event_id: eventId || null, uploaded_by: user.id,
+          event_id: eventId || null, uploaded_by: user.id, ...(admin ? { admin_only: true } : {}),
         })))
         if (error) throw error
         setDone(docs.length)
@@ -35,13 +37,13 @@ export function DriveButtons({ eventId, onAdded }) {
 
   return (
     <div className="drive-buttons">
-      <button className="btn primary" disabled={busy || !driveConfigured} onClick={pick}>
+      {can('post') && <button className="btn primary" disabled={busy || !ready} onClick={pick}>
         <Icon name="upload" size={16} /> {busy ? t('files.opening') : t('files.upload')}
-      </button>
-      {folderUrl && (
-        <a className="btn ghost" href={folderUrl} target="_blank" rel="noreferrer"><Icon name="folder" size={16} /> {t('files.openFolder')}</a>
+      </button>}
+      {url && (
+        <a className="btn ghost" href={url} target="_blank" rel="noreferrer"><Icon name="folder" size={16} /> {t('files.openFolder')}</a>
       )}
-      {!driveConfigured && <span className="field-hint">{t('files.notConfigured')}</span>}
+      {!ready && <span className="field-hint">{admin ? t('files.adminNotConfigured') : t('files.notConfigured')}</span>}
       {done > 0 && <span className="ok small">{t('files.added', { n: done })}</span>}
       <ErrorText error={error} />
     </div>

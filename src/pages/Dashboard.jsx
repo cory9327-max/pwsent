@@ -15,7 +15,8 @@ import { Empty, Icon, TypeBadge } from '../components/ui'
 
 export default function Dashboard() {
   const { t, lang } = useT()
-  const { user, profile, isAdmin } = useAuth()
+  const { user, profile, can } = useAuth()
+  const isAdmin = can('members')
   const { hasAttendance, color } = useTypes()
   const [events, setEvents] = useState([])
   const [mine, setMine] = useState({})
@@ -65,14 +66,16 @@ export default function Dashboard() {
           <h1>{t('dash.hello', { name: profile.display_name })}</h1>
           <p className="muted">{fmtDate(new Date(), lang, { year: 'numeric', month: 'long' })}</p>
         </div>
-        <div className="head-actions">
-          <button className="btn ghost" onClick={() => setModal('poll')}><Icon name="poll" size={16} /> {t('poll.new')}</button>
-          <button className="btn primary" onClick={() => setModal('event')}><Icon name="plus" size={16} /> {t('event.new')}</button>
-        </div>
+        {can('post') && (
+          <div className="head-actions">
+            <button className="btn ghost" onClick={() => setModal('poll')}><Icon name="poll" size={16} /> {t('poll.new')}</button>
+            <button className="btn primary" onClick={() => setModal('event')}><Icon name="plus" size={16} /> {t('event.new')}</button>
+          </div>
+        )}
       </div>
 
       {pending > 0 && (
-        <Link to="/members" className="banner">
+        <Link to="/admin" className="banner">
           <Icon name="users" /> {t('dash.pending', { n: pending })} <span className="banner-go">→</span>
         </Link>
       )}
@@ -84,7 +87,7 @@ export default function Dashboard() {
             {todays.map((e) => (
               <div key={e.id} className="card today" style={{ borderLeftColor: color(e.type) }}>
                 <Link to={`/events/${e.id}`} className="today-main">
-                  <TypeBadge type={e.type} kind={e.match_kind} tentative={e.status === 'tentative'} />
+                  <TypeBadge type={e.type} kind={e.match_kind} tentative={e.status === 'tentative'} locked={Boolean(e.visible_roles?.length)} />
                   <h3>{e.title}</h3>
                   <div className="meta"><Icon name="clock" size={14} /> {fmtTime(e.starts_at, lang)}{e.location && <> · <Icon name="pin" size={14} /> {e.location}</>}</div>
                 </Link>
@@ -117,7 +120,7 @@ export default function Dashboard() {
                   <Link to={`/events/${e.id}`}>
                     <div className="ev-date"><strong>{fmtDate(e.starts_at, lang)}</strong><span>{fmtTime(e.starts_at, lang)}</span></div>
                     <div className="ev-main"><span>{e.title}</span>{e.location && <span className="meta">{e.location}</span>}</div>
-                    <TypeBadge type={e.type} kind={e.match_kind} tentative={e.status === 'tentative'} />
+                    <TypeBadge type={e.type} kind={e.match_kind} tentative={e.status === 'tentative'} locked={Boolean(e.visible_roles?.length)} />
                   </Link>
                 </li>
               ))}

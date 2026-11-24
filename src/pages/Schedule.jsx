@@ -16,7 +16,7 @@ const ymd = (y, m, d) => `${y}-${pad(m + 1)}-${pad(d)}`
 
 export default function Schedule() {
   const { t, lang } = useT()
-  const { nameOf, isTrainer } = useAuth()
+  const { nameOf, can } = useAuth()
   const [weeksOpen, setWeeksOpen] = useState(false)
   const weekly = useWeeklyTraining()
   const { types, label, color } = useTypes()
@@ -67,8 +67,8 @@ export default function Schedule() {
         <h1>{t('nav.schedule')}</h1>
         <div className="head-actions">
           <button className="btn ghost" onClick={() => setSub(true)}><Icon name="share" size={16} /> {t('calsub.title')}</button>
-          {isTrainer && weekly.available && <button className="btn ghost" onClick={() => setWeeksOpen(true)}><Icon name="dumbbell" size={16} /> {t('wk.open')}</button>}
-          <button className="btn primary" onClick={() => setModal({ date: selected })}><Icon name="plus" size={16} /> {t('event.new')}</button>
+          {can('sessions') && weekly.available && <button className="btn ghost" onClick={() => setWeeksOpen(true)}><Icon name="dumbbell" size={16} /> {t('wk.open')}</button>}
+          {can('post') && <button className="btn primary" onClick={() => setModal({ date: selected })}><Icon name="plus" size={16} /> {t('event.new')}</button>}
         </div>
       </div>
 
@@ -95,7 +95,7 @@ export default function Schedule() {
             {cells.map((d, i) => (
               <button key={i} disabled={!d}
                 className={`cal-cell ${d === today ? 'is-today' : ''} ${d === selected ? 'is-sel' : ''}`}
-                onClick={() => d && setSelected(d)} onDoubleClick={() => d && setModal({ date: d })}>
+                onClick={() => d && setSelected(d)} onDoubleClick={() => d && can('post') && setModal({ date: d })}>
                 {d && <span className="cal-num">{Number(d.slice(8))}</span>}
                 <span className="cal-events">
                   {(byDay[d] || []).slice(0, 3).map((e) => <span key={e.id} className="cal-ev" style={{ background: color(e.type) }}>{e.title}</span>)}
@@ -116,7 +116,7 @@ export default function Schedule() {
                   <Link to={`/events/${e.id}`}>
                     <div className="ev-date"><strong>{fmtTime(e.starts_at, lang)}</strong></div>
                     <div className="ev-main"><span>{e.title}</span><span className="meta">{e.location || nameOf(e.created_by)}</span></div>
-                    <TypeBadge type={e.type} kind={e.match_kind} tentative={e.status === 'tentative'} />
+                    <TypeBadge type={e.type} kind={e.match_kind} tentative={e.status === 'tentative'} locked={Boolean(e.visible_roles?.length)} />
                   </Link>
                 </li>
               ))}
@@ -130,7 +130,7 @@ export default function Schedule() {
                   <Link to={`/events/${e.id}`}>
                     <div className="ev-date"><strong>{fmtDate(e.starts_at, lang)}</strong><span>{fmtTime(e.starts_at, lang)}</span></div>
                     <div className="ev-main"><span>{e.title}</span></div>
-                    <TypeBadge type={e.type} kind={e.match_kind} tentative={e.status === 'tentative'} />
+                    <TypeBadge type={e.type} kind={e.match_kind} tentative={e.status === 'tentative'} locked={Boolean(e.visible_roles?.length)} />
                   </Link>
                 </li>
               ))}

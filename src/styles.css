@@ -262,6 +262,19 @@ textarea { resize: vertical; }
 .btn.danger-text { color: var(--red); }
 .stack.tight { gap: 6px; }
 .btn.left { align-self: flex-start; }
+.role-card { display: flex; flex-direction: column; gap: 10px; border-top: 4px solid var(--line); }
+.role-card.new { border-top-style: dashed; }
+.role-head { display: flex; gap: 8px; align-items: center; }
+.role-head input[type='color'] { width: 38px; height: 36px; padding: 2px; border-radius: 8px; flex-shrink: 0; cursor: pointer; }
+.role-head input:not([type='color']) { font-weight: 700; }
+.perm-list { display: flex; flex-direction: column; gap: 8px; }
+.perm-list .check { align-items: flex-start; line-height: 1.35; }
+.perm-list input { flex-shrink: 0; margin-top: 1px; }
+.grid-cards.wide { grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); }
+.tabs.scroll { overflow-x: auto; white-space: nowrap; }
+.tabs.scroll button { flex-shrink: 0; }
+.vis-note { color: var(--red); font-weight: 600; }
+.badge.type-chip svg { margin-right: 1px; }
 .fold-head { all: unset; box-sizing: border-box; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 10px; width: 100%; }
 .fold-head > div { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
 .fold-head:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; border-radius: 6px; }
@@ -541,7 +554,7 @@ textarea { resize: vertical; }
   .cal-cell { min-height: 54px; padding: 4px; align-items: center; }
   .cal-events { display: none; }
   .cal-dots { display: flex; }
-  .grid-cards { grid-template-columns: 1fr; }
+  .grid-cards, .grid-cards.wide { grid-template-columns: 1fr; }
   .wk-dayset, .wk-dayset.wide { grid-template-columns: auto 1fr; }
   .slot-row { grid-template-columns: 1fr 1fr; }
   .slot-row > input:first-child { grid-column: 1 / -1; }

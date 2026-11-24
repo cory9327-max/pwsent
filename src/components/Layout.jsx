@@ -7,7 +7,8 @@ import { Icon, LangSwitch, RoleBadge } from './ui'
 
 export default function Layout({ children }) {
   const { t } = useT()
-  const { profile, isTrainer, isAdmin, signOut } = useAuth()
+  const { profile, can, signOut } = useAuth()
+  const canMembers = can('members')
   const [pending, setPending] = useState(0)
   const [menuOpen, setMenuOpen] = useState(false)
   const loc = useLocation()
@@ -15,10 +16,10 @@ export default function Layout({ children }) {
   useEffect(() => setMenuOpen(false), [loc.pathname])
 
   useEffect(() => {
-    if (!isAdmin) return
+    if (!canMembers) return
     supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('status', 'pending')
       .then(({ count }) => setPending(count || 0))
-  }, [isAdmin, loc.pathname])
+  }, [canMembers, loc.pathname])
 
   const nav = [
     { to: '/', icon: 'home', label: t('nav.dashboard'), end: true },
@@ -26,9 +27,9 @@ export default function Layout({ children }) {
     { to: '/polls', icon: 'poll', label: t('nav.polls') },
     { to: '/training', icon: 'dumbbell', label: t('nav.training') },
     { to: '/files', icon: 'folder', label: t('nav.files') },
-    isTrainer && { to: '/attendance', icon: 'check', label: t('nav.attendance') },
-    isAdmin && { to: '/foreign', icon: 'globe', label: t('nav.foreign'), admin: true },
-    isAdmin && { to: '/members', icon: 'users', label: t('nav.members'), admin: true, count: pending },
+    can('attendance') && { to: '/attendance', icon: 'check', label: t('nav.attendance') },
+    can('foreign') && { to: '/foreign', icon: 'globe', label: t('nav.foreign'), admin: true },
+    (can('settings') || canMembers) && { to: '/admin', icon: 'settings', label: t('nav.admin'), admin: true, count: pending },
   ].filter(Boolean)
 
   const mobileMain = nav.slice(0, 4)

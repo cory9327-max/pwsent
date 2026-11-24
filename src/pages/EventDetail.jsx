@@ -11,13 +11,15 @@ import { useTypes } from '../lib/types'
 import { POLL_SELECT, PollCard, PollForm } from '../components/Polls'
 import { LOG_SELECT, LogCard, LogForm } from '../components/TrainingLog'
 import { DriveButtons, FileTable } from '../components/FileList'
-import { Empty, ErrorText, Icon, Modal, RoleBadge, StatusPill, TypeBadge, confirmDelete } from '../components/ui'
+import { Empty, ErrorText, Icon, Modal, RoleBadge, useRoleLabel, StatusPill, TypeBadge, confirmDelete } from '../components/ui'
 
 export default function EventDetail() {
   const { id } = useParams()
   const nav = useNavigate()
   const { t, lang } = useT()
-  const { user, members, canEdit, nameOf, isTrainer } = useAuth()
+  const { user, members, canEdit, nameOf, can } = useAuth()
+  const roleLabel = useRoleLabel()
+  const canAtt = can('attendance')
   const { hasAttendance, color } = useTypes()
   const [ev, setEv] = useState(undefined)
   const [att, setAtt] = useState([])
@@ -107,6 +109,7 @@ export default function EventDetail() {
             {ev.ends_at && <> – {sameDay ? fmtTime(ev.ends_at, lang) : `${fmtDate(ev.ends_at, lang)} ${fmtTime(ev.ends_at, lang)}`}</>}</span>
           {ev.location && <span><Icon name="pin" size={15} /> {ev.location}</span>}
           <span><Icon name="user" size={15} /> {nameOf(ev.created_by)}</span>
+          {ev.visible_roles?.length > 0 && <span className="vis-note"><Icon name="lock" size={15} /> {t('event.visibleTo', { roles: ev.visible_roles.map(roleLabel).join(', ') })}</span>}
         </div>
         {ev.description && <p className="hero-desc">{ev.description}</p>}
         {ev.slots?.length > 0 && (
@@ -115,7 +118,7 @@ export default function EventDetail() {
         {ev.status === 'tentative' && (
           <div className="notice warn">
             {t('wk.tentativeNote')}
-            {isTrainer && (
+            {canEdit(ev.created_by) && (
               <span className="row-actions">
                 <button className="btn primary small" onClick={confirmEvent}>{t('wk.confirm')}</button>
               </span>
@@ -136,7 +139,7 @@ export default function EventDetail() {
               <StatusPill status={past ? 'absent' : 'none'} /> {(counts.absent || 0) + (counts.none || 0)}
             </div>
           </div>
-          {isTrainer && <p className="muted small">{t('att.trainerHint')}</p>}
+          {canAtt && <p className="muted small">{t('att.trainerHint')}</p>}
           <div className="card roster">
             {roster.map((m) => {
               const s = statusOf(m.id)
@@ -146,7 +149,7 @@ export default function EventDetail() {
                   <span className="roster-name">{m.display_name}</span>
                   <RoleBadge role={m.role} />
                   <span className="roster-time muted small">{attMap[m.id] && fmtTime(attMap[m.id].checked_at, lang)}</span>
-                  {isTrainer ? (
+                  {canAtt ? (
                     <select className={`att-select att-${s}`} value={s === 'none' ? 'absent' : s} onChange={(e) => setStatus(m.id, e.target.value)}>
                       <option value="present">{t('att.present')}</option>
                       <option value="late">{t('att.late')}</option>
@@ -164,7 +167,7 @@ export default function EventDetail() {
       <section>
         <div className="sec-head">
           <h2 className="sec-title">{t('nav.polls')}</h2>
-          <button className="btn ghost small" onClick={() => setModal('poll')}><Icon name="plus" size={14} /> {t('poll.new')}</button>
+          {can('post') && <button className="btn ghost small" onClick={() => setModal('poll')}><Icon name="plus" size={14} /> {t('poll.new')}</button>}
         </div>
         {polls.length === 0 ? <Empty>{t('poll.empty')}</Empty> : (
           <div className="stack">{polls.map((p) => <PollCard key={p.id} poll={p} showEvent={false} onChange={load} onEdit={(x) => setModal({ poll: x })} />)}</div>
@@ -175,7 +178,7 @@ export default function EventDetail() {
         <section>
           <div className="sec-head">
             <h2 className="sec-title">{t('training.logs')}</h2>
-            {isTrainer && <button className="btn ghost small" onClick={() => setModal('log')}><Icon name="plus" size={14} /> {t('training.newLog')}</button>}
+            {can('training_log') && <button className="btn ghost small" onClick={() => setModal('log')}><Icon name="plus" size={14} /> {t('training.newLog')}</button>}
           </div>
           {logs.length === 0 ? <Empty>{t('training.emptyEvent')}</Empty> : (
             <div className="stack">{logs.map((l) => <LogCard key={l.id} log={{ ...l, events: null }} categories={cats} onChange={load} onEdit={(x) => setModal({ log: x })} />)}</div>

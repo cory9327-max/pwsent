@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { LANGS, useT } from '../lib/i18n'
 import { useTypes } from '../lib/types'
+import { BUILTIN_ROLE_KEYS, useAuth } from '../lib/auth'
 
 const PATHS = {
   home: 'M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z',
@@ -22,6 +23,8 @@ const PATHS = {
   chevL: 'M15 6l-6 6 6 6',
   chevR: 'M9 6l6 6-6 6',
   chevD: 'M6 9l6 6 6-6',
+  lock: 'M6 11h12a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-8a1 1 0 0 1 1-1zM8 11V7a4 4 0 0 1 8 0v4',
+  settings: 'M4 6h10M18 6h2M4 12h2M10 12h10M4 18h8M16 18h4M14 4v4M6 10v4M12 16v4',
   chevU: 'M6 15l6-6 6 6',
   pin: 'M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11zM12 12a2 2 0 1 0 0-4 2 2 0 0 0 0 4z',
   clock: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 7v5l3 2',
@@ -59,19 +62,26 @@ export function Modal({ title, onClose, children, wide }) {
   )
 }
 
-export function TypeBadge({ type, kind, tentative }) {
+export function TypeBadge({ type, kind, tentative, locked }) {
   const { t } = useT()
   const { label, color } = useTypes()
   return (
     <span className={`badge type-chip ${tentative ? 'tentative' : ''}`} style={{ '--c': color(type) }}>
-      {label(type)}{kind ? ` · ${kind}` : ''}{tentative ? ` · ${t('wk.recruiting')}` : ''}
+      {locked && <Icon name="lock" size={11} />}{label(type)}{kind ? ` · ${kind}` : ''}{tentative ? ` · ${t('wk.recruiting')}` : ''}
     </span>
   )
 }
 
-export function RoleBadge({ role }) {
+export function useRoleLabel() {
   const { t } = useT()
-  return <span className={`badge role-${role}`}>{t(`role.${role}`)}</span>
+  const { roleInfo } = useAuth()
+  return (key) => roleInfo(key)?.name || (BUILTIN_ROLE_KEYS.includes(key) ? t(`role.${key}`) : key)
+}
+
+export function RoleBadge({ role }) {
+  const { roleInfo } = useAuth()
+  const label = useRoleLabel()
+  return <span className="badge type-chip" style={{ '--c': roleInfo(role)?.color || '#5c5f66' }}>{label(role)}</span>
 }
 
 export function StatusPill({ status }) {
@@ -90,6 +100,7 @@ export function ErrorText({ error }) {
   const known = {
     last_admin: t('err.lastAdmin'),
     forbidden: t('err.forbidden'),
+    forbidden_role: t('err.forbiddenRole'),
     drive_not_configured: t('files.notConfigured'),
   }
   let text = known[msg]

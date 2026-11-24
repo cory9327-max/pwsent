@@ -8,7 +8,7 @@ import { useTypes } from '../lib/types'
 import { DateTimeInput } from './inputs'
 import ManagedChoice from './ManagedChoice'
 import TypeManager from './TypeManager'
-import { ErrorText, Field, Modal } from './ui'
+import { ErrorText, Field, Icon, Modal, useRoleLabel } from './ui'
 
 const pad = (n) => String(n).padStart(2, '0')
 const MAX_REPEAT = 60
@@ -31,7 +31,10 @@ function addDays(local, days) {
 /** 일정 등록/수정. 훈련·경기는 트레이너 이상만. 새 일정은 매주/격주 반복 등록 가능 */
 export default function EventForm({ event, defaultDate, defaultType, onClose, onSaved }) {
   const { t } = useT()
-  const { user, isTrainer, isAdmin } = useAuth()
+  const { user, can, roles, rolesManaged } = useAuth()
+  const roleLabel = useRoleLabel()
+  const isTrainer = can('sessions')
+  const isAdmin = can('settings')
   const { types, label, color, hasAttendance, managed } = useTypes()
   const [manageTypes, setManageTypes] = useState(false)
   const editing = Boolean(event)
@@ -52,6 +55,7 @@ export default function EventForm({ event, defaultDate, defaultType, onClose, on
   })
   const [autoEnd, setAutoEnd] = useState(!event && Boolean(AUTO_END_HOURS[firstType])) // 종료를 자동으로 채운 상태인지
   const [withPoll, setWithPoll] = useState(false)
+  const [vis, setVis] = useState(event?.visible_roles || []) // 볼 수 있는 직급. 비어 있으면 전체 공개
   const [repeat, setRepeat] = useState(0) // 0 = 없음, 7 = 매주, 14 = 격주
   const [until, setUntil] = useState('')
   const [used, setUsed] = useState({ locations: [], kinds: [] })
@@ -108,6 +112,7 @@ export default function EventForm({ event, defaultDate, defaultType, onClose, on
       match_kind: f.type === 'match' ? (f.match_kind.trim() || null) : null,
       location: f.location.trim() || null,
       description: f.description.trim() || null,
+      ...(rolesManaged ? { visible_roles: vis.length ? vis : null } : {}),
     }
 
     if (editing) {
@@ -193,6 +198,20 @@ export default function EventForm({ event, defaultDate, defaultType, onClose, on
         <Field label={t('event.description')}>
           <textarea rows={2} value={f.description} onChange={set('description')} />
         </Field>
+
+        {rolesManaged && (
+          <Field label={t('event.visibility')} hint={vis.length ? t('event.visHint') : null}>
+            <div className="chips">
+              <button type="button" className={vis.length === 0 ? 'on' : ''} onClick={() => setVis([])}>{t('event.visAll')}</button>
+              {roles.map((r) => (
+                <button type="button" key={r.key} className={vis.includes(r.key) ? 'on' : ''}
+                  onClick={() => setVis(vis.includes(r.key) ? vis.filter((x) => x !== r.key) : [...vis, r.key])}>
+                  {vis.includes(r.key) && <Icon name="lock" size={12} />}{roleLabel(r.key)}
+                </button>
+              ))}
+            </div>
+          </Field>
+        )}
 
         {!editing && (
           <Field label={t('event.repeat')}>

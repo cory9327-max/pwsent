@@ -13,7 +13,7 @@ export default function Polls() {
   const [events, setEvents] = useState([])
   const [tab, setTab] = useState('open')
   const [modal, setModal] = useState(null)
-  const { isTrainer } = useAuth()
+  const { can } = useAuth()
   const weekly = useWeeklyTraining()
 
   const load = useCallback(async () => {
@@ -35,8 +35,8 @@ export default function Polls() {
       <div className="page-head">
         <h1>{t('nav.polls')}</h1>
         <div className="head-actions">
-          {isTrainer && weekly.available && <button className="btn ghost" onClick={() => setModal('weeks')}><Icon name="calendar" size={16} /> {t('wk.open')}</button>}
-          <button className="btn primary" onClick={() => setModal('new')}><Icon name="plus" size={16} /> {t('poll.new')}</button>
+          {can('sessions') && weekly.available && <button className="btn ghost" onClick={() => setModal('weeks')}><Icon name="calendar" size={16} /> {t('wk.open')}</button>}
+          {can('post') && <button className="btn primary" onClick={() => setModal('new')}><Icon name="plus" size={16} /> {t('poll.new')}</button>}
         </div>
       </div>
       <div className="tabs">

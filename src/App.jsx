@@ -14,7 +14,7 @@ import Training from './pages/Training'
 import Attendance from './pages/Attendance'
 import Files from './pages/Files'
 import Foreign from './pages/Foreign'
-import Members from './pages/Members'
+import Admin from './pages/Admin'
 import MyPage from './pages/MyPage'
 
 export default function App() {
@@ -38,7 +38,7 @@ export default function App() {
 }
 
 function Gate() {
-  const { loading, user, profile, approved, isTrainer, isAdmin } = useAuth()
+  const { loading, user, profile, approved, can } = useAuth()
   const { t } = useT()
 
   if (loading) return <div className="center-screen"><div className="spinner" aria-label={t('common.loading')} /></div>
@@ -56,10 +56,11 @@ function Gate() {
         <Route path="/events/:id" element={<EventDetail />} />
         <Route path="/polls" element={<Polls />} />
         <Route path="/training" element={<Training />} />
-        <Route path="/attendance" element={guard(isTrainer, <Attendance />)} />
+        <Route path="/attendance" element={guard(can('attendance'), <Attendance />)} />
         <Route path="/files" element={<Files />} />
-        <Route path="/foreign" element={guard(isAdmin, <Foreign />)} />
-        <Route path="/members" element={guard(isAdmin, <Members />)} />
+        <Route path="/foreign" element={guard(can('foreign'), <Foreign />)} />
+        <Route path="/admin" element={guard(can('settings') || can('members'), <Admin />)} />
+        <Route path="/members" element={<Navigate to="/admin" replace />} />
         <Route path="/me" element={<MyPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
