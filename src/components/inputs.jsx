@@ -38,7 +38,8 @@ export function DateTimeInput({ value, onChange, required, fallbackTime = '19:00
 export function ChoiceInput({ options, extra = [], value, onChange, placeholder, allowEmpty = true }) {
   const { t } = useT()
   const all = [...options, ...extra.filter((x) => x && !options.includes(x))]
-  const [custom, setCustom] = useState(Boolean(value) && !all.includes(value))
+  const [typing, setCustom] = useState(false)
+  const custom = typing || (Boolean(value) && !all.includes(value))
 
   return (
     <div className="choice">

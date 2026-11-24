@@ -3,8 +3,9 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/auth'
 import { useT } from '../lib/i18n'
 import { fromLocalInput, toLocalInput } from '../lib/format'
-import { EVENT_TYPES, LOCATIONS, MATCH_KINDS, TRAINER_ONLY_TYPES } from '../lib/presets'
+import { EVENT_TYPES, MATCH_KINDS, TRAINER_ONLY_TYPES } from '../lib/presets'
 import { ChoiceInput, DateTimeInput } from './inputs'
+import LocationPicker from './LocationPicker'
 import { ErrorText, Field, Modal } from './ui'
 
 const pad = (n) => String(n).padStart(2, '0')
@@ -78,7 +79,7 @@ export default function EventForm({ event, defaultDate, defaultType, onClose, on
     supabase.from('events').select('location, match_kind').order('created_at', { ascending: false }).limit(200)
       .then(({ data }) => {
         const uniq = (k, base) => [...new Set((data || []).map((r) => r[k]).filter((v) => v && !base.includes(v)))].slice(0, 6)
-        setUsed({ locations: uniq('location', LOCATIONS), kinds: uniq('match_kind', MATCH_KINDS) })
+        setUsed({ locations: uniq('location', []), kinds: uniq('match_kind', MATCH_KINDS) })
       })
   }, [])
 
@@ -176,8 +177,7 @@ export default function EventForm({ event, defaultDate, defaultType, onClose, on
           )}
         </Field>
         <Field label={t('event.location')}>
-          <ChoiceInput options={LOCATIONS} extra={used.locations} value={f.location}
-            placeholder={t('event.locationPh')} onChange={(v) => setF({ ...f, location: v })} />
+          <LocationPicker value={f.location} recent={used.locations} onChange={(v) => setF({ ...f, location: v })} />
         </Field>
         <Field label={t('event.description')}>
           <textarea rows={2} value={f.description} onChange={set('description')} />

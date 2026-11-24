@@ -240,6 +240,10 @@ textarea { resize: vertical; }
 .dt-input input[type='date'] { flex: 1; min-width: 0; }
 .dt-input select { width: auto; flex-shrink: 0; }
 .dt-input .dt-min { width: 70px; flex-shrink: 0; }
+.muted-link { color: var(--muted); }
+.loc-manage { background: var(--gray-soft); border-radius: 10px; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+.loc-manage ul { list-style: none; margin: 0; padding: 0; }
+.loc-manage li { display: flex; align-items: center; justify-content: space-between; font-weight: 600; font-size: 14px; padding: 2px 0 2px 4px; }
 .repeat-box { display: flex; flex-direction: column; gap: 6px; background: var(--gray-soft); border-radius: 10px; padding: 12px; }
 .repeat-until { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 600; }
 .repeat-until input { width: auto; flex: 1; }
