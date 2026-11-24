@@ -297,6 +297,11 @@ textarea { resize: vertical; }
 .steps li.ok b { background: var(--green); color: #fff; }
 .steps li em { font-style: normal; font-size: 13px; color: var(--muted); }
 .steps li.ok em { color: var(--green); }
+.roster-add { padding: 8px 10px; border-top: 1px solid var(--line); }
+.roster-add select { font-weight: 600; }
+.roster.muted-rows { margin-top: 8px; background: transparent; box-shadow: none; }
+.role-att { align-items: flex-start; background: var(--gray-soft); border-radius: 8px; padding: 9px 10px; line-height: 1.35; }
+.role-att input { flex-shrink: 0; margin-top: 1px; }
 .role-card { display: flex; flex-direction: column; gap: 10px; border-top: 4px solid var(--line); }
 .role-card.new { border-top-style: dashed; }
 .role-head { display: flex; gap: 8px; align-items: center; }

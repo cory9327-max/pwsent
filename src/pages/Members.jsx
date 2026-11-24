@@ -8,7 +8,7 @@ import { Empty, ErrorText, Icon, confirmDelete, useRoleLabel } from '../componen
 
 export default function Members({ embedded }) {
   const { t, lang } = useT()
-  const { user, profile, refresh, roles, permsOf } = useAuth()
+  const { user, profile, refresh, roles, permsOf, roleInfo, roleFlags } = useAuth()
   const roleLabel = useRoleLabel()
   const mine = permsOf(profile.role)
   // 자신보다 권한이 많은 직급은 줄 수 없음 (서버에서도 막힘)
@@ -117,7 +117,9 @@ export default function Members({ embedded }) {
                     </select>
                   </td>
                   <td>
-                    <input type="checkbox" checked={m.track_attendance} onChange={(e) => update(m.id, { track_attendance: e.target.checked })} aria-label={t('members.track')} />
+                    {roleFlags && roleInfo(m.role)?.attendance
+                      ? <span className="pill att-present">{t('members.byRole')}</span>
+                      : <label className="check"><input type="checkbox" checked={m.track_attendance} onChange={(e) => update(m.id, { track_attendance: e.target.checked })} /> <span className="small">{t('members.alsoAthlete')}</span></label>}
                   </td>
                   <td className="row-actions">
                     {m.id !== user.id && <>

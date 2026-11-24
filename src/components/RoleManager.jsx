@@ -61,6 +61,12 @@ export default function RoleManager() {
                   : <button className="icon-btn danger" onClick={() => remove(r)} aria-label={t('common.delete')}><Icon name="trash" size={16} /></button>}
               </div>
               <div className="meta">{t('roles.count', { n: countOf(r.key) })}{isAdminRole && ` · ${t('roles.adminNote')}`}</div>
+              {'attendance' in r && (
+                <label className="check role-att">
+                  <input type="checkbox" checked={r.attendance} disabled={isAdminRole} onChange={(e) => patch(r, { attendance: e.target.checked })} />
+                  <span><strong>{t('roles.attendance')}</strong><span className="muted small"> {t('roles.attendanceHint')}</span></span>
+                </label>
+              )}
               <div className="perm-list">
                 {ALL_PERMS.map((p) => (
                   <label key={p} className="check">

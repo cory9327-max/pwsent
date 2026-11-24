@@ -104,7 +104,7 @@ const ko = {
   'members.rejected': '거절·정지', 'members.approve': '승인', 'members.reject': '거절', 'members.suspend': '정지',
   'members.noPending': '대기 중인 신청이 없습니다', 'members.empty': '회원이 없습니다', 'members.noName': '(이름 미입력)',
   'members.applied': '{d} 신청', 'members.checkName': '이름이 본명/링네임이 아니면 거절하세요. 승인 후 이름은 회원 탭에서 고칠 수 있어요.',
-  'members.name': '이름', 'members.role': '권한', 'members.track': '근태 집계',
+  'members.name': '이름', 'members.role': '권한', 'members.track': '출석 대상',
 
   'calsub.title': '내 캘린더에 연결', 'calsub.body': '한 번 연결하면 PWS 일정이 내 구글 캘린더·아이폰 캘린더에 자동으로 나타나고, 일정이 바뀌면 따라서 바뀝니다.',
   'calsub.google': '구글 캘린더에 추가', 'calsub.apple': '아이폰·맥 캘린더에 추가', 'calsub.url': '구독 주소', 'calsub.copy': '주소 복사',
@@ -160,6 +160,9 @@ const ko = {
   'done.stepsTitle': '훈련 마감', 'done.stepsHint': '세 단계를 마치면 이 훈련이 완료로 처리됩니다.', 'done.notYet': '훈련 당일부터 마감할 수 있습니다.',
   'done.step1': '출석 확인', 'done.step2': '훈련 내용 기록', 'done.step3': '완료 확정', 'done.confirm': '완료 확정', 'done.waiting': '트레이너 확정 대기', 'done.undo': '확정 취소',
   'done.doneTitle': '완료된 훈련', 'done.doneBy': '{name} · {d} 확정', 'done.needLogHint': '훈련 내용을 먼저 기록해야 완료 확정할 수 있습니다.', 'done.markVoters': '투표한 사람 모두 참여로 체크',
+
+  'att.noneYet': '아직 출석 기록이 없습니다', 'att.add': '선수 추가 (참여로 체크)', 'att.rest': '미체크 {n}명 보기', 'att.restPast': '기록 없는 선수 {n}명 보기 (불참으로 집계)',
+  'members.byRole': '직급으로 포함', 'members.alsoAthlete': '선수 겸임', 'roles.attendance': '출석 대상 직급', 'roles.attendanceHint': '선수·연습생처럼 훈련 출석을 확인하는 직급. 이 직급의 회원은 모두 출석 명단과 근태 집계에 나옵니다.',
 
   'me.nameLocked': '이름 변경은 관리자에게 요청하세요.', 'me.language': '언어', 'me.myAttendance': '내 출석', 'me.last60': '최근 60일',
 }
@@ -267,7 +270,7 @@ const en = {
   'members.rejected': 'Rejected / suspended', 'members.approve': 'Approve', 'members.reject': 'Reject', 'members.suspend': 'Suspend',
   'members.noPending': 'No pending requests', 'members.empty': 'No members', 'members.noName': '(no name yet)',
   'members.applied': 'Applied {d}', 'members.checkName': 'Reject if this is not a real name or ring name. You can edit names in the Members tab later.',
-  'members.name': 'Name', 'members.role': 'Role', 'members.track': 'Track attendance',
+  'members.name': 'Name', 'members.role': 'Role', 'members.track': 'Attendance',
 
   'calsub.title': 'Connect my calendar', 'calsub.body': 'Connect once and PWS events appear in your Google or iPhone calendar and stay up to date automatically.',
   'calsub.google': 'Add to Google Calendar', 'calsub.apple': 'Add to iPhone / Mac Calendar', 'calsub.url': 'Subscription URL', 'calsub.copy': 'Copy URL',
@@ -323,6 +326,9 @@ const en = {
   'done.stepsTitle': 'Close out session', 'done.stepsHint': 'Finish the three steps to mark this session complete.', 'done.notYet': 'You can close a session from the day it takes place.',
   'done.step1': 'Check attendance', 'done.step2': 'Write training notes', 'done.step3': 'Confirm completion', 'done.confirm': 'Confirm', 'done.waiting': 'Waiting for trainer', 'done.undo': 'Undo',
   'done.doneTitle': 'Session completed', 'done.doneBy': 'Confirmed by {name} · {d}', 'done.needLogHint': 'Write the training notes before confirming completion.', 'done.markVoters': 'Mark everyone who voted as present',
+
+  'att.noneYet': 'No attendance recorded yet', 'att.add': 'Add a wrestler (mark present)', 'att.rest': 'Show {n} not checked', 'att.restPast': 'Show {n} with no record (counted absent)',
+  'members.byRole': 'Included by role', 'members.alsoAthlete': 'Also a wrestler', 'roles.attendance': 'Attendance role', 'roles.attendanceHint': 'A role whose training attendance is tracked (wrestlers, trainees). Everyone in it appears on rosters and reports.',
 
   'me.nameLocked': 'Ask an admin to change your name.', 'me.language': 'Language', 'me.myAttendance': 'My attendance', 'me.last60': 'Last 60 days',
 }
@@ -430,7 +436,7 @@ const ja = {
   'members.rejected': '却下・停止', 'members.approve': '承認', 'members.reject': '却下', 'members.suspend': '停止',
   'members.noPending': '承認待ちの申請はありません', 'members.empty': '会員がいません', 'members.noName': '（名前未入力）',
   'members.applied': '{d} 申請', 'members.checkName': '本名・リングネームでなければ却下してください。承認後の名前は会員タブで修正できます。',
-  'members.name': '名前', 'members.role': '権限', 'members.track': '勤怠集計',
+  'members.name': '名前', 'members.role': '権限', 'members.track': '出席対象',
 
   'calsub.title': '自分のカレンダーに連携', 'calsub.body': '一度連携すると、PWS の予定が Google カレンダーや iPhone のカレンダーに自動で表示され、変更も反映されます。',
   'calsub.google': 'Google カレンダーに追加', 'calsub.apple': 'iPhone・Mac のカレンダーに追加', 'calsub.url': '購読 URL', 'calsub.copy': 'URL をコピー',
@@ -486,6 +492,9 @@ const ja = {
   'done.stepsTitle': '練習の締め', 'done.stepsHint': '3つのステップを終えると、この練習は完了になります。', 'done.notYet': '練習当日から締められます。',
   'done.step1': '出席確認', 'done.step2': '練習内容の記録', 'done.step3': '完了確定', 'done.confirm': '完了を確定', 'done.waiting': 'トレーナーの確定待ち', 'done.undo': '確定を取り消す',
   'done.doneTitle': '完了した練習', 'done.doneBy': '{name} · {d} 確定', 'done.needLogHint': '完了を確定する前に、練習内容を記録してください。', 'done.markVoters': '投票した人を全員参加にする',
+
+  'att.noneYet': 'まだ出席記録がありません', 'att.add': '選手を追加（参加にする）', 'att.rest': '未チェック {n}人を表示', 'att.restPast': '記録のない選手 {n}人を表示（欠席として集計）',
+  'members.byRole': '役職で対象', 'members.alsoAthlete': '選手兼任', 'roles.attendance': '出席対象の役職', 'roles.attendanceHint': '選手・練習生など、練習の出席を確認する役職。この役職の会員は全員、出席名簿と勤怠集計に表示されます。',
 
   'me.nameLocked': '名前の変更は管理者に依頼してください。', 'me.language': '言語', 'me.myAttendance': '自分の出席', 'me.last60': '直近60日',
 }

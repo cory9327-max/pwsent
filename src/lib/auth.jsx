@@ -56,6 +56,9 @@ export function AuthProvider({ children }) {
     const permsOf = (key) => (key === 'admin' ? ALL_PERMS : roleBy[key]?.perms || [])
     const mine = approved ? permsOf(profile.role) : []
     const can = (perm) => mine.includes(perm)
+    // 출석 대상: 출석 대상 직급(선수·연습생)이거나, 회원별 '선수 겸임' 표시가 있는 회원
+    const roleFlags = roles.some((r) => 'attendance' in r) // 13 SQL 실행 전에는 예전 방식(회원별 표시만)
+    const isAttendee = (m) => m.status === 'approved' && (roleFlags ? Boolean(roleBy[m.role]?.attendance || m.track_attendance) : Boolean(m.track_attendance))
     return {
       session,
       user: session?.user ?? null,
@@ -69,6 +72,8 @@ export function AuthProvider({ children }) {
       roleInfo: (key) => roleBy[key],
       permsOf,
       can,
+      isAttendee,
+      roleFlags,
       refresh,
       nameOf: (id) => byId[id]?.display_name || '—',
       canEdit: (ownerId) => can('edit_all') || (approved && ownerId === userId),

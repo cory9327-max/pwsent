@@ -17,7 +17,7 @@ const dayLabel = (d, lang) => fmtDate(`${d}T12:00:00`, lang)
 /* ------------------------------------------------------------------ */
 export function WeekVoteCard({ week, minPeople, onChange }) {
   const { t, lang } = useT()
-  const { user, members, canEdit: canEditOwn, can, nameOf } = useAuth()
+  const { user, members, canEdit: canEditOwn, can, nameOf, isAttendee } = useAuth()
   const canEdit = (owner) => canEditOwn(owner) || can('sessions') // 자동 등록된 훈련도 트레이너가 관리
   const [editDay, setEditDay] = useState(null)
   const [busy, setBusy] = useState(false)
@@ -37,7 +37,7 @@ export function WeekVoteCard({ week, minPeople, onChange }) {
   const iAnswered = iSkip || votes.some((v) => v.user_id === user.id)
 
   const responded = new Set([...votes.map((v) => v.user_id), ...skips.map((s) => s.user_id)])
-  const pending = members.filter((m) => m.status === 'approved' && m.track_attendance && !responded.has(m.id))
+  const pending = members.filter((m) => isAttendee(m) && !responded.has(m.id))
 
   async function run(fn) {
     if (busy) return

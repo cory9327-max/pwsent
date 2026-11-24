@@ -17,7 +17,8 @@ export default function EventDetail() {
   const { id } = useParams()
   const nav = useNavigate()
   const { t, lang } = useT()
-  const { user, members, canEdit, nameOf, can } = useAuth()
+  const { user, members, canEdit, nameOf, can, isAttendee, roleInfo } = useAuth()
+  const [showRest, setShowRest] = useState(false)
   const roleLabel = useRoleLabel()
   const canAtt = can('attendance')
   const { hasAttendance, color } = useTypes()
@@ -53,12 +54,35 @@ export default function EventDetail() {
 
   const attMap = Object.fromEntries(att.map((a) => [a.user_id, a]))
   const past = seoulDate(ev.starts_at) < seoulDate()
-  const roster = members.filter((m) => m.status === 'approved' && m.track_attendance)
+  const roster = members.filter(isAttendee)
   const notYet = seoulDate(ev.starts_at) > seoulDate()
   const attended = att.filter((a) => a.status !== 'absent').length
   const closable = ev.type === 'training' && ev.status !== 'tentative' && 'completed_at' in ev
   const statusOf = (uid) => attMap[uid]?.status || (past ? 'absent' : 'none')
-  const counts = roster.reduce((c, m) => ({ ...c, [statusOf(m.id)]: (c[statusOf(m.id)] || 0) + 1 }), {})
+  const recorded = roster.filter((m) => attMap[m.id])   // 참여·지각·불참 기록이 있는 사람
+  const rest = roster.filter((m) => !attMap[m.id])      // 기록이 없는 사람
+  const counts = recorded.reduce((c, m) => ({ ...c, [statusOf(m.id)]: (c[statusOf(m.id)] || 0) + 1 }), {})
+
+  const rosterRow = (m) => {
+    const s = attMap[m.id]?.status || 'none'
+    return (
+      <div key={m.id} className="roster-row">
+        <div className="avatar sm">{m.display_name?.slice(0, 1)}</div>
+        <span className="roster-name">{m.display_name}</span>
+        {/* 선수·연습생 직급이 아닌데 선수 겸임으로 포함된 회원은 직급을 함께 표시 */}
+        {!roleInfo(m.role)?.attendance && <RoleBadge role={m.role} />}
+        <span className="roster-time muted small">{attMap[m.id] && attMap[m.id].status !== 'absent' && fmtTime(attMap[m.id].checked_at, lang)}</span>
+        {canAtt ? (
+          <select className={`att-select att-${s}`} value={s} onChange={(e) => setStatus(m.id, e.target.value)}>
+            <option value="present">{t('att.present')}</option>
+            <option value="late">{t('att.late')}</option>
+            <option value="absent">{t('att.absent')}</option>
+            <option value="none">{t('att.none')}</option>
+          </select>
+        ) : <StatusPill status={s} />}
+      </div>
+    )
+  }
 
   async function setStatus(uid, status) {
     setError(null)
@@ -224,7 +248,6 @@ export default function EventDetail() {
               <StatusPill status="present" /> {counts.present || 0}
               <StatusPill status="late" /> {counts.late || 0}
               <StatusPill status="absent" /> {counts.absent || 0}
-              {!past && <><StatusPill status="none" /> {counts.none || 0}</>}
             </div>
           </div>
           {canAtt && (
@@ -234,27 +257,23 @@ export default function EventDetail() {
             </p>
           )}
           <div className="card roster">
-            {roster.map((m) => {
-              const s = statusOf(m.id)
-              return (
-                <div key={m.id} className="roster-row">
-                  <div className="avatar sm">{m.display_name?.slice(0, 1)}</div>
-                  <span className="roster-name">{m.display_name}</span>
-                  <RoleBadge role={m.role} />
-                  <span className="roster-time muted small">{attMap[m.id] && fmtTime(attMap[m.id].checked_at, lang)}</span>
-                  {canAtt ? (
-                    <select className={`att-select att-${s}`} value={s} onChange={(e) => setStatus(m.id, e.target.value)}>
-                      <option value="present">{t('att.present')}</option>
-                      <option value="late">{t('att.late')}</option>
-                      <option value="absent">{t('att.absent')}</option>
-                      {!past && <option value="none">{t('att.none')}</option>}
-                    </select>
-                  ) : <StatusPill status={s} />}
-                </div>
-              )
-            })}
-            {roster.length === 0 && <Empty>{t('members.empty')}</Empty>}
+            {recorded.map(rosterRow)}
+            {recorded.length === 0 && <Empty>{t('att.noneYet')}</Empty>}
+            {canAtt && rest.length > 0 && (
+              <div className="roster-add">
+                <select value="" onChange={(e) => e.target.value && setStatus(e.target.value, 'present')} aria-label={t('att.add')}>
+                  <option value="">＋ {t('att.add')}</option>
+                  {rest.map((m) => <option key={m.id} value={m.id}>{m.display_name}</option>)}
+                </select>
+              </div>
+            )}
           </div>
+          {rest.length > 0 && (
+            <button className="link-btn small" onClick={() => setShowRest(!showRest)}>
+              {showRest ? t('wk.lessWeeks') : t(past ? 'att.restPast' : 'att.rest', { n: rest.length })}
+            </button>
+          )}
+          {showRest && rest.length > 0 && <div className="card roster muted-rows">{rest.map(rosterRow)}</div>}
         </section>
       )}
 
