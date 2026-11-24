@@ -280,6 +280,23 @@ textarea { resize: vertical; }
 .map-links { display: inline-flex; gap: 12px; flex-wrap: wrap; }
 .map-links a, .map-links-a { display: inline-flex; align-items: center; gap: 3px; color: var(--red); font-weight: 600; font-size: 13px; }
 .map-links a:hover, .map-links-a:hover { text-decoration: underline; }
+.sessions { display: flex; flex-direction: column; gap: 6px; margin-bottom: 18px; border-left: 4px solid var(--orange); }
+.sessions p { margin: 0; }
+.session-group { font-size: 12px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; margin-top: 10px; }
+.session-row { display: flex; align-items: center; gap: 12px; padding: 10px 6px; border-radius: 8px; }
+.session-row:hover { background: var(--gray-soft); }
+.session-row .ev-main { gap: 4px; }
+.session-row .meta { gap: 6px; }
+.closing { border-left: 4px solid var(--amber); display: flex; flex-direction: column; gap: 12px; }
+.closing.is-done { border-left-color: var(--green); }
+.steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.steps li { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; font-weight: 600; }
+.steps li > span { flex: 1; }
+.steps li b { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; background: var(--gray-soft); color: var(--muted); font-size: 13px; flex-shrink: 0; }
+.steps li.ok { border-color: #b2f2bb; background: var(--green-soft); }
+.steps li.ok b { background: var(--green); color: #fff; }
+.steps li em { font-style: normal; font-size: 13px; color: var(--muted); }
+.steps li.ok em { color: var(--green); }
 .role-card { display: flex; flex-direction: column; gap: 10px; border-top: 4px solid var(--line); }
 .role-card.new { border-top-style: dashed; }
 .role-head { display: flex; gap: 8px; align-items: center; }
@@ -415,7 +432,7 @@ textarea { resize: vertical; }
 /* ---------- event detail ---------- */
 .event-hero { border-left: 5px solid var(--blue); display: flex; flex-direction: column; gap: 12px; padding: 22px; }
 .hero-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
-.hero-top .row-actions { flex-wrap: wrap; gap: 6px; }
+.hero-top .row-actions { flex-wrap: wrap; gap: 6px; flex-shrink: 1; min-width: 0; }
 .hero-meta { display: flex; flex-wrap: wrap; gap: 8px 20px; color: var(--ink-2); font-size: 14px; }
 .hero-meta span { display: inline-flex; align-items: center; gap: 6px; }
 .hero-desc { margin: 0; white-space: pre-wrap; color: var(--ink-2); }

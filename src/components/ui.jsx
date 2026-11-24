@@ -101,6 +101,8 @@ export function ErrorText({ error }) {
     last_admin: t('err.lastAdmin'),
     forbidden: t('err.forbidden'),
     forbidden_role: t('err.forbiddenRole'),
+    need_log: t('done.needLogHint'),
+    too_early: t('done.notYet'),
     drive_not_configured: t('files.notConfigured'),
   }
   // 화면에서 직접 만든 안내 문구(문자열)는 그대로 보여 줌

@@ -19,6 +19,8 @@ export default function Training() {
   const [logs, setLogs] = useState([])
   const [cats, setCats] = useState([])
   const [events, setEvents] = useState([])
+  const [attCount, setAttCount] = useState({})
+  const [showDone, setShowDone] = useState(false)
   const [filter, setFilter] = useState('')
   const [modal, setModal] = useState(null)
   const [newCat, setNewCat] = useState({ name: '', color: COLORS[0] })
@@ -31,9 +33,15 @@ export default function Training() {
     const [l, c, e] = await Promise.all([
       supabase.from('training_logs').select(LOG_SELECT).order('log_date', { ascending: false }).limit(100),
       supabase.from('training_categories').select('*').order('name'),
-      supabase.from('events').select('id,title,starts_at,type,status').eq('type', 'training').gte('starts_at', since).order('starts_at', { ascending: false }),
+      supabase.from('events').select('*').eq('type', 'training').gte('starts_at', since).order('starts_at', { ascending: false }),
     ])
-    setLogs(l.data || []); setCats(c.data || []); setEvents(e.data || [])
+    const evs = (e.data || []).filter((x) => x.status !== 'tentative') // 확정된 훈련만
+    setLogs(l.data || []); setCats(c.data || []); setEvents(evs)
+    const ids = evs.map((x) => x.id)
+    const { data: att } = ids.length ? await supabase.from('attendance').select('event_id').in('event_id', ids) : { data: [] }
+    const n = {}
+    for (const a of att || []) n[a.event_id] = (n[a.event_id] || 0) + 1
+    setAttCount(n)
   }, [])
   useEffect(() => { load() }, [load])
 
@@ -59,7 +67,32 @@ export default function Training() {
   }
 
   const logged = new Set(logs.map((l) => l.event_id).filter(Boolean))
-  const unlogged = events.filter((e) => seoulDate(e.starts_at) <= seoulDate() && e.status !== 'tentative' && !logged.has(e.id)).slice(0, 8)
+  const today = seoulDate()
+  const weekAhead = seoulDate(new Date(Date.now() + 7 * 864e5))
+  const dateOf = (e) => seoulDate(e.starts_at)
+  const todo = events.filter((e) => dateOf(e) <= today && !e.completed_at).reverse()            // 진행·마감이 필요한 훈련 (오래된 것부터)
+  const upcoming = events.filter((e) => dateOf(e) > today && dateOf(e) <= weekAhead).reverse()  // 이번 주 예정
+  const finished = events.filter((e) => e.completed_at).slice(0, showDone ? 30 : 3)
+  const sessionRow = (e, kind) => (
+    <li key={e.id}>
+      <Link to={`/events/${e.id}`} className="session-row">
+        <div className="ev-date"><strong>{fmtDate(e.starts_at, lang)}</strong><span>{fmtTime(e.starts_at, lang)}</span></div>
+        <div className="ev-main">
+          <span>{e.title}{e.location ? ` · ${e.location}` : ''}</span>
+          {kind !== 'upcoming' && (
+            <span className="meta">
+              <span className={`pill ${attCount[e.id] ? 'att-present' : 'att-none'}`}>{t('done.attN', { n: attCount[e.id] || 0 })}</span>
+              <span className={`pill ${logged.has(e.id) ? 'att-present' : 'att-none'}`}>{logged.has(e.id) ? t('done.logYes') : t('done.logNo')}</span>
+            </span>
+          )}
+        </div>
+        {kind === 'todo' && <span className="pill att-late">{dateOf(e) === today ? t('done.today') : t('done.needed')}</span>}
+        {kind === 'done' && <span className="pill att-present">{t('done.done')}</span>}
+        {kind === 'upcoming' && <span className="pill att-none">{t('done.upcoming')}</span>}
+        <Icon name="chevR" size={16} />
+      </Link>
+    </li>
+  )
   const shown = filter ? logs.filter((l) => l.training_log_items?.some((i) => i.category_id === filter)) : logs
   const done = () => { setModal(null); load() }
 
@@ -78,22 +111,19 @@ export default function Training() {
 
       <div className="training-layout">
         <section>
-          {isTrainer && unlogged.length > 0 && (
-            <div className="card unlogged">
-              <h3>{t('training.unlogged')}</h3>
-              <p className="muted small">{t('training.unloggedHint')}</p>
-              <ul className="event-list">
-                {unlogged.map((e) => (
-                  <li key={e.id}>
-                    <div className="unlogged-row">
-                      <Link to={`/events/${e.id}`} className="ev-main"><span>{fmtDate(e.starts_at, lang)} {fmtTime(e.starts_at, lang)}</span><span className="meta">{e.title}</span></Link>
-                      <button className="btn primary small" onClick={() => setModal({ forEvent: e.id })}><Icon name="edit" size={14} /> {t('training.writeFor')}</button>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+          <div className="card sessions">
+            <h3>{t('done.title')}</h3>
+            <p className="muted small">{isTrainer ? t('done.hintTrainer') : t('done.hint')}</p>
+            {todo.length + upcoming.length + finished.length === 0 && <Empty>{t('done.none')}</Empty>}
+            {todo.length > 0 && <><div className="session-group">{t('done.groupTodo')}</div><ul className="event-list">{todo.map((e) => sessionRow(e, 'todo'))}</ul></>}
+            {upcoming.length > 0 && <><div className="session-group">{t('done.groupUpcoming')}</div><ul className="event-list">{upcoming.map((e) => sessionRow(e, 'upcoming'))}</ul></>}
+            {finished.length > 0 && <>
+              <div className="session-group">{t('done.groupDone')}</div>
+              <ul className="event-list">{finished.map((e) => sessionRow(e, 'done'))}</ul>
+              {events.filter((e) => e.completed_at).length > 3 && <button className="link-btn small left" onClick={() => setShowDone(!showDone)}>{showDone ? t('wk.lessWeeks') : t('done.more')}</button>}
+            </>}
+          </div>
+          <h2 className="sec-title">{t('training.logs')}</h2>
           <div className="chip-filter">
             <button className={!filter ? 'on' : ''} onClick={() => setFilter('')}>{t('common.all')}</button>
             {cats.map((c) => (

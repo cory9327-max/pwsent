@@ -54,6 +54,8 @@ export default function EventDetail() {
   const attMap = Object.fromEntries(att.map((a) => [a.user_id, a]))
   const past = seoulDate(ev.starts_at) < seoulDate()
   const roster = members.filter((m) => m.status === 'approved' && m.track_attendance)
+  const notYet = seoulDate(ev.starts_at) > seoulDate()
+  const closable = ev.type === 'training' && ev.status !== 'tentative' && 'completed_at' in ev
   const statusOf = (uid) => attMap[uid]?.status || (past ? 'absent' : 'none')
   const counts = roster.reduce((c, m) => ({ ...c, [statusOf(m.id)]: (c[statusOf(m.id)] || 0) + 1 }), {})
 
@@ -83,6 +85,23 @@ export default function EventDetail() {
     const { error } = mine
       ? await supabase.from('training_votes').delete().match({ event_id: ev.id, slot_key: s.id, user_id: user.id })
       : await supabase.from('training_votes').insert({ event_id: ev.id, slot_key: s.id, user_id: user.id })
+    if (error) setError(error)
+    load()
+  }
+
+  async function setComplete(done) {
+    setError(null)
+    const { error } = await supabase.rpc('set_training_complete', { p_event: ev.id, p_done: done })
+    if (error) setError(error)
+    load()
+  }
+
+  // 투표로 온다고 한 사람 중 아직 기록이 없는 사람을 한 번에 '참여'로
+  async function markVotersPresent() {
+    setError(null)
+    const ids = [...new Set(tvotes.map((v) => v.user_id))].filter((uid) => !attMap[uid] && roster.some((m) => m.id === uid))
+    if (!ids.length) return
+    const { error } = await supabase.from('attendance').insert(ids.map((uid) => ({ event_id: ev.id, user_id: uid, status: 'present', marked_by: user.id })))
     if (error) setError(error)
     load()
   }
@@ -139,6 +158,38 @@ export default function EventDetail() {
         <ErrorText error={error} />
       </div>
 
+      {closable && (
+        <section>
+          <div className={`card closing ${ev.completed_at ? 'is-done' : ''}`}>
+            <div className="poll-head">
+              <div>
+                <h3>{ev.completed_at ? t('done.doneTitle') : t('done.stepsTitle')}</h3>
+                <div className="meta">
+                  {ev.completed_at
+                    ? t('done.doneBy', { name: nameOf(ev.completed_by), d: `${fmtDate(ev.completed_at, lang)} ${fmtTime(ev.completed_at, lang)}` })
+                    : notYet ? t('done.notYet') : t('done.stepsHint')}
+                </div>
+              </div>
+              {ev.completed_at && can('training_log') && <button className="btn ghost small" onClick={() => setComplete(false)}>{t('done.undo')}</button>}
+            </div>
+            <ol className="steps">
+              <li className={att.length ? 'ok' : ''}><b>1</b><span>{t('done.step1')}</span><em>{t('done.attN', { n: att.length })}</em></li>
+              <li className={logs.length ? 'ok' : ''}>
+                <b>2</b><span>{t('done.step2')}</span>
+                {logs.length ? <em>{t('done.logYes')}</em>
+                  : can('training_log') && !notYet ? <button className="btn primary small" onClick={() => setModal('log')}>{t('training.writeFor')}</button> : <em>{t('done.logNo')}</em>}
+              </li>
+              <li className={ev.completed_at ? 'ok' : ''}>
+                <b>3</b><span>{t('done.step3')}</span>
+                {ev.completed_at ? <em>{t('done.done')}</em>
+                  : can('training_log') ? <button className="btn primary small" disabled={notYet || !logs.length} onClick={() => setComplete(true)}>{t('done.confirm')}</button> : <em>{t('done.waiting')}</em>}
+              </li>
+            </ol>
+            {!ev.completed_at && !notYet && can('training_log') && !logs.length && <span className="field-hint">{t('done.needLogHint')}</span>}
+          </div>
+        </section>
+      )}
+
       {ev.slots?.length > 0 && (
         <section>
           <div className="sec-head">
@@ -172,7 +223,12 @@ export default function EventDetail() {
               <StatusPill status={past ? 'absent' : 'none'} /> {(counts.absent || 0) + (counts.none || 0)}
             </div>
           </div>
-          {canAtt && <p className="muted small">{t('att.trainerHint')}</p>}
+          {canAtt && (
+            <p className="muted small">
+              {t('att.trainerHint')}{' '}
+              {tvotes.length > 0 && !notYet && <button className="link-btn" onClick={markVotersPresent}>{t('done.markVoters')}</button>}
+            </p>
+          )}
           <div className="card roster">
             {roster.map((m) => {
               const s = statusOf(m.id)

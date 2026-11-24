@@ -154,6 +154,13 @@ const ko = {
   'tv.google': '구글 지도', 'tv.naver': '네이버 지도', 'tv.inSchedule': '일정에서 보기', 'tv.timeTbd': '시간 미정', 'tv.departBeforeArrive': '출국이 입국보다 빠릅니다',
   'tv.visibility': '일정 탭 공개 범위', 'tv.visibilityHint': '일정 탭의 [입국]·[출국] 일정을 누가 볼 수 있는지입니다. 항공편과 숙소가 일정 설명에 함께 적힙니다.',
 
+  'done.title': '훈련 진행', 'done.hint': '확정된 훈련이 여기에 올라옵니다. 주말 훈련은 항상, 평일 훈련은 확정되면 올라옵니다.', 'done.hintTrainer': '훈련을 눌러 ① 출석 확인 ② 훈련 내용 기록 ③ 완료 확정 순서로 마감하세요.',
+  'done.none': '진행할 훈련이 없습니다', 'done.groupTodo': '마감이 필요한 훈련', 'done.groupUpcoming': '이번 주 예정', 'done.groupDone': '완료한 훈련', 'done.more': '완료한 훈련 더 보기',
+  'done.attN': '출석 {n}명', 'done.logYes': '기록 작성됨', 'done.logNo': '기록 없음', 'done.today': '오늘', 'done.needed': '마감 필요', 'done.done': '완료', 'done.upcoming': '예정',
+  'done.stepsTitle': '훈련 마감', 'done.stepsHint': '세 단계를 마치면 이 훈련이 완료로 처리됩니다.', 'done.notYet': '훈련 당일부터 마감할 수 있습니다.',
+  'done.step1': '출석 확인', 'done.step2': '훈련 내용 기록', 'done.step3': '완료 확정', 'done.confirm': '완료 확정', 'done.waiting': '트레이너 확정 대기', 'done.undo': '확정 취소',
+  'done.doneTitle': '완료된 훈련', 'done.doneBy': '{name} · {d} 확정', 'done.needLogHint': '훈련 내용을 먼저 기록해야 완료 확정할 수 있습니다.', 'done.markVoters': '투표한 사람 모두 참여로 체크',
+
   'me.nameLocked': '이름 변경은 관리자에게 요청하세요.', 'me.language': '언어', 'me.myAttendance': '내 출석', 'me.last60': '최근 60일',
 }
 
@@ -310,6 +317,13 @@ const en = {
   'tv.google': 'Google Maps', 'tv.naver': 'Naver Map', 'tv.inSchedule': 'View in schedule', 'tv.timeTbd': 'Time TBD', 'tv.departBeforeArrive': 'Departure is before arrival',
   'tv.visibility': 'Who sees it on the Schedule', 'tv.visibilityHint': 'Who can see the [Arrival]/[Departure] events. Flight and lodging are included in the event description.',
 
+  'done.title': 'Training sessions', 'done.hint': 'Confirmed sessions appear here. Weekend sessions always, weekday sessions once confirmed.', 'done.hintTrainer': 'Open a session and close it out: 1) check attendance 2) write the training notes 3) confirm completion.',
+  'done.none': 'No sessions to run', 'done.groupTodo': 'Needs closing', 'done.groupUpcoming': 'This week', 'done.groupDone': 'Completed', 'done.more': 'Show more completed',
+  'done.attN': '{n} checked in', 'done.logYes': 'Log written', 'done.logNo': 'No log', 'done.today': 'Today', 'done.needed': 'Needs closing', 'done.done': 'Done', 'done.upcoming': 'Upcoming',
+  'done.stepsTitle': 'Close out session', 'done.stepsHint': 'Finish the three steps to mark this session complete.', 'done.notYet': 'You can close a session from the day it takes place.',
+  'done.step1': 'Check attendance', 'done.step2': 'Write training notes', 'done.step3': 'Confirm completion', 'done.confirm': 'Confirm', 'done.waiting': 'Waiting for trainer', 'done.undo': 'Undo',
+  'done.doneTitle': 'Session completed', 'done.doneBy': 'Confirmed by {name} · {d}', 'done.needLogHint': 'Write the training notes before confirming completion.', 'done.markVoters': 'Mark everyone who voted as present',
+
   'me.nameLocked': 'Ask an admin to change your name.', 'me.language': 'Language', 'me.myAttendance': 'My attendance', 'me.last60': 'Last 60 days',
 }
 
@@ -465,6 +479,13 @@ const ja = {
   'tv.stay': '宿泊', 'tv.stayName': '宿泊先の名前', 'tv.stayNamePh': '例：PWS 寮', 'tv.stayAddress': '宿泊先の住所', 'tv.addressHint': '住所を入力すると Google マップ・NAVER 地図で開けます。',
   'tv.google': 'Google マップ', 'tv.naver': 'NAVER 地図', 'tv.inSchedule': '予定で見る', 'tv.timeTbd': '時間未定', 'tv.departBeforeArrive': '出国が入国より前です',
   'tv.visibility': '予定タブでの公開範囲', 'tv.visibilityHint': '予定タブの［入国］［出国］を誰が見られるかです。便名と宿泊先が予定の説明に入ります。',
+
+  'done.title': '練習の進行', 'done.hint': '確定した練習がここに表示されます。週末練習は常に、平日練習は確定後に表示されます。', 'done.hintTrainer': '練習を開いて ①出席確認 ②練習内容の記録 ③完了確定 の順に締めてください。',
+  'done.none': '進行する練習はありません', 'done.groupTodo': '締めが必要な練習', 'done.groupUpcoming': '今週の予定', 'done.groupDone': '完了した練習', 'done.more': '完了した練習をもっと見る',
+  'done.attN': '出席 {n}人', 'done.logYes': '記録あり', 'done.logNo': '記録なし', 'done.today': '今日', 'done.needed': '締めが必要', 'done.done': '完了', 'done.upcoming': '予定',
+  'done.stepsTitle': '練習の締め', 'done.stepsHint': '3つのステップを終えると、この練習は完了になります。', 'done.notYet': '練習当日から締められます。',
+  'done.step1': '出席確認', 'done.step2': '練習内容の記録', 'done.step3': '完了確定', 'done.confirm': '完了を確定', 'done.waiting': 'トレーナーの確定待ち', 'done.undo': '確定を取り消す',
+  'done.doneTitle': '完了した練習', 'done.doneBy': '{name} · {d} 確定', 'done.needLogHint': '完了を確定する前に、練習内容を記録してください。', 'done.markVoters': '投票した人を全員参加にする',
 
   'me.nameLocked': '名前の変更は管理者に依頼してください。', 'me.language': '言語', 'me.myAttendance': '自分の出席', 'me.last60': '直近60日',
 }
