@@ -11,6 +11,14 @@ const pad = (n) => String(n).padStart(2, '0')
 const MAX_REPEAT = 60
 const hasAttendance = (type) => TRAINER_ONLY_TYPES.includes(type)
 
+// 기본 종료 시각: 시작과 같은 날, n시간 뒤 (23시를 넘기지 않음)
+const AUTO_END_HOURS = { match: 3 } // 경기만 자동으로 채움. 훈련 등은 종료를 비워 둠
+function defaultEnd(start, hours = 2) {
+  if (!start) return ''
+  const h = Math.min(23, Number(start.slice(11, 13)) + hours)
+  return `${start.slice(0, 10)}T${pad(h)}:${start.slice(14, 16)}`
+}
+
 function addDays(local, days) {
   if (!local) return ''
   const d = new Date(local)
@@ -26,15 +34,18 @@ export default function EventForm({ event, defaultDate, defaultType, onClose, on
   const tomorrow = toLocalInput(new Date(Date.now() + 864e5).toISOString()).slice(0, 10)
   const firstType = isTrainer ? (defaultType || 'training') : 'general'
 
+  const firstStart = `${defaultDate || tomorrow}T19:00`
   const [f, setF] = useState({
     title: event?.title ?? '',
     type: event?.type ?? firstType,
     match_kind: event?.match_kind ?? MATCH_KINDS[0],
-    starts_at: event ? toLocalInput(event.starts_at) : `${defaultDate || tomorrow}T19:00`,
-    ends_at: event?.ends_at ? toLocalInput(event.ends_at) : '',
+    starts_at: event ? toLocalInput(event.starts_at) : firstStart,
+    // 경기는 종료를 시작과 같은 날 3시간 뒤로 미리 채움
+    ends_at: event ? (event.ends_at ? toLocalInput(event.ends_at) : '') : (AUTO_END_HOURS[firstType] ? defaultEnd(firstStart, AUTO_END_HOURS[firstType]) : ''),
     location: event?.location ?? '',
     description: event?.description ?? '',
   })
+  const [autoEnd, setAutoEnd] = useState(!event && Boolean(AUTO_END_HOURS[firstType])) // 종료를 자동으로 채운 상태인지
   const [withPoll, setWithPoll] = useState(!editing && f.type === 'training')
   const [repeat, setRepeat] = useState(0) // 0 = 없음, 7 = 매주, 14 = 격주
   const [until, setUntil] = useState('')
@@ -42,6 +53,25 @@ export default function EventForm({ event, defaultDate, defaultType, onClose, on
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState(null)
   const set = (k) => (e) => setF({ ...f, [k]: e.target.value })
+
+  // 시작을 바꾸면, 종료가 같은 날이었던 경우 날짜를 따라 옮기고 시작보다 빨라지지 않게 맞춤
+  function setStart(v) {
+    let end = f.ends_at
+    if (end && v && end.slice(0, 10) === f.starts_at.slice(0, 10)) {
+      end = `${v.slice(0, 10)}T${end.slice(11)}`
+      if (end < v || autoEnd) end = defaultEnd(v, AUTO_END_HOURS[f.type] || 2)
+    }
+    setF({ ...f, starts_at: v, ends_at: end })
+  }
+  function setType(ty) {
+    let end = f.ends_at
+    if (!editing && (autoEnd || !end)) {
+      end = AUTO_END_HOURS[ty] ? defaultEnd(f.starts_at, AUTO_END_HOURS[ty]) : ''
+      setAutoEnd(Boolean(end))
+    }
+    setF({ ...f, type: ty, ends_at: end })
+    if (!editing) setWithPoll(ty === 'training')
+  }
 
   // 이전에 직접 입력했던 장소·경기 구분도 선택지로 보여주기
   useEffect(() => {
@@ -117,7 +147,7 @@ export default function EventForm({ event, defaultDate, defaultType, onClose, on
             {EVENT_TYPES.map((ty) => (
               <button type="button" key={ty} disabled={hasAttendance(ty) && !isTrainer}
                 className={f.type === ty ? `on type-bg-${ty}` : ''}
-                onClick={() => { setF({ ...f, type: ty }); if (!editing) setWithPoll(ty === 'training') }}>
+                onClick={() => setType(ty)}>
                 {t(`etype.${ty}`)}
               </button>
             ))}
@@ -134,11 +164,16 @@ export default function EventForm({ event, defaultDate, defaultType, onClose, on
           <input required maxLength={120} value={f.title} onChange={set('title')} />
         </Field>
         <Field label={t('event.start')}>
-          <DateTimeInput required value={f.starts_at} onChange={(v) => setF({ ...f, starts_at: v })} />
+          <DateTimeInput required value={f.starts_at} onChange={setStart} />
         </Field>
         <Field label={t('event.end')}>
           <DateTimeInput value={f.ends_at} fallbackTime={endFallback}
-            onChange={(v) => setF({ ...f, ends_at: v })} />
+            onChange={(v) => { setAutoEnd(false); setF({ ...f, ends_at: v }) }} />
+          {!f.ends_at && f.starts_at && (
+            <button type="button" className="link-btn small left" onClick={() => { setAutoEnd(false); setF({ ...f, ends_at: defaultEnd(f.starts_at) }) }}>
+              {t('event.sameDay')}
+            </button>
+          )}
         </Field>
         <Field label={t('event.location')}>
           <ChoiceInput options={LOCATIONS} extra={used.locations} value={f.location}

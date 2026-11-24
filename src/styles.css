@@ -81,6 +81,7 @@ textarea { resize: vertical; }
 .icon-btn.danger:hover { background: var(--red-soft); color: var(--red); }
 .link-btn { border: 0; background: none; padding: 0; color: var(--red); font-weight: 600; }
 .link-btn.light { color: #9a9aa3; margin-top: 18px; }
+.link-btn.left { align-self: flex-start; }
 .link-btn.strong { color: var(--ink); text-align: left; }
 .link-btn:hover { text-decoration: underline; }
 
