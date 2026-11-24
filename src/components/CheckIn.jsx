@@ -16,7 +16,7 @@ export default function CheckIn({ event, record, onDone, compact }) {
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState(null)
 
-  if (!hasAttendance(event.type)) return null
+  if (!hasAttendance(event.type) || event.status === 'tentative') return null
   if (record) return <div className="checkin done"><span className="muted small">{t('att.mine')}</span> <StatusPill status={record.status} /></div>
 
   const today = isToday(event)

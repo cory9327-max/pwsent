@@ -111,7 +111,7 @@ export default function Schedule() {
                   <Link to={`/events/${e.id}`}>
                     <div className="ev-date"><strong>{fmtTime(e.starts_at, lang)}</strong></div>
                     <div className="ev-main"><span>{e.title}</span><span className="meta">{e.location || nameOf(e.created_by)}</span></div>
-                    <TypeBadge type={e.type} kind={e.match_kind} />
+                    <TypeBadge type={e.type} kind={e.match_kind} tentative={e.status === 'tentative'} />
                   </Link>
                 </li>
               ))}
@@ -125,7 +125,7 @@ export default function Schedule() {
                   <Link to={`/events/${e.id}`}>
                     <div className="ev-date"><strong>{fmtDate(e.starts_at, lang)}</strong><span>{fmtTime(e.starts_at, lang)}</span></div>
                     <div className="ev-main"><span>{e.title}</span></div>
-                    <TypeBadge type={e.type} kind={e.match_kind} />
+                    <TypeBadge type={e.type} kind={e.match_kind} tentative={e.status === 'tentative'} />
                   </Link>
                 </li>
               ))}

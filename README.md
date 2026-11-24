@@ -39,7 +39,7 @@
 2. `supabase/schema.sql` 파일을 열어 **`YOUR_EMAIL@gmail.com`을 본인 구글 이메일로 바꿉니다.**
    이 이메일로 가입하면 자동으로 관리자가 됩니다.
 3. 대시보드 왼쪽 **SQL Editor** → 파일 내용 전체 붙여넣기 → **Run**.
-   이어서 `supabase/03_events.sql`도 같은 방법으로 실행합니다 (일정 종류·반복 일정·캘린더 구독. 02 내용 포함). 그다음 `04_locations.sql`, `05_types.sql`을 차례로 실행합니다 (기본 장소 목록, 일정 종류·경기 구분 관리). 파일마다 새 탭에서 하나씩 실행하세요.
+   이어서 `supabase/03_events.sql`도 같은 방법으로 실행합니다 (일정 종류·반복 일정·캘린더 구독. 02 내용 포함). 그다음 `04_locations.sql`, `05_types.sql`을 차례로 실행합니다 (기본 장소 목록, 일정 종류·경기 구분 관리). 마지막으로 `06_weekly_training.sql` (주간 훈련·주간 투표). 파일마다 새 탭에서 하나씩 실행하세요.
 4. **Project Settings → API** 에서 `Project URL`과 `anon public` 키를 메모해 둡니다.
 
 > 이메일을 안 바꾸고 실행했다면: 먼저 가입한 뒤 SQL Editor에서

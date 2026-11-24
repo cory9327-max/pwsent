@@ -6,6 +6,8 @@ import { useAuth } from '../lib/auth'
 import { useT } from '../lib/i18n'
 import { LOG_SELECT, LogCard, LogForm } from '../components/TrainingLog'
 import EventForm from '../components/EventForm'
+import { OpenWeeksModal, WeekVoteCard } from '../components/WeeklyTraining'
+import { useWeeklyTraining } from '../lib/weekly'
 import { Empty, ErrorText, Icon, confirmDelete } from '../components/ui'
 
 const COLORS = ['#e03131', '#f08c00', '#2f9e44', '#1c7ed6', '#7048e8', '#c2255c', '#0c8599', '#5c5f66']
@@ -21,13 +23,14 @@ export default function Training() {
   const [newCat, setNewCat] = useState({ name: '', color: COLORS[0] })
   const [editCat, setEditCat] = useState(null)
   const [error, setError] = useState(null)
+  const weekly = useWeeklyTraining()
 
   const load = useCallback(async () => {
     const since = new Date(Date.now() - 60 * 864e5).toISOString()
     const [l, c, e] = await Promise.all([
       supabase.from('training_logs').select(LOG_SELECT).order('log_date', { ascending: false }).limit(100),
       supabase.from('training_categories').select('*').order('name'),
-      supabase.from('events').select('id,title,starts_at,type').eq('type', 'training').gte('starts_at', since).order('starts_at', { ascending: false }),
+      supabase.from('events').select('id,title,starts_at,type,status').eq('type', 'training').gte('starts_at', since).order('starts_at', { ascending: false }),
     ])
     setLogs(l.data || []); setCats(c.data || []); setEvents(e.data || [])
   }, [])
@@ -55,7 +58,7 @@ export default function Training() {
   }
 
   const logged = new Set(logs.map((l) => l.event_id).filter(Boolean))
-  const unlogged = events.filter((e) => new Date(e.starts_at) <= new Date() && !logged.has(e.id)).slice(0, 8)
+  const unlogged = events.filter((e) => new Date(e.starts_at) <= new Date() && e.status !== 'tentative' && !logged.has(e.id)).slice(0, 8)
   const shown = filter ? logs.filter((l) => l.training_log_items?.some((i) => i.category_id === filter)) : logs
   const done = () => { setModal(null); load() }
 
@@ -65,11 +68,21 @@ export default function Training() {
         <h1>{t('nav.training')}</h1>
         {isTrainer && (
           <div className="head-actions">
-            <button className="btn ghost" onClick={() => setModal('event')}><Icon name="calendar" size={16} /> {t('training.newSession')}</button>
+            {weekly.available && <button className="btn ghost" onClick={() => setModal('weeks')}><Icon name="calendar" size={16} /> {t('wk.open')}</button>}
+            <button className="btn ghost" onClick={() => setModal('event')}><Icon name="plus" size={16} /> {t('training.newSession')}</button>
             <button className="btn primary" onClick={() => setModal('log')}><Icon name="plus" size={16} /> {t('training.newLog')}</button>
           </div>
         )}
       </div>
+
+      {weekly.weeks.length > 0 && (
+        <section>
+          <h2 className="sec-title">{t('wk.section')}</h2>
+          <div className="grid-cards">
+            {weekly.weeks.map((w) => <WeekVoteCard key={w.weekStart} week={w} minPeople={weekly.minPeople} onChange={() => { weekly.reload(); load() }} />)}
+          </div>
+        </section>
+      )}
 
       <div className="training-layout">
         <section>
@@ -145,6 +158,7 @@ export default function Training() {
       {modal?.forEvent && <LogForm eventId={modal.forEvent} categories={cats} events={events} onClose={() => setModal(null)} onSaved={done} />}
       {modal === 'log' && <LogForm categories={cats} events={events} onClose={() => setModal(null)} onSaved={done} />}
       {modal?.log && <LogForm log={modal.log} categories={cats} events={events} onClose={() => setModal(null)} onSaved={done} />}
+      {modal === 'weeks' && <OpenWeeksModal minPeople={weekly.minPeople} onClose={() => setModal(null)} onSaved={(keep) => { weekly.reload(); load(); if (!keep) setModal(null) }} />}
       {modal === 'event' && <EventForm defaultType="training" onClose={() => setModal(null)} onSaved={done} />}
     </div>
   )

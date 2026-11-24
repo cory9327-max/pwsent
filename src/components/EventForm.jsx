@@ -51,7 +51,7 @@ export default function EventForm({ event, defaultDate, defaultType, onClose, on
     description: event?.description ?? '',
   })
   const [autoEnd, setAutoEnd] = useState(!event && Boolean(AUTO_END_HOURS[firstType])) // 종료를 자동으로 채운 상태인지
-  const [withPoll, setWithPoll] = useState(!editing && f.type === 'training')
+  const [withPoll, setWithPoll] = useState(false)
   const [repeat, setRepeat] = useState(0) // 0 = 없음, 7 = 매주, 14 = 격주
   const [until, setUntil] = useState('')
   const [used, setUsed] = useState({ locations: [], kinds: [] })
@@ -75,7 +75,7 @@ export default function EventForm({ event, defaultDate, defaultType, onClose, on
       setAutoEnd(Boolean(end))
     }
     setF({ ...f, type: ty, ends_at: end })
-    if (!editing) setWithPoll(ty === 'training')
+    if (!editing) setWithPoll(ty === 'match')
   }
 
   // 이전에 직접 입력했던 장소·경기 구분도 선택지로 보여주기

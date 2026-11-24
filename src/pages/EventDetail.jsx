@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/auth'
 import { useT } from '../lib/i18n'
+import { slotLabel } from '../lib/week'
 import { downloadIcs, fmtDate, fmtTime, googleCalendarUrl, seoulDate } from '../lib/format'
 import EventForm from '../components/EventForm'
 import CheckIn from '../components/CheckIn'
@@ -72,6 +73,12 @@ export default function EventDetail() {
     nav('/schedule')
   }
 
+  async function confirmEvent() {
+    const { error } = await supabase.from('events').update({ status: 'confirmed' }).eq('id', ev.id)
+    if (error) setError(error)
+    load()
+  }
+
   async function copyLink() {
     try { await navigator.clipboard.writeText(window.location.href); setCopied(true); setTimeout(() => setCopied(false), 1500) } catch { /* 무시 */ }
   }
@@ -83,7 +90,7 @@ export default function EventDetail() {
       <Link to="/schedule" className="back"><Icon name="chevL" size={16} /> {t('nav.schedule')}</Link>
       <div className="card event-hero" style={{ borderLeftColor: color(ev.type) }}>
         <div className="hero-top">
-          <span className="row-actions"><TypeBadge type={ev.type} kind={ev.match_kind} />{ev.series_id && <span className="badge type-general-soft">{t('event.repeating')}</span>}</span>
+          <span className="row-actions"><TypeBadge type={ev.type} kind={ev.match_kind} tentative={ev.status === 'tentative'} />{ev.series_id && <span className="badge type-general-soft">{t('event.repeating')}</span>}</span>
           <div className="row-actions">
             <button className="btn ghost small" onClick={copyLink}><Icon name="share" size={14} /> {copied ? t('event.copied') : t('event.copyLink')}</button>
             <a className="btn ghost small" href={googleCalendarUrl(ev)} target="_blank" rel="noreferrer"><Icon name="calendar" size={14} /> {t('event.addGcal')}</a>
@@ -102,11 +109,24 @@ export default function EventDetail() {
           <span><Icon name="user" size={15} /> {nameOf(ev.created_by)}</span>
         </div>
         {ev.description && <p className="hero-desc">{ev.description}</p>}
+        {ev.slots?.length > 0 && (
+          <div className="chips static">{ev.slots.map((s) => <span key={s.id}>{slotLabel(s)}</span>)}</div>
+        )}
+        {ev.status === 'tentative' && (
+          <div className="notice warn">
+            {t('wk.tentativeNote')}
+            {isTrainer && (
+              <span className="row-actions">
+                <button className="btn primary small" onClick={confirmEvent}>{t('wk.confirm')}</button>
+              </span>
+            )}
+          </div>
+        )}
         <CheckIn event={ev} record={attMap[user.id]} onDone={load} />
         <ErrorText error={error} />
       </div>
 
-      {hasAttendance(ev.type) && (
+      {hasAttendance(ev.type) && ev.status !== 'tentative' && (
         <section>
           <div className="sec-head">
             <h2 className="sec-title">{t('att.title')}</h2>

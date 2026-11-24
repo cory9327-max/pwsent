@@ -57,9 +57,14 @@ export function Modal({ title, onClose, children, wide }) {
   )
 }
 
-export function TypeBadge({ type, kind }) {
+export function TypeBadge({ type, kind, tentative }) {
+  const { t } = useT()
   const { label, color } = useTypes()
-  return <span className="badge type-chip" style={{ '--c': color(type) }}>{label(type)}{kind ? ` · ${kind}` : ''}</span>
+  return (
+    <span className={`badge type-chip ${tentative ? 'tentative' : ''}`} style={{ '--c': color(type) }}>
+      {label(type)}{kind ? ` · ${kind}` : ''}{tentative ? ` · ${t('wk.recruiting')}` : ''}
+    </span>
+  )
 }
 
 export function RoleBadge({ role }) {

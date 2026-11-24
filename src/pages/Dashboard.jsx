@@ -9,6 +9,8 @@ import { useTypes } from '../lib/types'
 import { POLL_SELECT, PollCard, PollForm, isOpen } from '../components/Polls'
 import { LOG_SELECT, LogCard } from '../components/TrainingLog'
 import EventForm from '../components/EventForm'
+import { WeekVoteCard } from '../components/WeeklyTraining'
+import { useWeeklyTraining } from '../lib/weekly'
 import { Empty, Icon, TypeBadge } from '../components/ui'
 
 export default function Dashboard() {
@@ -22,6 +24,8 @@ export default function Dashboard() {
   const [cats, setCats] = useState([])
   const [pending, setPending] = useState(0)
   const [modal, setModal] = useState(null)
+  const weekly = useWeeklyTraining()
+  const openWeeks = weekly.weeks.filter((w) => w.events.some((e) => seoulDate(e.starts_at) > seoulDate())).slice(0, 2)
 
   const load = useCallback(async () => {
     const start = new Date(); start.setHours(0, 0, 0, 0)
@@ -37,7 +41,7 @@ export default function Dashboard() {
     setPolls((pl.data || []).filter(isOpen).slice(0, 4))
     setLogs(lg.data || [])
     setCats(ct.data || [])
-    const ids = evs.filter((e) => hasAttendance(e.type)).map((e) => e.id)
+    const ids = evs.filter((e) => hasAttendance(e.type) && e.status !== 'tentative').map((e) => e.id)
     if (ids.length) {
       const { data } = await supabase.from('attendance').select('*').eq('user_id', user.id).in('event_id', ids)
       setMine(Object.fromEntries((data || []).map((a) => [a.event_id, a])))
@@ -80,7 +84,7 @@ export default function Dashboard() {
             {todays.map((e) => (
               <div key={e.id} className="card today" style={{ borderLeftColor: color(e.type) }}>
                 <Link to={`/events/${e.id}`} className="today-main">
-                  <TypeBadge type={e.type} kind={e.match_kind} />
+                  <TypeBadge type={e.type} kind={e.match_kind} tentative={e.status === 'tentative'} />
                   <h3>{e.title}</h3>
                   <div className="meta"><Icon name="clock" size={14} /> {fmtTime(e.starts_at, lang)}{e.location && <> · <Icon name="pin" size={14} /> {e.location}</>}</div>
                 </Link>
@@ -90,6 +94,15 @@ export default function Dashboard() {
           </div>
         )}
       </section>
+
+      {openWeeks.length > 0 && (
+        <section>
+          <h2 className="sec-title">{t('wk.section')}</h2>
+          <div className="grid-cards">
+            {openWeeks.map((w) => <WeekVoteCard key={w.weekStart} week={w} minPeople={weekly.minPeople} onChange={() => { weekly.reload(); load() }} />)}
+          </div>
+        </section>
+      )}
 
       <div className="two-col">
         <section>
@@ -104,7 +117,7 @@ export default function Dashboard() {
                   <Link to={`/events/${e.id}`}>
                     <div className="ev-date"><strong>{fmtDate(e.starts_at, lang)}</strong><span>{fmtTime(e.starts_at, lang)}</span></div>
                     <div className="ev-main"><span>{e.title}</span>{e.location && <span className="meta">{e.location}</span>}</div>
-                    <TypeBadge type={e.type} kind={e.match_kind} />
+                    <TypeBadge type={e.type} kind={e.match_kind} tentative={e.status === 'tentative'} />
                   </Link>
                 </li>
               ))}

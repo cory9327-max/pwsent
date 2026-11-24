@@ -20,7 +20,7 @@ export default function MyPage() {
       const joined = new Date(profile.approved_at || profile.created_at)
       const from = since > joined ? since : joined
       from.setHours(0, 0, 0, 0)
-      const { data: evs } = await supabase.from('events').select('id,title,type,starts_at')
+      const { data: evs } = await supabase.from('events').select('id,title,type,starts_at,status')
         .in('type', attendanceKeys).gte('starts_at', from.toISOString()).lte('starts_at', new Date().toISOString())
         .order('starts_at', { ascending: false })
       const ids = (evs || []).map((e) => e.id)
@@ -29,7 +29,7 @@ export default function MyPage() {
         : { data: [] }
       const m = Object.fromEntries((att || []).map((a) => [a.event_id, a.status]))
       const today = seoulDate()
-      setItems((evs || []).map((e) => ({ ...e, status: m[e.id] || (seoulDate(e.starts_at) < today ? 'absent' : 'none') })))
+      setItems((evs || []).filter((e) => e.status !== 'tentative').map((e) => ({ ...e, status: m[e.id] || (seoulDate(e.starts_at) < today ? 'absent' : 'none') })))
     })()
   }, [user.id, profile, attendanceKeys.join()])
 

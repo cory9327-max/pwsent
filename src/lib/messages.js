@@ -112,6 +112,15 @@ const ko = {
   'calsub.note': '이 주소는 나만의 비밀 주소입니다. 남에게 공유하지 마세요. 구글 캘린더는 반영까지 몇 시간 걸릴 수 있어요.',
   'calsub.reset': '주소 새로 만들기', 'calsub.resetConfirm': '새 주소를 만들면 기존 주소로 연결한 캘린더는 더 이상 갱신되지 않습니다. 계속할까요?',
 
+  'wk.section': '주간 훈련 투표', 'wk.vote': '훈련 투표', 'wk.thisWeek': '이번 주', 'wk.nextWeek': '다음 주', 'wk.weekOf': '{d} 주', 'wk.deadline': '각 훈련 전날 자정 마감',
+  'wk.recruiting': '모집 중', 'wk.enough': '희망 {n}명 · 진행 가능', 'wk.notEnough': '희망 {n}명 · 기준 {min}명', 'wk.confirm': '진행 확정', 'wk.cancel': '열지 않음', 'wk.cancelConfirm': '이 평일 훈련을 열지 않고 일정에서 지울까요?',
+  'wk.skip': '이번 주는 불참', 'wk.detail': '참여자 보기 · 미응답 {n}명', 'wk.skipList': '불참', 'wk.pending': '미응답', 'wk.join': '참가 희망',
+  'wk.open': '주간 훈련 열기', 'wk.from': '시작 주', 'wk.howMany': '몇 주치', 'wk.nWeeks': '{n}주', 'wk.days': '주말 훈련 (요일 · 장소)', 'wk.locNone': '장소 미정', 'wk.editSlots': '시간표 수정',
+  'wk.weekday': '평일 훈련', 'wk.weekdayHint': '모집 중으로 올라가고, 희망자를 보고 트레이너가 진행을 확정합니다. (보통 {n}명 이상이면 진행)', 'wk.recruit': '평일 모집 열기',
+  'wk.preview': '등록될 훈련 {n}개', 'wk.exists': '이미 등록됨', 'wk.hasMatch': '경기 있음', 'wk.noDays': '요일을 선택하세요', 'wk.create': '{n}개 훈련 열기', 'wk.noSlots': '시간표에 타임이 하나 이상 있어야 합니다',
+  'wk.titleWeekend': '주말 훈련', 'wk.titleWeekday': '평일 훈련', 'wk.slotNewPh': '새 타임 이름', 'wk.minPeople': '평일 훈련 진행 기준 인원', 'wk.slotHint': '시간표를 바꾸면 앞으로 여는 훈련부터 적용됩니다. 이미 열린 훈련은 그대로입니다.',
+  'wk.tentativeNote': '모집 중인 훈련입니다. 트레이너가 확정하면 진행됩니다.',
+
   'me.nameLocked': '이름 변경은 관리자에게 요청하세요.', 'me.language': '언어', 'me.myAttendance': '내 출석', 'me.last60': '최근 60일',
 }
 
@@ -226,6 +235,15 @@ const en = {
   'calsub.note': 'This URL is private to you. Do not share it. Google Calendar can take a few hours to show changes.',
   'calsub.reset': 'Generate a new URL', 'calsub.resetConfirm': 'Calendars connected with the old URL will stop updating. Continue?',
 
+  'wk.section': 'Weekly training vote', 'wk.vote': 'training vote', 'wk.thisWeek': 'This week', 'wk.nextWeek': 'Next week', 'wk.weekOf': 'Week of {d}', 'wk.deadline': 'closes midnight before each session',
+  'wk.recruiting': 'Recruiting', 'wk.enough': '{n} interested · good to go', 'wk.notEnough': '{n} interested · need {min}', 'wk.confirm': 'Confirm', 'wk.cancel': "Don't open", 'wk.cancelConfirm': 'Remove this weekday session from the schedule?',
+  'wk.skip': "I can't come this week", 'wk.detail': 'See who · {n} not answered', 'wk.skipList': 'Not coming', 'wk.pending': 'No answer', 'wk.join': 'I want to join',
+  'wk.open': 'Open weekly training', 'wk.from': 'Starting', 'wk.howMany': 'How many weeks', 'wk.nWeeks': '{n} week(s)', 'wk.days': 'Weekend sessions (day · location)', 'wk.locNone': 'Location TBD', 'wk.editSlots': 'Edit timetable',
+  'wk.weekday': 'Weekday session', 'wk.weekdayHint': 'Posted as recruiting; a trainer confirms after seeing interest (usually {n}+ people).', 'wk.recruit': 'Open weekday recruiting',
+  'wk.preview': '{n} session(s) to create', 'wk.exists': 'Already open', 'wk.hasMatch': 'Show day', 'wk.noDays': 'Pick at least one day', 'wk.create': 'Open {n} session(s)', 'wk.noSlots': 'The timetable needs at least one slot',
+  'wk.titleWeekend': 'Weekend training', 'wk.titleWeekday': 'Weekday training', 'wk.slotNewPh': 'New slot name', 'wk.minPeople': 'People needed for a weekday session', 'wk.slotHint': 'Timetable changes apply to sessions opened from now on.',
+  'wk.tentativeNote': 'This session is recruiting. It runs once a trainer confirms it.',
+
   'me.nameLocked': 'Ask an admin to change your name.', 'me.language': 'Language', 'me.myAttendance': 'My attendance', 'me.last60': 'Last 60 days',
 }
 
@@ -339,6 +357,15 @@ const ja = {
   'calsub.manual': 'ボタンが動かない場合：Google カレンダー（PC）→「他のカレンダー」横の + → URL で追加 → 上の URL を貼り付け。',
   'calsub.note': 'この URL はあなた専用です。他の人に共有しないでください。Google カレンダーへの反映には数時間かかることがあります。',
   'calsub.reset': 'URL を再発行', 'calsub.resetConfirm': '再発行すると、古い URL で連携したカレンダーは更新されなくなります。続けますか？',
+
+  'wk.section': '週間練習の投票', 'wk.vote': '練習投票', 'wk.thisWeek': '今週', 'wk.nextWeek': '来週', 'wk.weekOf': '{d} の週', 'wk.deadline': '各練習の前日24時締め切り',
+  'wk.recruiting': '募集中', 'wk.enough': '希望 {n}人 · 実施可能', 'wk.notEnough': '希望 {n}人 · 基準 {min}人', 'wk.confirm': '実施を確定', 'wk.cancel': '開催しない', 'wk.cancelConfirm': 'この平日練習を開催せず、予定から削除しますか？',
+  'wk.skip': '今週は不参加', 'wk.detail': '参加者を見る · 未回答 {n}人', 'wk.skipList': '不参加', 'wk.pending': '未回答', 'wk.join': '参加希望',
+  'wk.open': '週間練習を開く', 'wk.from': '開始週', 'wk.howMany': '何週分', 'wk.nWeeks': '{n}週', 'wk.days': '週末練習（曜日・場所）', 'wk.locNone': '場所未定', 'wk.editSlots': '時間割を編集',
+  'wk.weekday': '平日練習', 'wk.weekdayHint': '募集中として登録され、希望者を見てトレーナーが実施を確定します（通常 {n}人以上で実施）。', 'wk.recruit': '平日の募集を開く',
+  'wk.preview': '登録される練習 {n}件', 'wk.exists': '登録済み', 'wk.hasMatch': '試合あり', 'wk.noDays': '曜日を選んでください', 'wk.create': '{n}件の練習を開く', 'wk.noSlots': '時間割に枠が1つ以上必要です',
+  'wk.titleWeekend': '週末練習', 'wk.titleWeekday': '平日練習', 'wk.slotNewPh': '新しい枠の名前', 'wk.minPeople': '平日練習の実施基準人数', 'wk.slotHint': '時間割の変更は今後開く練習から適用されます。',
+  'wk.tentativeNote': '募集中の練習です。トレーナーが確定すると実施されます。',
 
   'me.nameLocked': '名前の変更は管理者に依頼してください。', 'me.language': '言語', 'me.myAttendance': '自分の出席', 'me.last60': '直近60日',
 }
