@@ -262,6 +262,12 @@ textarea { resize: vertical; }
 .btn.danger-text { color: var(--red); }
 .stack.tight { gap: 6px; }
 .btn.left { align-self: flex-start; }
+.fold-head { all: unset; box-sizing: border-box; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 10px; width: 100%; }
+.fold-head > div { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.fold-head:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; border-radius: 6px; }
+.fold-side { display: inline-flex; align-items: center; gap: 8px; flex-shrink: 0; color: var(--muted); }
+.poll-tools { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.poll-tools:empty { display: none; }
 .weekcard { display: flex; flex-direction: column; gap: 12px; }
 .wk-day { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; }
 .wk-day.tentative { border-style: dashed; background: #fffdf8; }

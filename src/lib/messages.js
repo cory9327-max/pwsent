@@ -123,6 +123,8 @@ const ko = {
 
   'wk.deleteWeek': '이 주 전체 삭제', 'wk.deleteWeekConfirm': '이 주에 열린 훈련 {n}개와 투표를 모두 삭제할까요? 되돌릴 수 없습니다.', 'wk.deleteDayConfirm': '{d} 훈련과 그 투표를 삭제할까요?', 'wk.editTitle': '훈련 수정', 'wk.slots': '타임', 'wk.addSlot': '타임 추가', 'wk.slotsDayHint': '이 날에만 적용됩니다. 타임을 지우면 그 타임의 투표도 집계에서 빠집니다.',
 
+  'poll.voted': '응답 완료', 'poll.notVoted': '미응답', 'poll.count': '{n}명 참여',
+
   'me.nameLocked': '이름 변경은 관리자에게 요청하세요.', 'me.language': '언어', 'me.myAttendance': '내 출석', 'me.last60': '최근 60일',
 }
 
@@ -248,6 +250,8 @@ const en = {
 
   'wk.deleteWeek': 'Delete this week', 'wk.deleteWeekConfirm': 'Delete the {n} session(s) opened this week and their votes? This cannot be undone.', 'wk.deleteDayConfirm': 'Delete the {d} session and its votes?', 'wk.editTitle': 'Edit session', 'wk.slots': 'Slots', 'wk.addSlot': 'Add slot', 'wk.slotsDayHint': 'Applies to this day only. Removing a slot drops its votes from the count.',
 
+  'poll.voted': 'Answered', 'poll.notVoted': 'Not answered', 'poll.count': '{n} voted',
+
   'me.nameLocked': 'Ask an admin to change your name.', 'me.language': 'Language', 'me.myAttendance': 'My attendance', 'me.last60': 'Last 60 days',
 }
 
@@ -372,6 +376,8 @@ const ja = {
   'wk.tentativeNote': '募集中の練習です。トレーナーが確定すると実施されます。',
 
   'wk.deleteWeek': 'この週をすべて削除', 'wk.deleteWeekConfirm': 'この週の練習 {n}件と投票をすべて削除しますか？元に戻せません。', 'wk.deleteDayConfirm': '{d} の練習と投票を削除しますか？', 'wk.editTitle': '練習を編集', 'wk.slots': '枠', 'wk.addSlot': '枠を追加', 'wk.slotsDayHint': 'この日だけに適用されます。枠を削除すると、その枠の投票は集計から外れます。',
+
+  'poll.voted': '回答済み', 'poll.notVoted': '未回答', 'poll.count': '{n}人が投票',
 
   'me.nameLocked': '名前の変更は管理者に依頼してください。', 'me.language': '言語', 'me.myAttendance': '自分の出席', 'me.last60': '直近60日',
 }

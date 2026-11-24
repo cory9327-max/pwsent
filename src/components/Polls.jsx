@@ -19,6 +19,7 @@ export function PollCard({ poll, onChange, onEdit, showEvent = true }) {
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState(null)
   const [showVoters, setShowVoters] = useState(false)
+  const [expanded, setExpanded] = useState(false)
 
   const options = [...(poll.poll_options || [])].sort((a, b) => a.position - b.position)
   const votes = poll.poll_votes || []
@@ -51,8 +52,8 @@ export function PollCard({ poll, onChange, onEdit, showEvent = true }) {
   }
 
   return (
-    <div className="card poll">
-      <div className="poll-head">
+    <div className={`card poll ${expanded ? '' : 'folded'}`}>
+      <button type="button" className="fold-head" onClick={() => setExpanded(!expanded)} aria-expanded={expanded}>
         <div>
           <h4>{poll.title}</h4>
           <div className="meta">
@@ -62,13 +63,21 @@ export function PollCard({ poll, onChange, onEdit, showEvent = true }) {
               ? (poll.closes_at ? t('poll.closesAt', { d: fmtDateTime(poll.closes_at, lang) }) : t('poll.noDeadline'))
               : <span className="tag-closed">{t('poll.closed')}</span>}
             {poll.multiple && <> · {t('poll.multiple')}</>}
+            {' · '}{t('poll.count', { n: voters.size })}
           </div>
-          {showEvent && poll.event_id && poll.events && (
-            <Link className="meta link" to={`/events/${poll.event_id}`}><Icon name="link" size={13} /> {poll.events.title}</Link>
-          )}
         </div>
+        <span className="fold-side">
+          {open && <span className={`pill ${mine.size ? 'att-present' : 'att-late'}`}>{mine.size ? t('poll.voted') : t('poll.notVoted')}</span>}
+          <Icon name={expanded ? 'chevU' : 'chevD'} />
+        </span>
+      </button>
+      {expanded && <>
+      <div className="poll-tools">
+        {showEvent && poll.event_id && poll.events && (
+          <Link className="meta link" to={`/events/${poll.event_id}`}><Icon name="link" size={13} /> {poll.events.title}</Link>
+        )}
         {canEdit(poll.created_by) && (
-          <div className="row-actions">
+          <div className="row-actions push">
             {open && <button className="btn ghost small" onClick={closeNow}>{t('poll.closeNow')}</button>}
             <button className="icon-btn" onClick={() => onEdit?.(poll)} aria-label={t('common.edit')}><Icon name="edit" size={16} /></button>
             <button className="icon-btn danger" onClick={remove} aria-label={t('common.delete')}><Icon name="trash" size={16} /></button>
@@ -103,6 +112,7 @@ export function PollCard({ poll, onChange, onEdit, showEvent = true }) {
           ))}
         </div>
       )}
+      </>}
       <ErrorText error={error} />
     </div>
   )

@@ -22,6 +22,7 @@ export function WeekVoteCard({ week, minPeople, onChange }) {
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState(null)
   const [detail, setDetail] = useState(false)
+  const [open, setOpen] = useState(false)
   const today = seoulDate()
   const thisMonday = mondayOf(today)
 
@@ -32,6 +33,7 @@ export function WeekVoteCard({ week, minPeople, onChange }) {
   const hopefuls = (ev) => new Set(votes.filter((v) => v.event_id === ev.id).map((v) => v.user_id)).size
   const iSkip = skips.some((s) => s.user_id === user.id)
   const anyOpen = events.some(isOpen)
+  const iAnswered = iSkip || votes.some((v) => v.user_id === user.id)
 
   const responded = new Set([...votes.map((v) => v.user_id), ...skips.map((s) => s.user_id)])
   const pending = members.filter((m) => m.status === 'approved' && m.track_attendance && !responded.has(m.id))
@@ -76,19 +78,24 @@ export function WeekVoteCard({ week, minPeople, onChange }) {
   const title = weekStart === thisMonday ? t('wk.thisWeek') : weekStart === addDaysStr(thisMonday, 7) ? t('wk.nextWeek') : t('wk.weekOf', { d: dayLabel(weekStart, lang) })
 
   return (
-    <div className="card weekcard">
-      <div className="poll-head">
+    <div className={`card weekcard ${open ? '' : 'folded'}`}>
+      <button type="button" className="fold-head" onClick={() => setOpen(!open)} aria-expanded={open}>
         <div>
           <h4>{title} · {t('wk.vote')}</h4>
           <div className="meta">{dayLabel(weekStart, lang)} – {dayLabel(addDaysStr(weekStart, 6), lang)} · {t('wk.deadline')}</div>
         </div>
-        {mineToManage.length > 0 && (
-          <button className="btn ghost small danger-text" disabled={busy} onClick={deleteWeek}><Icon name="trash" size={14} /> {t('wk.deleteWeek')}</button>
-        )}
-      </div>
+        <span className="fold-side">
+          <span className={`pill ${iAnswered ? 'att-present' : 'att-late'}`}>{iAnswered ? t('poll.voted') : t('poll.notVoted')}</span>
+          <Icon name={open ? 'chevU' : 'chevD'} />
+        </span>
+      </button>
+      {open && <>
+      {mineToManage.length > 0 && (
+        <button className="btn ghost small danger-text left" disabled={busy} onClick={deleteWeek}><Icon name="trash" size={14} /> {t('wk.deleteWeek')}</button>
+      )}
 
       {events.map((ev) => {
-        const open = isOpen(ev)
+        const votable = isOpen(ev)
         const tentative = ev.status === 'tentative'
         const n = hopefuls(ev)
         return (
@@ -97,7 +104,7 @@ export function WeekVoteCard({ week, minPeople, onChange }) {
               <Link to={`/events/${ev.id}`} className="wk-date">{dayLabel(seoulDate(ev.starts_at), lang)}</Link>
               {ev.location && <span className="meta"><Icon name="pin" size={13} /> {ev.location}</span>}
               {tentative && <span className={`pill ${n >= minPeople ? 'att-present' : 'att-late'}`}>{t('wk.recruiting')} {n}/{minPeople}</span>}
-              {!open && <span className="pill att-none">{t('poll.closed')}</span>}
+              {!votable && <span className="pill att-none">{t('poll.closed')}</span>}
               {canEdit(ev.created_by) && (
                 <span className="row-actions push">
                   <button className="icon-btn" onClick={() => setEditDay(ev)} aria-label={t('common.edit')}><Icon name="edit" size={15} /></button>
@@ -107,7 +114,7 @@ export function WeekVoteCard({ week, minPeople, onChange }) {
             </div>
             <div className="wk-slots">
               {(ev.slots || []).map((s) => (
-                <button key={s.id} className={`wk-slot ${mine(ev, s) ? 'mine' : ''}`} disabled={!open || busy} onClick={() => toggle(ev, s)}>
+                <button key={s.id} className={`wk-slot ${mine(ev, s) ? 'mine' : ''}`} disabled={!votable || busy} onClick={() => toggle(ev, s)}>
                   <span>{mine(ev, s) && '✓ '}{slotLabel(s)}</span>
                   <b>{count(ev, s)}</b>
                 </button>
@@ -143,6 +150,7 @@ export function WeekVoteCard({ week, minPeople, onChange }) {
           <div><strong>{t('wk.pending')}</strong>: {pending.map((m) => m.display_name).join(', ') || '—'}</div>
         </div>
       )}
+      </>}
       <ErrorText error={error} />
       {editDay && <DayEditModal event={editDay} onClose={() => setEditDay(null)} onSaved={() => { setEditDay(null); onChange?.() }} />}
     </div>
