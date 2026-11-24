@@ -121,7 +121,7 @@ const ko = {
   'wk.titleWeekend': '주말 훈련', 'wk.titleWeekday': '평일 훈련', 'wk.slotNewPh': '새 타임 이름', 'wk.minPeople': '평일 훈련 진행 기준 인원', 'wk.slotHint': '시간표를 바꾸면 앞으로 여는 훈련부터 적용됩니다. 이미 열린 훈련은 그대로입니다.',
   'wk.tentativeNote': '모집 중인 훈련입니다. 트레이너가 확정하면 진행됩니다.',
 
-  'wk.deleteWeek': '이 주 전체 삭제', 'wk.deleteWeekConfirm': '이 주에 열린 훈련 {n}개와 투표를 모두 삭제할까요? 되돌릴 수 없습니다.', 'wk.deleteDayConfirm': '{d} 훈련과 그 투표를 삭제할까요?', 'wk.editTitle': '훈련 수정', 'wk.slots': '타임', 'wk.addSlot': '타임 추가', 'wk.slotsDayHint': '이 날에만 적용됩니다. 타임을 지우면 그 타임의 투표도 집계에서 빠집니다.',
+  'wk.deleteWeek': '이 주 전체 삭제', 'wk.deleteWeekConfirm': '이 주에 열린 훈련 {n}개와 투표를 모두 삭제할까요? 되돌릴 수 없습니다.', 'wk.deleteDayConfirm': '{d} 훈련을 취소(삭제)할까요? 일정과 투표에서 빠지고, 자동 등록도 이 날은 건너뜁니다.', 'wk.editTitle': '훈련 수정', 'wk.slots': '타임', 'wk.addSlot': '타임 추가', 'wk.slotsDayHint': '이 날에만 적용됩니다. 타임을 지우면 그 타임의 투표도 집계에서 빠집니다.',
 
   'poll.voted': '응답 완료', 'poll.notVoted': '미응답', 'poll.count': '{n}명 참여',
 
@@ -133,11 +133,19 @@ const ko = {
   'roles.giveAll': '모든 권한 주기 (관리자급)', 'roles.inUse': '이 직급인 회원이 있어 삭제할 수 없습니다. 회원의 직급을 먼저 바꿔주세요.',
   'perm.post': '일정 등록 · 투표 만들기 · 드라이브 올리기', 'perm.sessions': '훈련·경기 등 출석 일정 등록, 주간 훈련 열기, 시간표 수정', 'perm.attendance': '출석 수정, 근태 집계 보기',
   'perm.training_log': '훈련 기록 작성, 훈련 항목 관리', 'perm.edit_all': '남이 올린 글 수정·삭제 (비공개 일정도 모두 보임)', 'perm.members': '회원 승인, 직급 지정',
-  'perm.settings': '직급·권한 설정, 기본 목록 관리', 'perm.foreign': '해외선수 일정 보기와 관리', 'perm.foreign_cost': '해외선수 비용(숙박비·항공권·개런티) 보기와 입력',
+  'perm.settings': '직급·권한 설정, 기본 목록 관리', 'perm.foreign': '해외선수 명단 보기와 관리', 'perm.foreign_cost': '해외선수 비용 조건(숙소·항공·개런티) 보기와 입력',
   'fv.noCostPerm': '일정만 볼 수 있습니다. 비용은 권한이 있는 직급에게만 보입니다.', 'fv.costHidden': '비용은 비용 권한이 있는 직급만 입력하고 볼 수 있습니다.', 'fv.noCostYet': '비용 미입력', 'perm.admin_drive': '관리자 드라이브 보기와 올리기',
   'err.forbiddenRole': '자신보다 권한이 많은 직급은 지정하거나 변경할 수 없습니다',
   'event.visibility': '공개 범위', 'event.visAll': '전체 공개', 'event.visHint': '선택한 직급과 등록자, 관리자급에게만 보입니다. 달력·홈·캘린더 연동·딸린 투표와 파일도 함께 가려집니다.', 'event.visibleTo': '{roles}만 볼 수 있음',
   'files.tabShared': '공유 드라이브', 'files.tabAdmin': '관리자 드라이브', 'files.adminHint': '관리자 드라이브 권한이 있는 직급만 볼 수 있는 파일입니다.', 'files.adminNotConfigured': '관리자 드라이브 폴더가 아직 연결되지 않았습니다 (VITE_ADMIN_DRIVE_FOLDER_ID 설정 필요)',
+
+  'ft.hint': '해외선수 명단입니다. 권한이 있는 직급만 볼 수 있습니다.', 'ft.hintNoCost': '명단만 볼 수 있습니다. 비용 조건은 권한이 있는 직급에게만 보입니다.',
+  'ft.new': '해외선수 등록', 'ft.edit': '해외선수 수정', 'ft.name': '이름', 'ft.nationality': '국적', 'ft.birth': '생년월일', 'ft.age': '{n}세', 'ft.count': '{n}명', 'ft.empty': '등록된 해외선수가 없습니다',
+  'ft.sortNat': '국적순', 'ft.sortRecent': '최근 등록순', 'ft.stay': '숙소', 'ft.flight': '항공', 'ft.included': '포함', 'ft.notIncluded': '미포함', 'ft.dormOk': '기숙사 가능', 'ft.dormNo': '기숙사 불가',
+  'ft.terms': '비용 조건', 'ft.stayIncluded': '숙소 포함 (우리가 제공)', 'ft.dormOkLabel': '기숙사를 써도 됨', 'ft.flightIncluded': '항공권 포함 (우리가 제공)', 'ft.termsMemo': '조건 메모', 'ft.termsMemoPh': '예: 2경기 기준, 세미나 별도',
+  'wk.participants': '참가 예정 {n}명', 'wk.nobody': '아직 없음', 'wk.moreWeeks': '이후 {n}주 더 보기', 'wk.lessWeeks': '접기',
+  'auto.title': '주말 훈련 자동 등록', 'auto.weeks': '몇 주 앞까지 미리 올려둘지', 'auto.off': '끄기', 'auto.sat': '토요일', 'auto.sun': '일요일',
+  'auto.hint': '주말 훈련이 일정에 항상 올라가 있습니다. 경기가 있는 날과 직접 취소(삭제)한 날은 건너뜁니다. 취소한 날을 다시 열려면 "주간 훈련 열기"를 쓰세요.',
 
   'me.nameLocked': '이름 변경은 관리자에게 요청하세요.', 'me.language': '언어', 'me.myAttendance': '내 출석', 'me.last60': '최근 60일',
 }
@@ -274,11 +282,19 @@ const en = {
   'roles.giveAll': 'Give every permission (admin-grade)', 'roles.inUse': 'Members still have this role. Change their role first.',
   'perm.post': 'Post events, create polls, upload to Drive', 'perm.sessions': 'Post attendance events (training, shows), open weekly training, edit timetable', 'perm.attendance': 'Edit attendance, view reports',
   'perm.training_log': 'Write training logs, manage drill categories', 'perm.edit_all': "Edit and delete others' posts (also sees restricted events)", 'perm.members': 'Approve members, assign roles',
-  'perm.settings': 'Roles and permissions, default lists', 'perm.foreign': 'View and manage foreign talent bookings', 'perm.foreign_cost': 'View and enter foreign talent costs (lodging, flights, guarantees)',
+  'perm.settings': 'Roles and permissions, default lists', 'perm.foreign': 'View and manage the foreign talent roster', 'perm.foreign_cost': 'View and enter foreign talent cost terms (lodging, flight, guarantee)',
   'fv.noCostPerm': 'You can see bookings only. Costs are visible to roles with the cost permission.', 'fv.costHidden': 'Costs can only be entered and seen by roles with the cost permission.', 'fv.noCostYet': 'No costs entered', 'perm.admin_drive': 'See and upload to the admin Drive',
   'err.forbiddenRole': 'You cannot assign or change a role with more permissions than your own',
   'event.visibility': 'Visible to', 'event.visAll': 'Everyone', 'event.visHint': 'Only the selected roles, the creator and admin-grade roles can see it. It is also hidden from the calendar, home, calendar sync and its polls and files.', 'event.visibleTo': 'Only visible to {roles}',
   'files.tabShared': 'Shared Drive', 'files.tabAdmin': 'Admin Drive', 'files.adminHint': 'Files only roles with the admin Drive permission can see.', 'files.adminNotConfigured': 'The admin Drive folder is not connected yet (set VITE_ADMIN_DRIVE_FOLDER_ID)',
+
+  'ft.hint': 'Foreign talent roster. Visible only to roles with permission.', 'ft.hintNoCost': 'You can see the roster only. Cost terms are visible to roles with the cost permission.',
+  'ft.new': 'Add foreign talent', 'ft.edit': 'Edit foreign talent', 'ft.name': 'Name', 'ft.nationality': 'Nationality', 'ft.birth': 'Date of birth', 'ft.age': 'age {n}', 'ft.count': '{n} people', 'ft.empty': 'No foreign talent yet',
+  'ft.sortNat': 'By nationality', 'ft.sortRecent': 'Recently added', 'ft.stay': 'Lodging', 'ft.flight': 'Flight', 'ft.included': 'Included', 'ft.notIncluded': 'Not included', 'ft.dormOk': 'dorm OK', 'ft.dormNo': 'no dorm',
+  'ft.terms': 'Cost terms', 'ft.stayIncluded': 'Lodging included (we provide)', 'ft.dormOkLabel': 'Dorm is acceptable', 'ft.flightIncluded': 'Flight included (we provide)', 'ft.termsMemo': 'Terms note', 'ft.termsMemoPh': 'e.g. for 2 matches, seminar extra',
+  'wk.participants': '{n} planning to come', 'wk.nobody': 'Nobody yet', 'wk.moreWeeks': 'Show {n} more week(s)', 'wk.lessWeeks': 'Show less',
+  'auto.title': 'Automatic weekend training', 'auto.weeks': 'How far ahead to post', 'auto.off': 'Off', 'auto.sat': 'Saturday', 'auto.sun': 'Sunday',
+  'auto.hint': 'Weekend training is always on the schedule. Show days and days you cancelled (deleted) are skipped. To reopen a cancelled day, use "Open weekly training".',
 
   'me.nameLocked': 'Ask an admin to change your name.', 'me.language': 'Language', 'me.myAttendance': 'My attendance', 'me.last60': 'Last 60 days',
 }
@@ -415,11 +431,19 @@ const ja = {
   'roles.giveAll': 'すべての権限を付与（管理者級）', 'roles.inUse': 'この役職の会員がいるため削除できません。先に会員の役職を変更してください。',
   'perm.post': '予定の登録・投票の作成・ドライブへのアップロード', 'perm.sessions': '練習・試合など出席予定の登録、週間練習を開く、時間割の編集', 'perm.attendance': '出席の修正、勤怠集計の閲覧',
   'perm.training_log': '練習記録の作成、練習項目の管理', 'perm.edit_all': '他人の投稿の編集・削除（非公開の予定もすべて見える）', 'perm.members': '会員の承認、役職の指定',
-  'perm.settings': '役職・権限の設定、基本リストの管理', 'perm.foreign': '海外選手の予定の閲覧と管理', 'perm.foreign_cost': '海外選手の費用（宿泊費・航空券・ギャラ）の閲覧と入力',
+  'perm.settings': '役職・権限の設定、基本リストの管理', 'perm.foreign': '海外選手名簿の閲覧と管理', 'perm.foreign_cost': '海外選手の費用条件（宿泊・航空券・ギャラ）の閲覧と入力',
   'fv.noCostPerm': '予定のみ閲覧できます。費用は権限のある役職にだけ表示されます。', 'fv.costHidden': '費用は費用権限のある役職だけが入力・閲覧できます。', 'fv.noCostYet': '費用未入力', 'perm.admin_drive': '管理者ドライブの閲覧とアップロード',
   'err.forbiddenRole': '自分より権限の多い役職は指定・変更できません',
   'event.visibility': '公開範囲', 'event.visAll': '全体公開', 'event.visHint': '選んだ役職と登録者、管理者級にだけ表示されます。カレンダー・ホーム・カレンダー連携・関連する投票とファイルも非表示になります。', 'event.visibleTo': '{roles} のみ閲覧可',
   'files.tabShared': '共有ドライブ', 'files.tabAdmin': '管理者ドライブ', 'files.adminHint': '管理者ドライブの権限がある役職だけが見られるファイルです。', 'files.adminNotConfigured': '管理者ドライブのフォルダがまだ接続されていません（VITE_ADMIN_DRIVE_FOLDER_ID の設定が必要）',
+
+  'ft.hint': '海外選手の名簿です。権限のある役職のみ閲覧できます。', 'ft.hintNoCost': '名簿のみ閲覧できます。費用条件は権限のある役職にだけ表示されます。',
+  'ft.new': '海外選手を登録', 'ft.edit': '海外選手を編集', 'ft.name': '名前', 'ft.nationality': '国籍', 'ft.birth': '生年月日', 'ft.age': '{n}歳', 'ft.count': '{n}人', 'ft.empty': '登録された海外選手はいません',
+  'ft.sortNat': '国籍順', 'ft.sortRecent': '登録が新しい順', 'ft.stay': '宿泊', 'ft.flight': '航空券', 'ft.included': '込み', 'ft.notIncluded': 'なし', 'ft.dormOk': '寮可', 'ft.dormNo': '寮不可',
+  'ft.terms': '費用条件', 'ft.stayIncluded': '宿泊込み（こちらで提供）', 'ft.dormOkLabel': '寮でもよい', 'ft.flightIncluded': '航空券込み（こちらで提供）', 'ft.termsMemo': '条件メモ', 'ft.termsMemoPh': '例：2試合分、セミナー別途',
+  'wk.participants': '参加予定 {n}人', 'wk.nobody': 'まだいません', 'wk.moreWeeks': '以降 {n}週を表示', 'wk.lessWeeks': '閉じる',
+  'auto.title': '週末練習の自動登録', 'auto.weeks': '何週先まで登録しておくか', 'auto.off': 'オフ', 'auto.sat': '土曜日', 'auto.sun': '日曜日',
+  'auto.hint': '週末練習は常に予定に登録されます。試合のある日と、手動でキャンセル（削除）した日は除外されます。キャンセルした日を再び開くには「週間練習を開く」を使ってください。',
 
   'me.nameLocked': '名前の変更は管理者に依頼してください。', 'me.language': '言語', 'me.myAttendance': '自分の出席', 'me.last60': '直近60日',
 }

@@ -17,7 +17,8 @@ const dayLabel = (d, lang) => fmtDate(`${d}T12:00:00`, lang)
 /* ------------------------------------------------------------------ */
 export function WeekVoteCard({ week, minPeople, onChange }) {
   const { t, lang } = useT()
-  const { user, members, canEdit, nameOf } = useAuth()
+  const { user, members, canEdit: canEditOwn, can, nameOf } = useAuth()
+  const canEdit = (owner) => canEditOwn(owner) || can('sessions') // 자동 등록된 훈련도 트레이너가 관리
   const [editDay, setEditDay] = useState(null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState(null)

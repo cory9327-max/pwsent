@@ -15,6 +15,8 @@ export default function Polls() {
   const [modal, setModal] = useState(null)
   const { can } = useAuth()
   const weekly = useWeeklyTraining()
+  const [allWeeks, setAllWeeks] = useState(false)
+  const weeksShown = allWeeks ? weekly.weeks : weekly.weeks.slice(0, 2)
 
   const load = useCallback(async () => {
     const since = new Date(Date.now() - 7 * 864e5).toISOString()
@@ -40,15 +42,20 @@ export default function Polls() {
         </div>
       </div>
       <div className="tabs">
-        <button className={tab === 'open' ? 'on' : ''} onClick={() => setTab('open')}>{t('poll.tabOpen')} <span>{polls.filter(isOpen).length + weekly.weeks.length}</span></button>
+        <button className={tab === 'open' ? 'on' : ''} onClick={() => setTab('open')}>{t('poll.tabOpen')} <span>{polls.filter(isOpen).length + Math.min(weekly.weeks.length, 2)}</span></button>
         <button className={tab === 'closed' ? 'on' : ''} onClick={() => setTab('closed')}>{t('poll.tabClosed')}</button>
       </div>
       {tab === 'open' && weekly.weeks.length > 0 && (
         <section>
           <h2 className="sec-title">{t('wk.section')}</h2>
           <div className="grid-cards">
-            {weekly.weeks.map((w) => <WeekVoteCard key={w.weekStart} week={w} minPeople={weekly.minPeople} onChange={weekly.reload} />)}
+            {weeksShown.map((w) => <WeekVoteCard key={w.weekStart} week={w} minPeople={weekly.minPeople} onChange={weekly.reload} />)}
           </div>
+          {weekly.weeks.length > 2 && (
+            <button className="link-btn small" onClick={() => setAllWeeks(!allWeeks)}>
+              {allWeeks ? t('wk.lessWeeks') : t('wk.moreWeeks', { n: weekly.weeks.length - 2 })}
+            </button>
+          )}
         </section>
       )}
       {list.length === 0 ? (tab === 'open' && weekly.weeks.length > 0 ? null : <Empty>{t('poll.empty')}</Empty>) : (

@@ -10,7 +10,7 @@ import RoleManager from '../components/RoleManager'
 import ManagedChoice from '../components/ManagedChoice'
 import TypeManager from '../components/TypeManager'
 import { SlotEditor } from '../components/WeeklyTraining'
-import { Icon } from '../components/ui'
+import { ErrorText, Icon } from '../components/ui'
 
 /** 관리자 설정: 직급·권한 / 회원 / 기본 목록 / 드라이브 */
 export default function Admin() {
@@ -90,9 +90,61 @@ function Lists() {
           <h3>{t('admin.slots')}</h3>
           {slots === null ? <div className="spinner" /> : slots === false
             ? <div className="empty">{t('admin.needSql', { f: '06_weekly_training.sql' })}</div>
-            : <SlotEditor slots={slots} minPeople={min} onChange={loadSlots} />}
+            : <><SlotEditor slots={slots} minPeople={min} onChange={loadSlots} /><AutoTraining /></>}
         </div>
       )}
+    </div>
+  )
+}
+
+/** 주말 훈련 자동 등록 설정 */
+function AutoTraining() {
+  const { t } = useT()
+  const [s, setS] = useState(null)
+  const [places, setPlaces] = useState(LOCATIONS)
+  const [error, setError] = useState(null)
+  const load = async () => {
+    const { data } = await supabase.from('training_settings').select('*').maybeSingle()
+    setS(data && 'auto_weeks' in data ? data : false)
+  }
+  useEffect(() => {
+    load()
+    supabase.from('locations').select('name').order('position').then(({ data }) => { if (data?.length) setPlaces(data.map((l) => l.name)) })
+  }, [])
+  if (s === null) return null
+  if (s === false) return <div className="empty">{t('admin.needSql', { f: '09_roster_auto_training.sql' })}</div>
+
+  async function patch(p) {
+    setError(null)
+    setS({ ...s, ...p })
+    const { error } = await supabase.from('training_settings').update(p).eq('id', true)
+    if (error) return setError(error)
+    await supabase.rpc('ensure_weekly_trainings')
+  }
+  const Loc = ({ k, on }) => (
+    <select value={s[k] || ''} disabled={!s[on]} onChange={(e) => patch({ [k]: e.target.value || null })}>
+      <option value="">{t('wk.locNone')}</option>
+      {places.map((p) => <option key={p}>{p}</option>)}
+    </select>
+  )
+  return (
+    <div className="loc-manage">
+      <strong>{t('auto.title')}</strong>
+      <label className="repeat-until">
+        <span>{t('auto.weeks')}</span>
+        <select value={s.auto_weeks} onChange={(e) => patch({ auto_weeks: Number(e.target.value) })}>
+          <option value={0}>{t('auto.off')}</option>
+          {[4, 8, 12].map((n) => <option key={n} value={n}>{t('wk.nWeeks', { n })}</option>)}
+        </select>
+      </label>
+      <div className="wk-dayset">
+        <label className="check"><input type="checkbox" checked={s.sat_on} onChange={(e) => patch({ sat_on: e.target.checked })} /> {t('auto.sat')}</label>
+        <Loc k="sat_location" on="sat_on" />
+        <label className="check"><input type="checkbox" checked={s.sun_on} onChange={(e) => patch({ sun_on: e.target.checked })} /> {t('auto.sun')}</label>
+        <Loc k="sun_location" on="sun_on" />
+      </div>
+      <span className="field-hint">{t('auto.hint')}</span>
+      <ErrorText error={error} />
     </div>
   )
 }

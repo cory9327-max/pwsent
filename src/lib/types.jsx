@@ -23,6 +23,8 @@ export function TypesProvider({ children }) {
   const [managed, setManaged] = useState(false) // DB 목록을 쓰는 중인지
 
   const reload = useCallback(async () => {
+    // 빠진 주말 훈련을 일정에 채워 넣음 (09 SQL 실행 전이면 조용히 건너뜀)
+    try { await supabase.rpc('ensure_weekly_trainings') } catch { /* 무시 */ }
     const { data, error } = await supabase.from('event_types').select('*').order('position').order('created_at')
     if (error || !data?.length) { setTypes(BUILTIN); setManaged(false) } else { setTypes(data); setManaged(true) }
   }, [])

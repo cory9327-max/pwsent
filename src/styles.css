@@ -263,6 +263,14 @@ textarea { resize: vertical; }
 .stack.tight { gap: 6px; }
 .btn.left { align-self: flex-start; }
 .check.pad { padding: 9px 0; }
+.check.indent { margin-left: 26px; }
+.nowrap { white-space: nowrap; }
+.roster-table td { vertical-align: top; }
+.roster-note { max-width: 260px; color: var(--ink-2); }
+.slot-people { display: flex; flex-direction: column; gap: 6px; }
+.slot-people .wk-slot { flex: none; }
+.people { display: flex; flex-wrap: wrap; gap: 5px; padding-left: 2px; }
+.person { background: var(--gray-soft); border-radius: 999px; padding: 2px 10px; font-size: 13px; font-weight: 600; }
 .role-card { display: flex; flex-direction: column; gap: 10px; border-top: 4px solid var(--line); }
 .role-card.new { border-top-style: dashed; }
 .role-head { display: flex; gap: 8px; align-items: center; }

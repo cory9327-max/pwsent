@@ -2,160 +2,135 @@ import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/auth'
 import { useT } from '../lib/i18n'
-import { fmtDate, fmtMoney, seoulDate } from '../lib/format'
+import { fmtMoney, seoulDate } from '../lib/format'
 import { Empty, ErrorText, Field, Icon, Modal, confirmDelete } from '../components/ui'
 
 const CURRENCIES = ['KRW', 'JPY', 'USD', 'EUR', 'GBP', 'MXN', 'TWD', 'AUD']
-const STATUSES = ['planned', 'confirmed', 'done', 'cancelled']
-const COST_FIELDS = ['stay_cost', 'flight_cost', 'guarantee', 'other_cost', 'currency']
 const one = (x) => (Array.isArray(x) ? x[0] : x) || null
 
-/** 총 비용. c = 비용 정보, flightProvided = 항공권 제공 여부 */
-export const visitTotal = (c, flightProvided) =>
-  Number(c?.stay_cost || 0) + (flightProvided ? Number(c?.flight_cost || 0) : 0) + Number(c?.guarantee || 0) + Number(c?.other_cost || 0)
+function ageOf(birth) {
+  if (!birth) return null
+  const [y, m, d] = birth.split('-').map(Number)
+  const [ty, tm, td] = seoulDate().split('-').map(Number)
+  return ty - y - (tm < m || (tm === m && td < d) ? 1 : 0)
+}
 
-const nights = (v) => (v.arrival_date && v.departure_date
-  ? Math.round((new Date(v.departure_date) - new Date(v.arrival_date)) / 864e5) : null)
-
+/** 해외선수 명단: 선수 한 명에 한 줄. 비용 조건(숙소·항공·개런티)은 비용 권한이 있는 직급에게만 보임 */
 export default function Foreign() {
   const { t, lang } = useT()
-  const { nameOf, can } = useAuth()
-  const [rows, setRows] = useState([])
-  const [legacy, setLegacy] = useState(false) // 08_foreign_costs.sql 실행 전: 금액이 일정 표 안에 있음
-  const [view, setView] = useState('upcoming')
-  const [year, setYear] = useState(new Date().getFullYear())
+  const { can } = useAuth()
+  const canCost = can('foreign_cost')
+  const [rows, setRows] = useState(null)
+  const [missing, setMissing] = useState(false) // 09 SQL 미실행
+  const [q, setQ] = useState('')
+  const [sort, setSort] = useState('name')
   const [modal, setModal] = useState(null)
   const [error, setError] = useState(null)
-  const canCost = legacy || can('foreign_cost') // 분리 전에는 해외선수 권한이 비용까지 포함
 
   const load = useCallback(async () => {
-    const q = (sel) => supabase.from('foreign_visits').select(sel).order('arrival_date', { ascending: true, nullsFirst: false })
-    let res = await q('*, foreign_visit_costs(*)')
-    let old = false
-    if (res.error) { old = true; res = await q('*') }
-    if (res.error) setError(res.error)
-    setLegacy(old)
-    setRows((res.data || []).map((v) => ({ ...v, cost: old ? v : one(v.foreign_visit_costs) })))
+    const { data, error } = await supabase.from('foreign_talents').select('*, foreign_talent_terms(*)').order('name')
+    if (error) { setMissing(true); setRows([]); return }
+    setRows((data || []).map((r) => ({ ...r, terms: one(r.foreign_talent_terms) })))
   }, [])
   useEffect(() => { load() }, [load])
 
-  const today = seoulDate()
-  const active = (r) => r.status !== 'cancelled'
-  const inYear = rows.filter((r) => (r.arrival_date || '').startsWith(String(year)))
-  const upcoming = rows.filter((r) => active(r) && (!r.departure_date || r.departure_date >= today))
-  const shown = view === 'upcoming' ? upcoming : view === 'year' ? inYear : rows
-
-  const sumBy = (fn) => {
-    const m = {}
-    for (const r of inYear.filter((x) => active(x) && x.cost)) m[r.cost.currency] = (m[r.cost.currency] || 0) + fn(r)
-    return m
-  }
-  const byCur = sumBy((r) => visitTotal(r.cost, r.flight_provided))
-  const guaranteeByCur = sumBy((r) => Number(r.cost.guarantee || 0))
-  const money = (m) => (Object.keys(m).length ? Object.entries(m).map(([c, v]) => <div key={c}>{fmtMoney(v, c, lang)}</div>) : '—')
-  const years = [...new Set([new Date().getFullYear() + 1, new Date().getFullYear(), ...rows.map((r) => Number((r.arrival_date || '').slice(0, 4))).filter(Boolean)])].sort((a, b) => b - a)
-
-  async function remove(v) {
+  async function remove(r) {
     if (!confirmDelete(t)) return
-    const { error } = await supabase.from('foreign_visits').delete().eq('id', v.id)
+    const { error } = await supabase.from('foreign_talents').delete().eq('id', r.id)
     if (error) return setError(error)
     load()
   }
+
+  if (rows === null) return <div className="page"><div className="spinner" /></div>
+  const shown = rows
+    .filter((r) => !q || `${r.name} ${r.ring_name || ''} ${r.nationality || ''}`.toLowerCase().includes(q.toLowerCase()))
+    .sort((a, b) => sort === 'nationality' ? (a.nationality || '~').localeCompare(b.nationality || '~')
+      : sort === 'recent' ? b.created_at.localeCompare(a.created_at)
+        : (a.ring_name || a.name).localeCompare(b.ring_name || b.name))
+  const yn = (v, yes, no) => <span className={`pill ${v ? 'att-present' : 'att-none'}`}>{v ? yes : no}</span>
 
   return (
     <div className="page">
       <div className="page-head">
         <div>
           <h1>{t('nav.foreign')}</h1>
-          <p className="muted"><Icon name="lock" size={14} /> {canCost ? t('fv.adminOnly') : t('fv.noCostPerm')}</p>
+          <p className="muted"><Icon name="lock" size={14} /> {canCost ? t('ft.hint') : t('ft.hintNoCost')}</p>
         </div>
-        <button className="btn primary" onClick={() => setModal({})}><Icon name="plus" size={16} /> {t('fv.new')}</button>
+        {!missing && <button className="btn primary" onClick={() => setModal({})}><Icon name="plus" size={16} /> {t('ft.new')}</button>}
       </div>
 
-      <div className="stat-row">
-        <div className="card stat">
-          <span className="stat-label">{t('fv.upcomingCount')}</span>
-          <strong className="stat-value">{upcoming.length}</strong>
+      {missing ? <Empty>{t('admin.needSql', { f: '09_roster_auto_training.sql' })}</Empty> : <>
+        <div className="toolbar">
+          <input className="search" placeholder={t('common.search')} value={q} onChange={(e) => setQ(e.target.value)} />
+          <select value={sort} onChange={(e) => setSort(e.target.value)}>
+            <option value="name">{t('att.sortName')}</option>
+            <option value="nationality">{t('ft.sortNat')}</option>
+            <option value="recent">{t('ft.sortRecent')}</option>
+          </select>
+          <span className="muted small">{t('ft.count', { n: shown.length })}</span>
         </div>
-        {canCost && <>
-          <div className="card stat">
-            <span className="stat-label">
-              <select className="inline-select" value={year} onChange={(e) => setYear(Number(e.target.value))}>
-                {years.map((y) => <option key={y} value={y}>{y}</option>)}
-              </select> {t('fv.yearTotal')}
-            </span>
-            <strong className="stat-value small">{money(byCur)}</strong>
+        <ErrorText error={error} />
+
+        {shown.length === 0 ? <Empty>{t('ft.empty')}</Empty> : (
+          <div className="card table-wrap">
+            <table className="table roster-table">
+              <thead>
+                <tr>
+                  <th>{t('members.name')}</th><th>{t('ft.nationality')}</th><th>{t('ft.birth')}</th>
+                  {canCost && <><th>{t('ft.stay')}</th><th>{t('ft.flight')}</th><th className="num">{t('fv.guarantee')}</th></>}
+                  <th>{t('fv.notes')}</th><th />
+                </tr>
+              </thead>
+              <tbody>
+                {shown.map((r) => {
+                  const x = r.terms
+                  const age = ageOf(r.birth_date)
+                  return (
+                    <tr key={r.id}>
+                      <td>
+                        <button className="link-btn strong" onClick={() => setModal(r)}>{r.ring_name || r.name}</button>
+                        {r.ring_name && <div className="muted small">{r.name}</div>}
+                        {r.contact && <div className="muted small">{r.contact}</div>}
+                      </td>
+                      <td>{r.nationality || '—'}</td>
+                      <td className="nowrap">{r.birth_date || '—'}{age !== null && <span className="muted small"> ({t('ft.age', { n: age })})</span>}</td>
+                      {canCost && <>
+                        <td className="nowrap">
+                          {!x ? '—' : <>{yn(x.stay_included, t('ft.included'), t('ft.notIncluded'))}{x.stay_included && <span className="muted small"> {x.dorm_ok ? t('ft.dormOk') : t('ft.dormNo')}</span>}</>}
+                        </td>
+                        <td>{!x ? '—' : yn(x.flight_included, t('ft.included'), t('ft.notIncluded'))}</td>
+                        <td className="num nowrap">{x?.guarantee != null ? fmtMoney(x.guarantee, x.currency, lang) : '—'}</td>
+                      </>}
+                      <td className="small roster-note">{[canCost && x?.memo, r.notes].filter(Boolean).join(' · ') || ''}</td>
+                      <td>
+                        <span className="row-actions">
+                          <button className="icon-btn" onClick={() => setModal(r)} aria-label={t('common.edit')}><Icon name="edit" size={16} /></button>
+                          <button className="icon-btn danger" onClick={() => remove(r)} aria-label={t('common.delete')}><Icon name="trash" size={16} /></button>
+                        </span>
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
           </div>
-          <div className="card stat">
-            <span className="stat-label">{year} {t('fv.guaranteeTotal')}</span>
-            <strong className="stat-value small">{money(guaranteeByCur)}</strong>
-          </div>
-        </>}
-      </div>
+        )}
+      </>}
 
-      <div className="tabs">
-        <button className={view === 'upcoming' ? 'on' : ''} onClick={() => setView('upcoming')}>{t('fv.tabUpcoming')}</button>
-        <button className={view === 'year' ? 'on' : ''} onClick={() => setView('year')}>{year}</button>
-        <button className={view === 'all' ? 'on' : ''} onClick={() => setView('all')}>{t('common.all')}</button>
-      </div>
-      <ErrorText error={error} />
-
-      {shown.length === 0 ? <Empty>{t('fv.empty')}</Empty> : (
-        <div className="grid-cards">
-          {shown.map((v) => {
-            const c = canCost ? v.cost : null
-            const cur = c?.currency || 'KRW'
-            return (
-              <div key={v.id} className={`card visit st-${v.status}`}>
-                <div className="poll-head">
-                  <div>
-                    <h4>{v.ring_name || v.player_name}{v.ring_name && <span className="muted small"> ({v.player_name})</span>}</h4>
-                    <div className="meta">{v.country || '—'} · <span className={`pill fv-${v.status}`}>{t(`fv.st.${v.status}`)}</span></div>
-                  </div>
-                  <div className="row-actions">
-                    <button className="icon-btn" onClick={() => setModal(v)} aria-label={t('common.edit')}><Icon name="edit" size={16} /></button>
-                    <button className="icon-btn danger" onClick={() => remove(v)} aria-label={t('common.delete')}><Icon name="trash" size={16} /></button>
-                  </div>
-                </div>
-                <div className="visit-dates">
-                  <Icon name="calendar" size={14} />
-                  {v.arrival_date ? fmtDate(v.arrival_date + 'T12:00:00', lang) : '?'} → {v.departure_date ? fmtDate(v.departure_date + 'T12:00:00', lang) : '?'}
-                  {nights(v) !== null && <span className="muted small"> · {t('fv.nights', { n: nights(v) })}</span>}
-                </div>
-                {v.schedule && <p className="visit-sched">{v.schedule}</p>}
-                <dl className="cost">
-                  <dt>{t('fv.stay')}</dt><dd>{t(`fv.stay.${v.stay}`)}{c && ` · ${fmtMoney(c.stay_cost, cur, lang)}`}</dd>
-                  <dt>{t('fv.flight')}</dt><dd>{v.flight_provided ? `${t('fv.provided')}${c ? ` · ${fmtMoney(c.flight_cost, cur, lang)}` : ''}` : t('fv.notProvided')}</dd>
-                  {c && <>
-                    <dt>{t('fv.guarantee')}</dt><dd>{fmtMoney(c.guarantee, cur, lang)}</dd>
-                    {Number(c.other_cost) > 0 && <><dt>{t('fv.other')}</dt><dd>{fmtMoney(c.other_cost, cur, lang)}</dd></>}
-                    <dt className="total">{t('fv.total')}</dt><dd className="total">{fmtMoney(visitTotal(c, v.flight_provided), cur, lang)}</dd>
-                  </>}
-                </dl>
-                {canCost && !v.cost && <div className="meta">{t('fv.noCostYet')}</div>}
-                {v.contact && <div className="meta">{t('fv.contact')}: {v.contact}</div>}
-                {v.notes && <p className="poll-desc">{v.notes}</p>}
-                <div className="meta muted small">{t('fv.by', { name: nameOf(v.created_by) })}</div>
-              </div>
-            )
-          })}
-        </div>
-      )}
-
-      {modal && <VisitForm visit={modal.id ? modal : null} legacy={legacy} canCost={canCost} onClose={() => setModal(null)} onSaved={() => { setModal(null); load() }} />}
+      {modal && <TalentForm talent={modal.id ? modal : null} canCost={canCost} onClose={() => setModal(null)} onSaved={() => { setModal(null); load() }} />}
     </div>
   )
 }
 
-function VisitForm({ visit, legacy, canCost, onClose, onSaved }) {
-  const { t, lang } = useT()
+function TalentForm({ talent, canCost, onClose, onSaved }) {
+  const { t } = useT()
   const { user } = useAuth()
-  const c0 = visit?.cost || {}
+  const x = talent?.terms || {}
   const [f, setF] = useState({
-    player_name: visit?.player_name ?? '', ring_name: visit?.ring_name ?? '', country: visit?.country ?? '', contact: visit?.contact ?? '',
-    arrival_date: visit?.arrival_date ?? '', departure_date: visit?.departure_date ?? '', schedule: visit?.schedule ?? '',
-    stay: visit?.stay ?? 'dorm', flight_provided: visit?.flight_provided ?? false, status: visit?.status ?? 'planned', notes: visit?.notes ?? '',
-    stay_cost: c0.stay_cost ?? 0, flight_cost: c0.flight_cost ?? 0, guarantee: c0.guarantee ?? 0, other_cost: c0.other_cost ?? 0, currency: c0.currency ?? 'KRW',
+    name: talent?.name ?? '', ring_name: talent?.ring_name ?? '', nationality: talent?.nationality ?? '', birth_date: talent?.birth_date ?? '',
+    contact: talent?.contact ?? '', notes: talent?.notes ?? '',
+    stay_included: x.stay_included ?? false, dorm_ok: x.dorm_ok ?? false, flight_included: x.flight_included ?? false,
+    guarantee: x.guarantee ?? '', currency: x.currency ?? 'KRW', memo: x.memo ?? '',
   })
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState(null)
@@ -164,23 +139,20 @@ function VisitForm({ visit, legacy, canCost, onClose, onSaved }) {
   async function submit(e) {
     e.preventDefault()
     setBusy(true); setError(null)
-    const num = (v) => (v === '' ? 0 : Number(v))
     const row = {
-      player_name: f.player_name.trim(), ring_name: f.ring_name.trim() || null, country: f.country.trim() || null,
-      contact: f.contact.trim() || null, arrival_date: f.arrival_date || null, departure_date: f.departure_date || null,
-      schedule: f.schedule.trim() || null, stay: f.stay, flight_provided: f.flight_provided, status: f.status, notes: f.notes.trim() || null,
+      name: f.name.trim(), ring_name: f.ring_name.trim() || null, nationality: f.nationality.trim() || null,
+      birth_date: f.birth_date || null, contact: f.contact.trim() || null, notes: f.notes.trim() || null,
     }
-    const cost = {
-      stay_cost: num(f.stay_cost), flight_cost: f.flight_provided ? num(f.flight_cost) : 0,
-      guarantee: num(f.guarantee), other_cost: num(f.other_cost), currency: f.currency,
-    }
-    const full = legacy && canCost ? { ...row, ...cost } : row
-    const res = visit
-      ? await supabase.from('foreign_visits').update(full).eq('id', visit.id).select().single()
-      : await supabase.from('foreign_visits').insert({ ...full, created_by: user.id }).select().single()
+    const res = talent
+      ? await supabase.from('foreign_talents').update(row).eq('id', talent.id).select().single()
+      : await supabase.from('foreign_talents').insert({ ...row, created_by: user.id }).select().single()
     if (res.error) { setBusy(false); return setError(res.error) }
-    if (!legacy && canCost) {
-      const { error } = await supabase.from('foreign_visit_costs').upsert({ visit_id: res.data.id, ...cost, updated_at: new Date().toISOString() })
+    if (canCost) {
+      const { error } = await supabase.from('foreign_talent_terms').upsert({
+        talent_id: res.data.id, stay_included: f.stay_included, dorm_ok: f.stay_included && f.dorm_ok, flight_included: f.flight_included,
+        guarantee: f.guarantee === '' ? null : Number(f.guarantee), currency: f.currency, memo: f.memo.trim() || null,
+        updated_at: new Date().toISOString(),
+      })
       if (error) { setBusy(false); return setError(error) }
     }
     setBusy(false)
@@ -188,57 +160,37 @@ function VisitForm({ visit, legacy, canCost, onClose, onSaved }) {
   }
 
   return (
-    <Modal title={visit ? t('fv.edit') : t('fv.new')} onClose={onClose} wide>
+    <Modal title={talent ? t('ft.edit') : t('ft.new')} onClose={onClose} wide>
       <form className="form" onSubmit={submit}>
         <div className="row2">
-          <Field label={t('fv.playerName')}><input required value={f.player_name} onChange={set('player_name')} autoFocus /></Field>
+          <Field label={t('ft.name')}><input required maxLength={80} value={f.name} onChange={set('name')} autoFocus /></Field>
           <Field label={t('name.ring')}><input value={f.ring_name} onChange={set('ring_name')} /></Field>
         </div>
         <div className="row2">
-          <Field label={t('fv.country')}><input value={f.country} onChange={set('country')} /></Field>
-          <Field label={t('fv.contact')}><input value={f.contact} onChange={set('contact')} /></Field>
+          <Field label={t('ft.nationality')}><input value={f.nationality} onChange={set('nationality')} /></Field>
+          <Field label={t('ft.birth')}><input type="date" value={f.birth_date} max={seoulDate()} onChange={set('birth_date')} /></Field>
         </div>
-        <div className="row3">
-          <Field label={t('fv.arrival')}><input type="date" value={f.arrival_date} onChange={set('arrival_date')} /></Field>
-          <Field label={t('fv.departure')}><input type="date" value={f.departure_date} min={f.arrival_date || undefined} onChange={set('departure_date')} /></Field>
-          <Field label={t('fv.status')}>
-            <select value={f.status} onChange={set('status')}>{STATUSES.map((s) => <option key={s} value={s}>{t(`fv.st.${s}`)}</option>)}</select>
-          </Field>
-        </div>
-        <Field label={t('fv.schedule')} hint={t('fv.scheduleHint')}>
-          <textarea rows={2} value={f.schedule} onChange={set('schedule')} />
-        </Field>
-        <div className="row2">
-          <Field label={t('fv.stay')}>
-            <select value={f.stay} onChange={set('stay')}>{['dorm', 'hotel', 'none'].map((s) => <option key={s} value={s}>{t(`fv.stay.${s}`)}</option>)}</select>
-          </Field>
-          <Field label={t('fv.flight')}>
-            <label className="check pad"><input type="checkbox" checked={f.flight_provided} onChange={set('flight_provided')} /> {t('fv.provideFlight')}</label>
-          </Field>
-        </div>
+        <Field label={t('fv.contact')}><input value={f.contact} onChange={set('contact')} /></Field>
 
         {canCost ? (
           <fieldset className="cost-box">
-            <legend>{t('fv.costs')}</legend>
-            <div className="row3">
+            <legend>{t('ft.terms')}</legend>
+            <label className="check"><input type="checkbox" checked={f.stay_included} onChange={set('stay_included')} /> {t('ft.stayIncluded')}</label>
+            {f.stay_included && (
+              <label className="check indent"><input type="checkbox" checked={f.dorm_ok} onChange={set('dorm_ok')} /> {t('ft.dormOkLabel')}</label>
+            )}
+            <label className="check"><input type="checkbox" checked={f.flight_included} onChange={set('flight_included')} /> {t('ft.flightIncluded')}</label>
+            <div className="row2">
+              <Field label={t('fv.guarantee')}><input type="number" min="0" step="any" value={f.guarantee} onChange={set('guarantee')} /></Field>
               <Field label={t('fv.currency')}>
                 <select value={f.currency} onChange={set('currency')}>{CURRENCIES.map((c) => <option key={c}>{c}</option>)}</select>
               </Field>
-              <Field label={t('fv.stayCost')}><input type="number" min="0" step="any" value={f.stay_cost} onChange={set('stay_cost')} /></Field>
-              <Field label={t('fv.flightCost')}><input type="number" min="0" step="any" disabled={!f.flight_provided} value={f.flight_cost} onChange={set('flight_cost')} /></Field>
             </div>
-            <div className="row3">
-              <Field label={t('fv.guarantee')}><input type="number" min="0" step="any" value={f.guarantee} onChange={set('guarantee')} /></Field>
-              <Field label={t('fv.other')}><input type="number" min="0" step="any" value={f.other_cost} onChange={set('other_cost')} /></Field>
-              <div className="field total-preview">
-                <span className="field-label">{t('fv.total')}</span>
-                <strong>{fmtMoney(visitTotal({ ...f, flight_cost: f.flight_provided ? f.flight_cost : 0 }, f.flight_provided), f.currency, lang)}</strong>
-              </div>
-            </div>
+            <Field label={t('ft.termsMemo')}><input value={f.memo} onChange={set('memo')} placeholder={t('ft.termsMemoPh')} /></Field>
           </fieldset>
         ) : <span className="field-hint">{t('fv.costHidden')}</span>}
 
-        <Field label={t('fv.notes')}><textarea rows={3} value={f.notes} onChange={set('notes')} /></Field>
+        <Field label={t('fv.notes')}><textarea rows={2} value={f.notes} onChange={set('notes')} /></Field>
         <ErrorText error={error} />
         <div className="form-actions">
           <button type="button" className="btn ghost" onClick={onClose}>{t('common.cancel')}</button>

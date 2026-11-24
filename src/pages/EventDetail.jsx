@@ -27,6 +27,7 @@ export default function EventDetail() {
   const [logs, setLogs] = useState([])
   const [cats, setCats] = useState([])
   const [files, setFiles] = useState([])
+  const [tvotes, setTvotes] = useState([])
   const [modal, setModal] = useState(null)
   const [error, setError] = useState(null)
   const [copied, setCopied] = useState(false)
@@ -42,6 +43,7 @@ export default function EventDetail() {
       supabase.from('training_categories').select('*').order('name'),
       supabase.from('shared_files').select('*').eq('event_id', id).order('created_at', { ascending: false }),
     ])
+    if (e.slots) { const v = await supabase.from('training_votes').select('*').eq('event_id', id); setTvotes(v.data || []) }
     setAtt(a.data || []); setPolls(p.data || []); setLogs(l.data || []); setCats(c.data || []); setFiles(f.data || [])
   }, [id])
   useEffect(() => { load() }, [load])
@@ -73,6 +75,16 @@ export default function EventDetail() {
       : await q.eq('id', ev.id)
     if (error) { setModal(null); return setError(error) }
     nav('/schedule')
+  }
+
+  async function toggleSlot(s) {
+    setError(null)
+    const mine = tvotes.some((v) => v.slot_key === s.id && v.user_id === user.id)
+    const { error } = mine
+      ? await supabase.from('training_votes').delete().match({ event_id: ev.id, slot_key: s.id, user_id: user.id })
+      : await supabase.from('training_votes').insert({ event_id: ev.id, slot_key: s.id, user_id: user.id })
+    if (error) setError(error)
+    load()
   }
 
   async function confirmEvent() {
@@ -112,9 +124,7 @@ export default function EventDetail() {
           {ev.visible_roles?.length > 0 && <span className="vis-note"><Icon name="lock" size={15} /> {t('event.visibleTo', { roles: ev.visible_roles.map(roleLabel).join(', ') })}</span>}
         </div>
         {ev.description && <p className="hero-desc">{ev.description}</p>}
-        {ev.slots?.length > 0 && (
-          <div className="chips static">{ev.slots.map((s) => <span key={s.id}>{slotLabel(s)}</span>)}</div>
-        )}
+
         {ev.status === 'tentative' && (
           <div className="notice warn">
             {t('wk.tentativeNote')}
@@ -128,6 +138,29 @@ export default function EventDetail() {
         <CheckIn event={ev} record={attMap[user.id]} onDone={load} />
         <ErrorText error={error} />
       </div>
+
+      {ev.slots?.length > 0 && (
+        <section>
+          <div className="sec-head">
+            <h2 className="sec-title">{t('wk.participants', { n: new Set(tvotes.filter((v) => ev.slots.some((s) => s.id === v.slot_key)).map((v) => v.user_id)).size })}</h2>
+            <span className="muted small">{seoulDate(ev.starts_at) > seoulDate() ? t('wk.deadline') : t('poll.closed')}</span>
+          </div>
+          <div className="card stack">
+            {ev.slots.map((s) => {
+              const who = tvotes.filter((v) => v.slot_key === s.id)
+              const mine = who.some((v) => v.user_id === user.id)
+              return (
+                <div key={s.id} className="slot-people">
+                  <button className={`wk-slot ${mine ? 'mine' : ''}`} disabled={seoulDate(ev.starts_at) <= seoulDate()} onClick={() => toggleSlot(s)}>
+                    <span>{mine && '✓ '}{slotLabel(s)}</span><b>{who.length}</b>
+                  </button>
+                  <div className="people">{who.length ? who.map((v) => <span key={v.user_id} className="person">{nameOf(v.user_id)}</span>) : <span className="muted small">{t('wk.nobody')}</span>}</div>
+                </div>
+              )
+            })}
+          </div>
+        </section>
+      )}
 
       {hasAttendance(ev.type) && ev.status !== 'tentative' && (
         <section>
