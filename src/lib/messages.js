@@ -1,0 +1,310 @@
+// 번역 사전 — 한국어(ko) / English(en) / 日本語(ja)
+// 문구를 바꾸려면 여기만 고치면 됩니다. {name} 같은 부분은 자동으로 채워집니다.
+
+const ko = {
+  'setup.title': '설정이 필요합니다',
+  'setup.body': '.env 파일(또는 Vercel 환경변수)에 Supabase 주소와 키를 넣어주세요.',
+
+  'common.loading': '불러오는 중', 'common.save': '저장', 'common.saving': '저장 중…', 'common.cancel': '취소',
+  'common.edit': '수정', 'common.delete': '삭제', 'common.add': '추가', 'common.all': '전체', 'common.viewAll': '전체 보기',
+  'common.search': '검색', 'common.retry': '다시 시도', 'common.confirmDelete': '정말 삭제할까요? 되돌릴 수 없습니다.',
+
+  'err.generic': '오류가 발생했습니다', 'err.forbidden': '권한이 없습니다', 'err.lastAdmin': '관리자는 최소 1명 있어야 합니다',
+
+  'auth.welcome': 'PWS 포털', 'auth.subtitle': '선수·스탭·트레이너 전용 내부 관리 사이트',
+  'auth.google': 'Google 계정으로 계속하기', 'auth.or': '또는', 'auth.email': '이메일', 'auth.password': '비밀번호',
+  'auth.pwHint': '8자 이상', 'auth.signIn': '로그인', 'auth.signUp': '회원가입', 'auth.signOut': '로그아웃',
+  'auth.noAccount': '계정이 없나요?', 'auth.haveAccount': '이미 계정이 있나요?',
+  'auth.checkEmail': '확인 메일을 보냈어요. 메일의 링크를 누른 뒤 로그인하세요.',
+  'auth.approvalNote': '가입 후 관리자의 승인이 있어야 이용할 수 있습니다.',
+
+  'onb.title': '이름 등록', 'onb.body': 'PWS에서는 본명 또는 링네임만 사용할 수 있습니다. 별명·닉네임은 승인되지 않아요.',
+  'onb.nameType': '이름 종류', 'onb.nameHint': '승인 후에는 직접 바꿀 수 없고 관리자에게 요청해야 합니다.',
+  'onb.agree': '본명 또는 실제 사용하는 링네임임을 확인합니다', 'onb.submit': '승인 요청',
+  'onb.pendingTitle': '승인 대기 중', 'onb.pendingBody': '관리자가 승인하면 바로 이용할 수 있어요.',
+  'onb.editName': '이름 수정', 'onb.checkAgain': '승인 확인',
+  'onb.rejected': '승인이 거절되었습니다. 이름을 본명/링네임으로 고쳐 다시 신청하세요.',
+  'onb.noProfile': '계정 정보를 찾을 수 없습니다', 'onb.noProfileBody': '잠시 후 다시 시도하거나 관리자에게 문의하세요.',
+
+  'name.real': '본명', 'name.ring': '링네임',
+  'role.admin': '관리자', 'role.trainer': '트레이너', 'role.player': '선수', 'role.staff': '스탭',
+  'roleDesc.admin': '모든 항목 수정·회원 승인·해외선수 관리', 'roleDesc.trainer': '훈련·경기 등록, 출석 관리, 훈련 기록',
+  'roleDesc.player': '일정·투표·드라이브·출석 체크', 'roleDesc.staff': '선수와 같은 권한',
+
+  'nav.dashboard': '홈', 'nav.schedule': '일정', 'nav.polls': '투표', 'nav.training': '훈련 기록', 'nav.files': '드라이브',
+  'nav.attendance': '근태 관리', 'nav.foreign': '해외선수', 'nav.members': '회원 관리', 'nav.me': '내 정보', 'nav.adminSection': '관리자',
+
+  'dash.hello': '{name}님, 안녕하세요', 'dash.today': '오늘', 'dash.noToday': '오늘 일정이 없습니다',
+  'dash.upcoming': '다가오는 일정 (2주)', 'dash.noUpcoming': '예정된 일정이 없습니다', 'dash.openPolls': '진행 중인 투표',
+  'dash.recentTraining': '최근 훈련 기록', 'dash.pending': '승인 대기 중인 가입 신청 {n}건',
+
+  'etype.general': '일반', 'etype.training': '훈련', 'etype.match': '경기',
+  'event.new': '일정 등록', 'event.edit': '일정 수정', 'event.title': '제목', 'event.type': '종류',
+  'event.typeHint': '훈련·경기 일정은 트레이너 이상만 등록할 수 있어요', 'event.start': '시작', 'event.end': '종료 (선택)',
+  'event.location': '장소', 'event.description': '설명', 'event.withPoll': '참가 투표도 함께 만들기',
+  'event.notFound': '일정을 찾을 수 없습니다', 'event.copyLink': '링크 복사', 'event.copied': '복사됨!', 'event.addGcal': '구글 캘린더',
+
+  'cal.today': '오늘', 'cal.noEvents': '일정 없음', 'cal.monthList': '이번 달 전체',
+
+  'att.title': '출석', 'att.present': '참여', 'att.late': '지각', 'att.absent': '불참', 'att.none': '미체크',
+  'att.mine': '내 출석', 'att.checkPresent': '참여 체크', 'att.checkLate': '지각 체크',
+  'att.onlyToday': '출석 체크는 당일에만 할 수 있어요',
+  'att.trainerHint': '트레이너는 출석 상태를 직접 고칠 수 있습니다. 체크하지 않은 사람은 다음 날부터 불참으로 집계됩니다.',
+  'att.reportHint': '훈련·경기 기준. 체크하지 않으면 자동으로 불참 처리됩니다.',
+  'att.total': '일정', 'att.rate': '출석률', 'att.thisMonth': '이번 달', 'att.lastMonth': '지난달', 'att.last3': '최근 3개월',
+  'att.sortName': '이름순', 'att.sortRate': '출석률 낮은 순', 'att.sortAbsent': '불참 많은 순', 'att.noData': '집계할 기록이 없습니다',
+
+  'poll.new': '투표 만들기', 'poll.edit': '투표 수정', 'poll.question': '질문', 'poll.options': '선택지',
+  'poll.optionN': '선택지 {n}', 'poll.addOption': '선택지 추가', 'poll.needTwo': '선택지를 2개 이상 입력하세요',
+  'poll.deadline': '마감', 'poll.deadlineHint': '비워두면 마감 없음', 'poll.linkEvent': '연결할 일정',
+  'poll.linked': '(연결된 일정)', 'poll.allowMultiple': '복수 선택 허용', 'poll.multiple': '복수 선택',
+  'poll.closesAt': '{d} 마감', 'poll.noDeadline': '마감 없음', 'poll.closed': '마감됨', 'poll.closeNow': '지금 마감',
+  'poll.voters': '{n}명 참여 · 투표자 보기', 'poll.empty': '투표가 없습니다', 'poll.tabOpen': '진행 중', 'poll.tabClosed': '마감',
+  'poll.joinTitle': '[참가 투표] {title}', 'poll.optJoin': '참가', 'poll.optLate': '늦게 참가', 'poll.optSkip': '불참',
+
+  'training.logs': '훈련 기록', 'training.newLog': '훈련 기록 작성', 'training.editLog': '훈련 기록 수정',
+  'training.newSession': '훈련 일정 등록', 'training.date': '훈련 날짜', 'training.linkEvent': '연결할 훈련 일정',
+  'training.items': '훈련 항목', 'training.addItem': '항목 추가', 'training.contentPh': '내용 (예: 전방 낙법 50회)',
+  'training.minPh': '분', 'training.min': '{n}분', 'training.totalMin': '총 {n}분', 'training.notes': '메모 / 특이사항',
+  'training.noCategory': '항목 없음', 'training.needCategory': '오른쪽에서 체력·낙법 같은 항목을 먼저 만들어 두면 편해요.',
+  'training.by': '작성: {name}', 'training.empty': '훈련 기록이 없습니다', 'training.emptyEvent': '아직 이 훈련의 기록이 없습니다',
+  'training.categories': '훈련 항목', 'training.categoriesHint': '트레이너가 직접 만드는 분류입니다 (예: 체력, 낙법, 로프워크).',
+  'training.catPh': '새 항목 이름', 'training.noCats': '아직 항목이 없습니다',
+
+  'files.upload': '드라이브에 올리기', 'files.opening': '여는 중…', 'files.openFolder': '공유 폴더 열기',
+  'files.hint': '파일은 PWS 공유 구글 드라이브 폴더에 저장되고, 여기에는 목록이 남습니다.',
+  'files.notConfigured': '구글 드라이브 연동 설정이 아직 안 되어 있습니다 (관리자 설정 필요)',
+  'files.added': '{n}개 파일을 등록했어요', 'files.empty': '등록된 파일이 없습니다',
+  'files.removeHint': '목록에서만 지워집니다. 드라이브의 원본은 그대로 남아요.',
+
+  'fv.adminOnly': '관리자만 볼 수 있는 정보입니다', 'fv.new': '해외선수 일정 등록', 'fv.edit': '해외선수 일정 수정',
+  'fv.playerName': '선수 이름', 'fv.country': '국가', 'fv.contact': '연락처', 'fv.arrival': '입국일', 'fv.departure': '출국일',
+  'fv.status': '상태', 'fv.schedule': '출전 일정', 'fv.scheduleHint': '예: 12/14 대회 메인이벤트, 12/15 세미나',
+  'fv.costs': '비용', 'fv.currency': '통화', 'fv.stay': '숙소', 'fv.stayCost': '숙박비', 'fv.flight': '항공편',
+  'fv.provideFlight': '항공권 제공', 'fv.flightCost': '항공권 비용', 'fv.guarantee': '개런티', 'fv.other': '기타 비용',
+  'fv.total': '총 비용', 'fv.notes': '메모', 'fv.provided': '제공', 'fv.notProvided': '미제공',
+  'fv.stay.dorm': '기숙사', 'fv.stay.hotel': '일반 숙소', 'fv.stay.none': '숙소 없음',
+  'fv.st.planned': '협의 중', 'fv.st.confirmed': '확정', 'fv.st.done': '완료', 'fv.st.cancelled': '취소',
+  'fv.upcomingCount': '예정·진행 중', 'fv.yearTotal': '총 비용', 'fv.guaranteeTotal': '개런티 합계',
+  'fv.tabUpcoming': '예정', 'fv.empty': '등록된 해외선수 일정이 없습니다', 'fv.nights': '{n}박', 'fv.by': '등록: {name}',
+
+  'members.hint': '본명 또는 링네임이 맞는지 확인하고 승인하세요.', 'members.pending': '승인 대기', 'members.approved': '회원',
+  'members.rejected': '거절·정지', 'members.approve': '승인', 'members.reject': '거절', 'members.suspend': '정지',
+  'members.noPending': '대기 중인 신청이 없습니다', 'members.empty': '회원이 없습니다', 'members.noName': '(이름 미입력)',
+  'members.applied': '{d} 신청', 'members.checkName': '이름이 본명/링네임이 아니면 거절하세요. 승인 후 이름은 회원 탭에서 고칠 수 있어요.',
+  'members.name': '이름', 'members.role': '권한', 'members.track': '근태 집계',
+
+  'calsub.title': '내 캘린더에 연결', 'calsub.body': '한 번 연결하면 PWS 일정이 내 구글 캘린더·아이폰 캘린더에 자동으로 나타나고, 일정이 바뀌면 따라서 바뀝니다.',
+  'calsub.google': '구글 캘린더에 추가', 'calsub.apple': '아이폰·맥 캘린더에 추가', 'calsub.url': '구독 주소', 'calsub.copy': '주소 복사',
+  'calsub.manual': '버튼이 안 되면: 구글 캘린더(PC) → 다른 캘린더 옆 + → URL로 추가 → 위 주소 붙여넣기.',
+  'calsub.note': '이 주소는 나만의 비밀 주소입니다. 남에게 공유하지 마세요. 구글 캘린더는 반영까지 몇 시간 걸릴 수 있어요.',
+  'calsub.reset': '주소 새로 만들기', 'calsub.resetConfirm': '새 주소를 만들면 기존 주소로 연결한 캘린더는 더 이상 갱신되지 않습니다. 계속할까요?',
+
+  'me.nameLocked': '이름 변경은 관리자에게 요청하세요.', 'me.language': '언어', 'me.myAttendance': '내 출석', 'me.last60': '최근 60일',
+}
+
+const en = {
+  'setup.title': 'Setup required',
+  'setup.body': 'Add your Supabase URL and key to the .env file (or Vercel environment variables).',
+
+  'common.loading': 'Loading', 'common.save': 'Save', 'common.saving': 'Saving…', 'common.cancel': 'Cancel',
+  'common.edit': 'Edit', 'common.delete': 'Delete', 'common.add': 'Add', 'common.all': 'All', 'common.viewAll': 'View all',
+  'common.search': 'Search', 'common.retry': 'Retry', 'common.confirmDelete': 'Delete this? This cannot be undone.',
+
+  'err.generic': 'Something went wrong', 'err.forbidden': "You don't have permission", 'err.lastAdmin': 'There must be at least one admin',
+
+  'auth.welcome': 'PWS Portal', 'auth.subtitle': 'Internal site for wrestlers, staff and trainers',
+  'auth.google': 'Continue with Google', 'auth.or': 'or', 'auth.email': 'Email', 'auth.password': 'Password',
+  'auth.pwHint': 'At least 8 characters', 'auth.signIn': 'Sign in', 'auth.signUp': 'Sign up', 'auth.signOut': 'Sign out',
+  'auth.noAccount': "Don't have an account?", 'auth.haveAccount': 'Already have an account?',
+  'auth.checkEmail': 'We sent a confirmation email. Click the link, then sign in.',
+  'auth.approvalNote': 'New accounts must be approved by an admin.',
+
+  'onb.title': 'Register your name', 'onb.body': 'PWS only allows your real name or ring name. Nicknames will not be approved.',
+  'onb.nameType': 'Name type', 'onb.nameHint': 'After approval, only an admin can change it.',
+  'onb.agree': 'I confirm this is my real name or the ring name I actually use', 'onb.submit': 'Request approval',
+  'onb.pendingTitle': 'Waiting for approval', 'onb.pendingBody': "You'll have access as soon as an admin approves you.",
+  'onb.editName': 'Edit name', 'onb.checkAgain': 'Check status',
+  'onb.rejected': 'Your request was rejected. Please re-apply with your real name or ring name.',
+  'onb.noProfile': 'Account not found', 'onb.noProfileBody': 'Try again shortly or contact an admin.',
+
+  'name.real': 'Real name', 'name.ring': 'Ring name',
+  'role.admin': 'Admin', 'role.trainer': 'Trainer', 'role.player': 'Wrestler', 'role.staff': 'Staff',
+  'roleDesc.admin': 'Edit everything, approve members, manage foreign talent', 'roleDesc.trainer': 'Post trainings/matches, manage attendance, training logs',
+  'roleDesc.player': 'Schedule, polls, Drive, check-in', 'roleDesc.staff': 'Same as wrestler',
+
+  'nav.dashboard': 'Home', 'nav.schedule': 'Schedule', 'nav.polls': 'Polls', 'nav.training': 'Training log', 'nav.files': 'Drive',
+  'nav.attendance': 'Attendance', 'nav.foreign': 'Foreign talent', 'nav.members': 'Members', 'nav.me': 'Me', 'nav.adminSection': 'Admin',
+
+  'dash.hello': 'Hi, {name}', 'dash.today': 'Today', 'dash.noToday': 'Nothing scheduled today',
+  'dash.upcoming': 'Coming up (2 weeks)', 'dash.noUpcoming': 'No upcoming events', 'dash.openPolls': 'Open polls',
+  'dash.recentTraining': 'Recent training', 'dash.pending': '{n} sign-up request(s) waiting for approval',
+
+  'etype.general': 'General', 'etype.training': 'Training', 'etype.match': 'Show',
+  'event.new': 'New event', 'event.edit': 'Edit event', 'event.title': 'Title', 'event.type': 'Type',
+  'event.typeHint': 'Only trainers and admins can post trainings and shows', 'event.start': 'Start', 'event.end': 'End (optional)',
+  'event.location': 'Location', 'event.description': 'Description', 'event.withPoll': 'Also create an attendance poll',
+  'event.notFound': 'Event not found', 'event.copyLink': 'Copy link', 'event.copied': 'Copied!', 'event.addGcal': 'Google Calendar',
+
+  'cal.today': 'Today', 'cal.noEvents': 'No events', 'cal.monthList': 'This month',
+
+  'att.title': 'Attendance', 'att.present': 'Present', 'att.late': 'Late', 'att.absent': 'Absent', 'att.none': 'Not checked',
+  'att.mine': 'My status', 'att.checkPresent': "I'm here", 'att.checkLate': "I'm late",
+  'att.onlyToday': 'Check-in is only available on the day',
+  'att.trainerHint': "Trainers can change anyone's status. Anyone who doesn't check in is counted absent from the next day.",
+  'att.reportHint': 'Trainings and shows only. No check-in = absent.',
+  'att.total': 'Events', 'att.rate': 'Rate', 'att.thisMonth': 'This month', 'att.lastMonth': 'Last month', 'att.last3': 'Last 3 months',
+  'att.sortName': 'By name', 'att.sortRate': 'Lowest rate', 'att.sortAbsent': 'Most absences', 'att.noData': 'No records yet',
+
+  'poll.new': 'New poll', 'poll.edit': 'Edit poll', 'poll.question': 'Question', 'poll.options': 'Options',
+  'poll.optionN': 'Option {n}', 'poll.addOption': 'Add option', 'poll.needTwo': 'Enter at least two options',
+  'poll.deadline': 'Deadline', 'poll.deadlineHint': 'Leave empty for no deadline', 'poll.linkEvent': 'Linked event',
+  'poll.linked': '(linked event)', 'poll.allowMultiple': 'Allow multiple choices', 'poll.multiple': 'Multiple choice',
+  'poll.closesAt': 'Closes {d}', 'poll.noDeadline': 'No deadline', 'poll.closed': 'Closed', 'poll.closeNow': 'Close now',
+  'poll.voters': '{n} voted · see who', 'poll.empty': 'No polls', 'poll.tabOpen': 'Open', 'poll.tabClosed': 'Closed',
+  'poll.joinTitle': '[Attendance] {title}', 'poll.optJoin': 'Joining', 'poll.optLate': 'Joining late', 'poll.optSkip': "Can't make it",
+
+  'training.logs': 'Training log', 'training.newLog': 'Write training log', 'training.editLog': 'Edit training log',
+  'training.newSession': 'New training session', 'training.date': 'Date', 'training.linkEvent': 'Linked training',
+  'training.items': 'Drills', 'training.addItem': 'Add drill', 'training.contentPh': 'Details (e.g. 50 front breakfalls)',
+  'training.minPh': 'min', 'training.min': '{n} min', 'training.totalMin': '{n} min total', 'training.notes': 'Notes',
+  'training.noCategory': 'No category', 'training.needCategory': 'Create categories like Conditioning or Bumps on the right first.',
+  'training.by': 'By {name}', 'training.empty': 'No training logs', 'training.emptyEvent': 'No log for this session yet',
+  'training.categories': 'Categories', 'training.categoriesHint': 'Trainers create these (e.g. Conditioning, Bumps, Ropes).',
+  'training.catPh': 'New category', 'training.noCats': 'No categories yet',
+
+  'files.upload': 'Upload to Drive', 'files.opening': 'Opening…', 'files.openFolder': 'Open shared folder',
+  'files.hint': 'Files are saved to the PWS shared Google Drive folder and listed here.',
+  'files.notConfigured': 'Google Drive is not set up yet (admin setup required)',
+  'files.added': 'Added {n} file(s)', 'files.empty': 'No files yet',
+  'files.removeHint': 'Removes it from this list only. The file stays in Drive.',
+
+  'fv.adminOnly': 'Visible to admins only', 'fv.new': 'New foreign talent booking', 'fv.edit': 'Edit booking',
+  'fv.playerName': 'Name', 'fv.country': 'Country', 'fv.contact': 'Contact', 'fv.arrival': 'Arrival', 'fv.departure': 'Departure',
+  'fv.status': 'Status', 'fv.schedule': 'Bookings', 'fv.scheduleHint': 'e.g. 12/14 show main event, 12/15 seminar',
+  'fv.costs': 'Costs', 'fv.currency': 'Currency', 'fv.stay': 'Accommodation', 'fv.stayCost': 'Accommodation cost', 'fv.flight': 'Flight',
+  'fv.provideFlight': 'We provide the flight', 'fv.flightCost': 'Flight cost', 'fv.guarantee': 'Guarantee', 'fv.other': 'Other costs',
+  'fv.total': 'Total', 'fv.notes': 'Notes', 'fv.provided': 'Provided', 'fv.notProvided': 'Not provided',
+  'fv.stay.dorm': 'Dorm', 'fv.stay.hotel': 'Hotel', 'fv.stay.none': 'None',
+  'fv.st.planned': 'Negotiating', 'fv.st.confirmed': 'Confirmed', 'fv.st.done': 'Done', 'fv.st.cancelled': 'Cancelled',
+  'fv.upcomingCount': 'Upcoming / ongoing', 'fv.yearTotal': 'total cost', 'fv.guaranteeTotal': 'guarantees',
+  'fv.tabUpcoming': 'Upcoming', 'fv.empty': 'No bookings yet', 'fv.nights': '{n} nights', 'fv.by': 'Added by {name}',
+
+  'members.hint': 'Check that each name is a real name or ring name before approving.', 'members.pending': 'Pending', 'members.approved': 'Members',
+  'members.rejected': 'Rejected / suspended', 'members.approve': 'Approve', 'members.reject': 'Reject', 'members.suspend': 'Suspend',
+  'members.noPending': 'No pending requests', 'members.empty': 'No members', 'members.noName': '(no name yet)',
+  'members.applied': 'Applied {d}', 'members.checkName': 'Reject if this is not a real name or ring name. You can edit names in the Members tab later.',
+  'members.name': 'Name', 'members.role': 'Role', 'members.track': 'Track attendance',
+
+  'calsub.title': 'Connect my calendar', 'calsub.body': 'Connect once and PWS events appear in your Google or iPhone calendar and stay up to date automatically.',
+  'calsub.google': 'Add to Google Calendar', 'calsub.apple': 'Add to iPhone / Mac Calendar', 'calsub.url': 'Subscription URL', 'calsub.copy': 'Copy URL',
+  'calsub.manual': 'If the button fails: Google Calendar (desktop) → + next to Other calendars → From URL → paste the URL above.',
+  'calsub.note': 'This URL is private to you. Do not share it. Google Calendar can take a few hours to show changes.',
+  'calsub.reset': 'Generate a new URL', 'calsub.resetConfirm': 'Calendars connected with the old URL will stop updating. Continue?',
+
+  'me.nameLocked': 'Ask an admin to change your name.', 'me.language': 'Language', 'me.myAttendance': 'My attendance', 'me.last60': 'Last 60 days',
+}
+
+const ja = {
+  'setup.title': '設定が必要です',
+  'setup.body': '.env ファイル（または Vercel の環境変数）に Supabase の URL とキーを設定してください。',
+
+  'common.loading': '読み込み中', 'common.save': '保存', 'common.saving': '保存中…', 'common.cancel': 'キャンセル',
+  'common.edit': '編集', 'common.delete': '削除', 'common.add': '追加', 'common.all': 'すべて', 'common.viewAll': 'すべて見る',
+  'common.search': '検索', 'common.retry': '再試行', 'common.confirmDelete': '削除しますか？元に戻せません。',
+
+  'err.generic': 'エラーが発生しました', 'err.forbidden': '権限がありません', 'err.lastAdmin': '管理者は最低1人必要です',
+
+  'auth.welcome': 'PWS ポータル', 'auth.subtitle': '選手・スタッフ・トレーナー専用の内部管理サイト',
+  'auth.google': 'Google アカウントで続行', 'auth.or': 'または', 'auth.email': 'メールアドレス', 'auth.password': 'パスワード',
+  'auth.pwHint': '8文字以上', 'auth.signIn': 'ログイン', 'auth.signUp': '新規登録', 'auth.signOut': 'ログアウト',
+  'auth.noAccount': 'アカウントをお持ちでないですか？', 'auth.haveAccount': 'すでにアカウントをお持ちですか？',
+  'auth.checkEmail': '確認メールを送信しました。リンクをクリックしてからログインしてください。',
+  'auth.approvalNote': '登録後、管理者の承認が必要です。',
+
+  'onb.title': '名前の登録', 'onb.body': 'PWS では本名またはリングネームのみ使用できます。ニックネームは承認されません。',
+  'onb.nameType': '名前の種類', 'onb.nameHint': '承認後は自分で変更できず、管理者に依頼する必要があります。',
+  'onb.agree': '本名または実際に使用しているリングネームであることを確認します', 'onb.submit': '承認を申請',
+  'onb.pendingTitle': '承認待ち', 'onb.pendingBody': '管理者が承認するとすぐに利用できます。',
+  'onb.editName': '名前を修正', 'onb.checkAgain': '承認を確認',
+  'onb.rejected': '承認されませんでした。本名またはリングネームに直して再申請してください。',
+  'onb.noProfile': 'アカウント情報が見つかりません', 'onb.noProfileBody': 'しばらくしてから再試行するか、管理者にお問い合わせください。',
+
+  'name.real': '本名', 'name.ring': 'リングネーム',
+  'role.admin': '管理者', 'role.trainer': 'トレーナー', 'role.player': '選手', 'role.staff': 'スタッフ',
+  'roleDesc.admin': '全項目の編集・会員承認・海外選手管理', 'roleDesc.trainer': '練習・試合の登録、出席管理、練習記録',
+  'roleDesc.player': '予定・投票・ドライブ・出席チェック', 'roleDesc.staff': '選手と同じ権限',
+
+  'nav.dashboard': 'ホーム', 'nav.schedule': '予定', 'nav.polls': '投票', 'nav.training': '練習記録', 'nav.files': 'ドライブ',
+  'nav.attendance': '勤怠管理', 'nav.foreign': '海外選手', 'nav.members': '会員管理', 'nav.me': 'マイページ', 'nav.adminSection': '管理者',
+
+  'dash.hello': '{name}さん、こんにちは', 'dash.today': '今日', 'dash.noToday': '今日の予定はありません',
+  'dash.upcoming': '今後の予定（2週間）', 'dash.noUpcoming': '予定はありません', 'dash.openPolls': '受付中の投票',
+  'dash.recentTraining': '最近の練習記録', 'dash.pending': '承認待ちの登録申請が{n}件あります',
+
+  'etype.general': '一般', 'etype.training': '練習', 'etype.match': '試合',
+  'event.new': '予定を登録', 'event.edit': '予定を編集', 'event.title': 'タイトル', 'event.type': '種類',
+  'event.typeHint': '練習・試合はトレーナー以上のみ登録できます', 'event.start': '開始', 'event.end': '終了（任意）',
+  'event.location': '場所', 'event.description': '説明', 'event.withPoll': '参加投票も一緒に作成',
+  'event.notFound': '予定が見つかりません', 'event.copyLink': 'リンクをコピー', 'event.copied': 'コピーしました', 'event.addGcal': 'Google カレンダー',
+
+  'cal.today': '今日', 'cal.noEvents': '予定なし', 'cal.monthList': '今月の予定',
+
+  'att.title': '出席', 'att.present': '参加', 'att.late': '遅刻', 'att.absent': '欠席', 'att.none': '未チェック',
+  'att.mine': '自分の出席', 'att.checkPresent': '参加でチェック', 'att.checkLate': '遅刻でチェック',
+  'att.onlyToday': '出席チェックは当日のみ可能です',
+  'att.trainerHint': 'トレーナーは出席状態を直接修正できます。チェックしなかった人は翌日から欠席として集計されます。',
+  'att.reportHint': '練習・試合が対象。チェックしないと自動的に欠席になります。',
+  'att.total': '予定数', 'att.rate': '出席率', 'att.thisMonth': '今月', 'att.lastMonth': '先月', 'att.last3': '直近3か月',
+  'att.sortName': '名前順', 'att.sortRate': '出席率が低い順', 'att.sortAbsent': '欠席が多い順', 'att.noData': '集計する記録がありません',
+
+  'poll.new': '投票を作成', 'poll.edit': '投票を編集', 'poll.question': '質問', 'poll.options': '選択肢',
+  'poll.optionN': '選択肢 {n}', 'poll.addOption': '選択肢を追加', 'poll.needTwo': '選択肢を2つ以上入力してください',
+  'poll.deadline': '締め切り', 'poll.deadlineHint': '空欄なら締め切りなし', 'poll.linkEvent': '関連する予定',
+  'poll.linked': '（関連する予定）', 'poll.allowMultiple': '複数選択を許可', 'poll.multiple': '複数選択',
+  'poll.closesAt': '{d} 締め切り', 'poll.noDeadline': '締め切りなし', 'poll.closed': '締め切り済み', 'poll.closeNow': '今すぐ締め切る',
+  'poll.voters': '{n}人が投票 · 投票者を見る', 'poll.empty': '投票はありません', 'poll.tabOpen': '受付中', 'poll.tabClosed': '締め切り',
+  'poll.joinTitle': '【参加投票】{title}', 'poll.optJoin': '参加', 'poll.optLate': '遅れて参加', 'poll.optSkip': '不参加',
+
+  'training.logs': '練習記録', 'training.newLog': '練習記録を書く', 'training.editLog': '練習記録を編集',
+  'training.newSession': '練習予定を登録', 'training.date': '練習日', 'training.linkEvent': '関連する練習',
+  'training.items': '練習項目', 'training.addItem': '項目を追加', 'training.contentPh': '内容（例：前受け身 50回）',
+  'training.minPh': '分', 'training.min': '{n}分', 'training.totalMin': '合計 {n}分', 'training.notes': 'メモ・特記事項',
+  'training.noCategory': '項目なし', 'training.needCategory': '右側で体力・受け身などの項目を先に作っておくと便利です。',
+  'training.by': '記録: {name}', 'training.empty': '練習記録はありません', 'training.emptyEvent': 'この練習の記録はまだありません',
+  'training.categories': '練習項目', 'training.categoriesHint': 'トレーナーが作成する分類です（例：体力、受け身、ロープワーク）。',
+  'training.catPh': '新しい項目名', 'training.noCats': 'まだ項目がありません',
+
+  'files.upload': 'ドライブにアップロード', 'files.opening': '開いています…', 'files.openFolder': '共有フォルダを開く',
+  'files.hint': 'ファイルは PWS の共有 Google ドライブフォルダに保存され、ここに一覧が残ります。',
+  'files.notConfigured': 'Google ドライブ連携がまだ設定されていません（管理者の設定が必要）',
+  'files.added': '{n}件のファイルを登録しました', 'files.empty': '登録されたファイルはありません',
+  'files.removeHint': '一覧から削除するだけです。ドライブの元ファイルは残ります。',
+
+  'fv.adminOnly': '管理者のみ閲覧できる情報です', 'fv.new': '海外選手の予定を登録', 'fv.edit': '海外選手の予定を編集',
+  'fv.playerName': '選手名', 'fv.country': '国', 'fv.contact': '連絡先', 'fv.arrival': '入国日', 'fv.departure': '出国日',
+  'fv.status': '状態', 'fv.schedule': '出場予定', 'fv.scheduleHint': '例：12/14 大会メインイベント、12/15 セミナー',
+  'fv.costs': '費用', 'fv.currency': '通貨', 'fv.stay': '宿泊', 'fv.stayCost': '宿泊費', 'fv.flight': '航空券',
+  'fv.provideFlight': '航空券を提供', 'fv.flightCost': '航空券代', 'fv.guarantee': 'ギャラ', 'fv.other': 'その他費用',
+  'fv.total': '総費用', 'fv.notes': 'メモ', 'fv.provided': '提供', 'fv.notProvided': '提供なし',
+  'fv.stay.dorm': '寮', 'fv.stay.hotel': '一般宿泊施設', 'fv.stay.none': '宿泊なし',
+  'fv.st.planned': '交渉中', 'fv.st.confirmed': '確定', 'fv.st.done': '完了', 'fv.st.cancelled': 'キャンセル',
+  'fv.upcomingCount': '予定・滞在中', 'fv.yearTotal': '総費用', 'fv.guaranteeTotal': 'ギャラ合計',
+  'fv.tabUpcoming': '予定', 'fv.empty': '海外選手の予定はありません', 'fv.nights': '{n}泊', 'fv.by': '登録: {name}',
+
+  'members.hint': '本名またはリングネームか確認してから承認してください。', 'members.pending': '承認待ち', 'members.approved': '会員',
+  'members.rejected': '却下・停止', 'members.approve': '承認', 'members.reject': '却下', 'members.suspend': '停止',
+  'members.noPending': '承認待ちの申請はありません', 'members.empty': '会員がいません', 'members.noName': '（名前未入力）',
+  'members.applied': '{d} 申請', 'members.checkName': '本名・リングネームでなければ却下してください。承認後の名前は会員タブで修正できます。',
+  'members.name': '名前', 'members.role': '権限', 'members.track': '勤怠集計',
+
+  'calsub.title': '自分のカレンダーに連携', 'calsub.body': '一度連携すると、PWS の予定が Google カレンダーや iPhone のカレンダーに自動で表示され、変更も反映されます。',
+  'calsub.google': 'Google カレンダーに追加', 'calsub.apple': 'iPhone・Mac のカレンダーに追加', 'calsub.url': '購読 URL', 'calsub.copy': 'URL をコピー',
+  'calsub.manual': 'ボタンが動かない場合：Google カレンダー（PC）→「他のカレンダー」横の + → URL で追加 → 上の URL を貼り付け。',
+  'calsub.note': 'この URL はあなた専用です。他の人に共有しないでください。Google カレンダーへの反映には数時間かかることがあります。',
+  'calsub.reset': 'URL を再発行', 'calsub.resetConfirm': '再発行すると、古い URL で連携したカレンダーは更新されなくなります。続けますか？',
+
+  'me.nameLocked': '名前の変更は管理者に依頼してください。', 'me.language': '言語', 'me.myAttendance': '自分の出席', 'me.last60': '直近60日',
+}
+
+export const messages = { ko, en, ja }
