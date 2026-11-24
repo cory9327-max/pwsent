@@ -34,7 +34,7 @@ export function buildIcs(events) {
       `LAST-MODIFIED:${stamp(e.updated_at || e.starts_at)}`,
       `DTSTART:${stamp(e.starts_at)}`,
       `DTEND:${stamp(end)}`,
-      `SUMMARY:${esc(`[${TYPE[e.type] || e.type}${e.match_kind ? ` ${e.match_kind}` : ''}] ${e.title}`)}`,
+      `SUMMARY:${esc(`[${e.type_name || TYPE[e.type] || e.type}${e.match_kind ? ` ${e.match_kind}` : ''}] ${e.title}`)}`,
     )
     if (e.description) lines.push(`DESCRIPTION:${esc(e.description)}`)
     if (e.location) lines.push(`LOCATION:${esc(e.location)}`)

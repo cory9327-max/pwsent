@@ -3,14 +3,15 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/auth'
 import { useT } from '../lib/i18n'
 import { fromLocalInput, toLocalInput } from '../lib/format'
-import { EVENT_TYPES, MATCH_KINDS, TRAINER_ONLY_TYPES } from '../lib/presets'
-import { ChoiceInput, DateTimeInput } from './inputs'
-import LocationPicker from './LocationPicker'
+import { LOCATIONS, MATCH_KINDS } from '../lib/presets'
+import { useTypes } from '../lib/types'
+import { DateTimeInput } from './inputs'
+import ManagedChoice from './ManagedChoice'
+import TypeManager from './TypeManager'
 import { ErrorText, Field, Modal } from './ui'
 
 const pad = (n) => String(n).padStart(2, '0')
 const MAX_REPEAT = 60
-const hasAttendance = (type) => TRAINER_ONLY_TYPES.includes(type)
 
 // 기본 종료 시각: 시작과 같은 날, n시간 뒤 (23시를 넘기지 않음)
 const AUTO_END_HOURS = { match: 3 } // 경기만 자동으로 채움. 훈련 등은 종료를 비워 둠
@@ -30,10 +31,13 @@ function addDays(local, days) {
 /** 일정 등록/수정. 훈련·경기는 트레이너 이상만. 새 일정은 매주/격주 반복 등록 가능 */
 export default function EventForm({ event, defaultDate, defaultType, onClose, onSaved }) {
   const { t } = useT()
-  const { user, isTrainer } = useAuth()
+  const { user, isTrainer, isAdmin } = useAuth()
+  const { types, label, color, hasAttendance, managed } = useTypes()
+  const [manageTypes, setManageTypes] = useState(false)
   const editing = Boolean(event)
   const tomorrow = toLocalInput(new Date(Date.now() + 864e5).toISOString()).slice(0, 10)
-  const firstType = isTrainer ? (defaultType || 'training') : 'general'
+  const allowed = types.filter((x) => isTrainer || !x.attendance).map((x) => x.key)
+  const firstType = allowed.includes(defaultType) ? defaultType : (allowed[0] || 'general')
 
   const firstStart = `${defaultDate || tomorrow}T19:00`
   const [f, setF] = useState({
@@ -79,7 +83,7 @@ export default function EventForm({ event, defaultDate, defaultType, onClose, on
     supabase.from('events').select('location, match_kind').order('created_at', { ascending: false }).limit(200)
       .then(({ data }) => {
         const uniq = (k, base) => [...new Set((data || []).map((r) => r[k]).filter((v) => v && !base.includes(v)))].slice(0, 6)
-        setUsed({ locations: uniq('location', []), kinds: uniq('match_kind', MATCH_KINDS) })
+        setUsed({ locations: uniq('location', []), kinds: uniq('match_kind', []) })
       })
   }, [])
 
@@ -145,19 +149,25 @@ export default function EventForm({ event, defaultDate, defaultType, onClose, on
       <form onSubmit={submit} className="form">
         <Field label={t('event.type')}>
           <div className="chips">
-            {EVENT_TYPES.map((ty) => (
+            {types.map(({ key: ty }) => (
               <button type="button" key={ty} disabled={hasAttendance(ty) && !isTrainer}
-                className={f.type === ty ? `on type-bg-${ty}` : ''}
+                className={f.type === ty ? 'on' : ''} style={f.type === ty ? { background: color(ty) } : null}
                 onClick={() => setType(ty)}>
-                {t(`etype.${ty}`)}
+                {label(ty)}
               </button>
             ))}
           </div>
+          {isAdmin && managed && (
+            <button type="button" className="link-btn small left muted-link" onClick={() => setManageTypes(!manageTypes)}>
+              {manageTypes ? t('list.closeManage') : t('types.manage')}
+            </button>
+          )}
+          {manageTypes && <TypeManager onDeleted={(k) => k === f.type && setType(allowed.find((x) => x !== k) || 'general')} />}
           {!isTrainer && <span className="field-hint">{t('event.typeHint')}</span>}
         </Field>
         {f.type === 'match' && (
           <Field label={t('event.matchKind')}>
-            <ChoiceInput options={MATCH_KINDS} extra={used.kinds} value={f.match_kind} allowEmpty={false}
+            <ManagedChoice table="match_kinds" fallback={MATCH_KINDS} recent={used.kinds} value={f.match_kind} allowEmpty={false}
               placeholder={t('event.matchKindPh')} onChange={(v) => setF({ ...f, match_kind: v })} />
           </Field>
         )}
@@ -177,7 +187,8 @@ export default function EventForm({ event, defaultDate, defaultType, onClose, on
           )}
         </Field>
         <Field label={t('event.location')}>
-          <LocationPicker value={f.location} recent={used.locations} onChange={(v) => setF({ ...f, location: v })} />
+          <ManagedChoice table="locations" fallback={LOCATIONS} recent={used.locations} value={f.location}
+            placeholder={t('event.locationPh')} onChange={(v) => setF({ ...f, location: v })} />
         </Field>
         <Field label={t('event.description')}>
           <textarea rows={2} value={f.description} onChange={set('description')} />

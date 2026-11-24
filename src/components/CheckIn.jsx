@@ -3,19 +3,20 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/auth'
 import { useT } from '../lib/i18n'
 import { seoulDate } from '../lib/format'
+import { useTypes } from '../lib/types'
 import { ErrorText, StatusPill } from './ui'
 
-export const isAttendanceEvent = (ev) => ev.type === 'training' || ev.type === 'match'
 export const isToday = (ev) => seoulDate(ev.starts_at) === seoulDate()
 
 /** 본인 출석 체크 (당일만, 참여/지각 중 선택. 한 번 찍으면 수정은 트레이너만) */
 export default function CheckIn({ event, record, onDone, compact }) {
   const { t } = useT()
   const { user } = useAuth()
+  const { hasAttendance } = useTypes()
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState(null)
 
-  if (!isAttendanceEvent(event)) return null
+  if (!hasAttendance(event.type)) return null
   if (record) return <div className="checkin done"><span className="muted small">{t('att.mine')}</span> <StatusPill status={record.status} /></div>
 
   const today = isToday(event)

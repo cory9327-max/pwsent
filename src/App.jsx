@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import { isConfigured } from './lib/supabase'
 import { AuthProvider, useAuth } from './lib/auth'
 import { useT } from './lib/i18n'
+import { TypesProvider } from './lib/types'
 import Layout from './components/Layout'
 import Login from './pages/Login'
 import Onboarding from './pages/Onboarding'
@@ -47,6 +48,7 @@ function Gate() {
   const guard = (ok, el) => (ok ? el : <Navigate to="/" replace />)
 
   return (
+    <TypesProvider>
     <Layout>
       <Routes>
         <Route path="/" element={<Dashboard />} />
@@ -62,5 +64,6 @@ function Gate() {
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Layout>
+    </TypesProvider>
   )
 }

@@ -39,7 +39,7 @@
 2. `supabase/schema.sql` 파일을 열어 **`YOUR_EMAIL@gmail.com`을 본인 구글 이메일로 바꿉니다.**
    이 이메일로 가입하면 자동으로 관리자가 됩니다.
 3. 대시보드 왼쪽 **SQL Editor** → 파일 내용 전체 붙여넣기 → **Run**.
-   이어서 `supabase/03_events.sql`도 같은 방법으로 실행합니다 (일정 종류·반복 일정·캘린더 구독. 02 내용 포함). 그다음 `supabase/04_locations.sql`도 실행합니다 (기본 장소 목록).
+   이어서 `supabase/03_events.sql`도 같은 방법으로 실행합니다 (일정 종류·반복 일정·캘린더 구독. 02 내용 포함). 그다음 `04_locations.sql`, `05_types.sql`을 차례로 실행합니다 (기본 장소 목록, 일정 종류·경기 구분 관리). 파일마다 새 탭에서 하나씩 실행하세요.
 4. **Project Settings → API** 에서 `Project URL`과 `anon public` 키를 메모해 둡니다.
 
 > 이메일을 안 바꾸고 실행했다면: 먼저 가입한 뒤 SQL Editor에서
@@ -85,7 +85,7 @@
 ## 운영 팁
 - **회원 완전 삭제**: 회원 관리에서 삭제 후, Supabase → Authentication → Users에서도 해당 계정을 지우면 재가입부터 다시 해야 합니다. "정지"만 하면 로그인은 되지만 아무것도 볼 수 없습니다.
 - **기본 장소 목록**: 관리자가 일정 등록 화면에서 직접 추가·삭제 (`supabase/04_locations.sql` 실행 필요).
-- **경기 구분·일정 종류 목록 수정**: `src/lib/presets.js`.
+- **일정 종류·경기 구분**: 관리자가 일정 등록 화면에서 직접 추가·수정 (`supabase/05_types.sql` 실행 필요).
 - **문구 수정**: `src/lib/messages.js` 한 파일에 3개 언어 문구가 모두 있습니다.
 - **기존 데이터 백업**: Supabase → Database → Backups (무료 플랜은 매일 자동 백업 7일 보관).
 

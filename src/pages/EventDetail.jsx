@@ -5,7 +5,8 @@ import { useAuth } from '../lib/auth'
 import { useT } from '../lib/i18n'
 import { downloadIcs, fmtDate, fmtTime, googleCalendarUrl, seoulDate } from '../lib/format'
 import EventForm from '../components/EventForm'
-import CheckIn, { isAttendanceEvent } from '../components/CheckIn'
+import CheckIn from '../components/CheckIn'
+import { useTypes } from '../lib/types'
 import { POLL_SELECT, PollCard, PollForm } from '../components/Polls'
 import { LOG_SELECT, LogCard, LogForm } from '../components/TrainingLog'
 import { DriveButtons, FileTable } from '../components/FileList'
@@ -16,6 +17,7 @@ export default function EventDetail() {
   const nav = useNavigate()
   const { t, lang } = useT()
   const { user, members, canEdit, nameOf, isTrainer } = useAuth()
+  const { hasAttendance, color } = useTypes()
   const [ev, setEv] = useState(undefined)
   const [att, setAtt] = useState([])
   const [polls, setPolls] = useState([])
@@ -79,7 +81,7 @@ export default function EventDetail() {
   return (
     <div className="page">
       <Link to="/schedule" className="back"><Icon name="chevL" size={16} /> {t('nav.schedule')}</Link>
-      <div className={`card event-hero type-l-${ev.type}`}>
+      <div className="card event-hero" style={{ borderLeftColor: color(ev.type) }}>
         <div className="hero-top">
           <span className="row-actions"><TypeBadge type={ev.type} kind={ev.match_kind} />{ev.series_id && <span className="badge type-general-soft">{t('event.repeating')}</span>}</span>
           <div className="row-actions">
@@ -104,7 +106,7 @@ export default function EventDetail() {
         <ErrorText error={error} />
       </div>
 
-      {isAttendanceEvent(ev) && (
+      {hasAttendance(ev.type) && (
         <section>
           <div className="sec-head">
             <h2 className="sec-title">{t('att.title')}</h2>

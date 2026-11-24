@@ -4,7 +4,7 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/auth'
 import { useT } from '../lib/i18n'
 import { fmtDate, fmtTime, localeOf, seoulDate } from '../lib/format'
-import { EVENT_TYPES } from '../lib/presets'
+import { useTypes } from '../lib/types'
 import EventForm from '../components/EventForm'
 import CalendarSubscribe from '../components/CalendarSubscribe'
 import { Empty, Icon, Modal, TypeBadge } from '../components/ui'
@@ -15,6 +15,7 @@ const ymd = (y, m, d) => `${y}-${pad(m + 1)}-${pad(d)}`
 export default function Schedule() {
   const { t, lang } = useT()
   const { nameOf } = useAuth()
+  const { types, label, color } = useTypes()
   const now = new Date()
   const [ym, setYm] = useState({ y: now.getFullYear(), m: now.getMonth() })
   const [events, setEvents] = useState([])
@@ -74,9 +75,9 @@ export default function Schedule() {
           <button className="btn ghost small" onClick={() => { setYm({ y: now.getFullYear(), m: now.getMonth() }); setSelected(today) }}>{t('cal.today')}</button>
         </div>
         <div className="chips">
-          {['all', ...EVENT_TYPES].map((f) => (
+          {['all', ...types.map((x) => x.key)].map((f) => (
             <button key={f} className={filter === f ? 'on' : ''} onClick={() => setFilter(f)}>
-              {f !== 'all' && <i className={`dot type-bg-${f}`} />}{f === 'all' ? t('common.all') : t(`etype.${f}`)}
+              {f !== 'all' && <i className="dot" style={{ background: color(f) }} />}{f === 'all' ? t('common.all') : label(f)}
             </button>
           ))}
         </div>
@@ -92,10 +93,10 @@ export default function Schedule() {
                 onClick={() => d && setSelected(d)} onDoubleClick={() => d && setModal({ date: d })}>
                 {d && <span className="cal-num">{Number(d.slice(8))}</span>}
                 <span className="cal-events">
-                  {(byDay[d] || []).slice(0, 3).map((e) => <span key={e.id} className={`cal-ev type-bg-${e.type}`}>{e.title}</span>)}
+                  {(byDay[d] || []).slice(0, 3).map((e) => <span key={e.id} className="cal-ev" style={{ background: color(e.type) }}>{e.title}</span>)}
                   {(byDay[d] || []).length > 3 && <span className="cal-more">+{byDay[d].length - 3}</span>}
                 </span>
-                <span className="cal-dots">{(byDay[d] || []).slice(0, 4).map((e) => <i key={e.id} className={`dot type-bg-${e.type}`} />)}</span>
+                <span className="cal-dots">{(byDay[d] || []).slice(0, 4).map((e) => <i key={e.id} className="dot" style={{ background: color(e.type) }} />)}</span>
               </button>
             ))}
           </div>

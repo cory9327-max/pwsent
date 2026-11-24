@@ -4,7 +4,8 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/auth'
 import { useT } from '../lib/i18n'
 import { fmtDate, fmtTime, seoulDate } from '../lib/format'
-import CheckIn, { isAttendanceEvent } from '../components/CheckIn'
+import CheckIn from '../components/CheckIn'
+import { useTypes } from '../lib/types'
 import { POLL_SELECT, PollCard, PollForm, isOpen } from '../components/Polls'
 import { LOG_SELECT, LogCard } from '../components/TrainingLog'
 import EventForm from '../components/EventForm'
@@ -13,6 +14,7 @@ import { Empty, Icon, TypeBadge } from '../components/ui'
 export default function Dashboard() {
   const { t, lang } = useT()
   const { user, profile, isAdmin } = useAuth()
+  const { hasAttendance, color } = useTypes()
   const [events, setEvents] = useState([])
   const [mine, setMine] = useState({})
   const [polls, setPolls] = useState([])
@@ -35,7 +37,7 @@ export default function Dashboard() {
     setPolls((pl.data || []).filter(isOpen).slice(0, 4))
     setLogs(lg.data || [])
     setCats(ct.data || [])
-    const ids = evs.filter(isAttendanceEvent).map((e) => e.id)
+    const ids = evs.filter((e) => hasAttendance(e.type)).map((e) => e.id)
     if (ids.length) {
       const { data } = await supabase.from('attendance').select('*').eq('user_id', user.id).in('event_id', ids)
       setMine(Object.fromEntries((data || []).map((a) => [a.event_id, a])))
@@ -44,7 +46,7 @@ export default function Dashboard() {
       const { count } = await supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('status', 'pending')
       setPending(count || 0)
     }
-  }, [user.id, isAdmin])
+  }, [user.id, isAdmin, hasAttendance])
 
   useEffect(() => { load() }, [load])
 
@@ -76,7 +78,7 @@ export default function Dashboard() {
         {todays.length === 0 ? <Empty>{t('dash.noToday')}</Empty> : (
           <div className="today-grid">
             {todays.map((e) => (
-              <div key={e.id} className={`card today type-l-${e.type}`}>
+              <div key={e.id} className="card today" style={{ borderLeftColor: color(e.type) }}>
                 <Link to={`/events/${e.id}`} className="today-main">
                   <TypeBadge type={e.type} kind={e.match_kind} />
                   <h3>{e.title}</h3>

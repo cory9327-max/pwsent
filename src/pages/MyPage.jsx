@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/auth'
 import { useT } from '../lib/i18n'
 import { fmtDate, seoulDate } from '../lib/format'
+import { useTypes } from '../lib/types'
 import CalendarSubscribe from '../components/CalendarSubscribe'
 import { Empty, LangSwitch, RoleBadge, StatusPill, TypeBadge } from '../components/ui'
 
@@ -11,6 +12,7 @@ export default function MyPage() {
   const { t, lang } = useT()
   const { user, profile, signOut } = useAuth()
   const [items, setItems] = useState([])
+  const { attendanceKeys } = useTypes()
 
   useEffect(() => {
     (async () => {
@@ -19,7 +21,7 @@ export default function MyPage() {
       const from = since > joined ? since : joined
       from.setHours(0, 0, 0, 0)
       const { data: evs } = await supabase.from('events').select('id,title,type,starts_at')
-        .in('type', ['training', 'match']).gte('starts_at', from.toISOString()).lte('starts_at', new Date().toISOString())
+        .in('type', attendanceKeys).gte('starts_at', from.toISOString()).lte('starts_at', new Date().toISOString())
         .order('starts_at', { ascending: false })
       const ids = (evs || []).map((e) => e.id)
       const { data: att } = ids.length
@@ -29,7 +31,7 @@ export default function MyPage() {
       const today = seoulDate()
       setItems((evs || []).map((e) => ({ ...e, status: m[e.id] || (seoulDate(e.starts_at) < today ? 'absent' : 'none') })))
     })()
-  }, [user.id, profile])
+  }, [user.id, profile, attendanceKeys.join()])
 
   const c = items.reduce((a, i) => ({ ...a, [i.status]: (a[i.status] || 0) + 1 }), {})
   const counted = items.filter((i) => i.status !== 'none').length

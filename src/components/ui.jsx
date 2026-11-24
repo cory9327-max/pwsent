@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { LANGS, useT } from '../lib/i18n'
+import { useTypes } from '../lib/types'
 
 const PATHS = {
   home: 'M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z',
@@ -57,8 +58,8 @@ export function Modal({ title, onClose, children, wide }) {
 }
 
 export function TypeBadge({ type, kind }) {
-  const { t } = useT()
-  return <span className={`badge type-${type}`}>{t(`etype.${type}`)}{kind ? ` · ${kind}` : ''}</span>
+  const { label, color } = useTypes()
+  return <span className="badge type-chip" style={{ '--c': color(type) }}>{label(type)}{kind ? ` · ${kind}` : ''}</span>
 }
 
 export function RoleBadge({ role }) {
