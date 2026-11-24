@@ -11,7 +11,7 @@ const ko = {
 
   'err.generic': '오류가 발생했습니다', 'err.forbidden': '권한이 없습니다', 'err.lastAdmin': '관리자는 최소 1명 있어야 합니다',
 
-  'auth.welcome': 'PWS 포털', 'auth.subtitle': '선수·스탭·트레이너 전용 내부 관리 사이트',
+  'auth.welcome': 'PWS Portal', 'auth.subtitle': '선수·스탭·트레이너 전용 내부 관리 사이트',
   'auth.google': 'Google 계정으로 계속하기', 'auth.or': '또는', 'auth.email': '이메일', 'auth.password': '비밀번호',
   'auth.pwHint': '8자 이상', 'auth.signIn': '로그인', 'auth.signUp': '회원가입', 'auth.signOut': '로그아웃',
   'auth.noAccount': '계정이 없나요?', 'auth.haveAccount': '이미 계정이 있나요?',
@@ -215,7 +215,7 @@ const ja = {
 
   'err.generic': 'エラーが発生しました', 'err.forbidden': '権限がありません', 'err.lastAdmin': '管理者は最低1人必要です',
 
-  'auth.welcome': 'PWS ポータル', 'auth.subtitle': '選手・スタッフ・トレーナー専用の内部管理サイト',
+  'auth.welcome': 'PWS Portal', 'auth.subtitle': '選手・スタッフ・トレーナー専用の内部管理サイト',
   'auth.google': 'Google アカウントで続行', 'auth.or': 'または', 'auth.email': 'メールアドレス', 'auth.password': 'パスワード',
   'auth.pwHint': '8文字以上', 'auth.signIn': 'ログイン', 'auth.signUp': '新規登録', 'auth.signOut': 'ログアウト',
   'auth.noAccount': 'アカウントをお持ちでないですか？', 'auth.haveAccount': 'すでにアカウントをお持ちですか？',

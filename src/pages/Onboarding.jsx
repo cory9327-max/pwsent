@@ -84,7 +84,7 @@ function Shell({ children, onSignOut }) {
   const { t } = useT()
   return (
     <div className="center-screen dark">
-      <div className="onb-top"><span className="brand-mark">PWS</span><LangSwitch compact /></div>
+      <div className="onb-top"><img className="brand-logo" src="/logo-wide.png" alt="PWS" /><LangSwitch compact /></div>
       <div className="card narrow">{children}</div>
       <button className="link-btn light" onClick={onSignOut}>{t('auth.signOut')}</button>
     </div>

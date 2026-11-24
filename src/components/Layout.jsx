@@ -37,7 +37,7 @@ export default function Layout({ children }) {
     <div className="shell">
       <aside className={`sidebar ${menuOpen ? 'open' : ''}`}>
         <div className="brand">
-          <span className="brand-mark">PWS</span>
+          <img className="brand-logo" src="/logo-wide.png" alt="PWS" />
           <span className="brand-sub">Portal</span>
         </div>
         <nav className="nav">
@@ -68,7 +68,7 @@ export default function Layout({ children }) {
       <div className="main">
         <header className="topbar">
           <button className="icon-btn" onClick={() => setMenuOpen(true)} aria-label="menu"><Icon name="menu" /></button>
-          <span className="brand-mark small">PWS</span>
+          <img className="brand-logo small" src="/logo-wide.png" alt="PWS" />
           <LangSwitch compact />
         </header>
         <main className="content">{children}</main>

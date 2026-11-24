@@ -37,7 +37,7 @@ export default function Login() {
       <div className="login-art" aria-hidden="true">
         <div className="ring">
           <span className="rope r1" /><span className="rope r2" /><span className="rope r3" />
-          <div className="login-logo">PWS</div>
+          <img className="login-logo" src="/logo.png" alt="Pro Wrestling Society Korea" />
         </div>
       </div>
       <div className="login-panel">

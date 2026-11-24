@@ -115,11 +115,13 @@ textarea { resize: vertical; }
   position: sticky; top: 0; height: 100vh; width: 236px; flex-shrink: 0;
   background: var(--side); color: #e9e9ee; display: flex; flex-direction: column; padding: 20px 14px;
 }
-.brand { display: flex; align-items: baseline; gap: 8px; padding: 4px 10px 22px; }
+.brand { display: flex; align-items: center; gap: 8px; padding: 4px 10px 22px; }
 .brand-mark {
   font-weight: 900; font-size: 22px; letter-spacing: .04em; color: #fff;
   padding: 2px 8px; border: 2.5px solid var(--red); border-radius: 4px; line-height: 1.1;
 }
+.brand-logo { height: 40px; border-radius: 8px; background: #fff; display: block; }
+.brand-logo.small { height: 32px; border: 1px solid var(--line); }
 .brand-mark.small { font-size: 16px; color: var(--ink); }
 .brand-sub { color: #8c8c96; font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: .12em; }
 .nav { display: flex; flex-direction: column; gap: 2px; flex: 1; overflow-y: auto; }
@@ -234,7 +236,7 @@ textarea { resize: vertical; }
 .rope.r1 { inset: 0; border-color: var(--red); }
 .rope.r2 { inset: 7%; border-color: #fff; opacity: .9; }
 .rope.r3 { inset: 14%; border-color: #3b5bdb; }
-.login-logo { font-size: clamp(54px, 9vw, 110px); font-weight: 900; color: #fff; letter-spacing: .04em; text-shadow: 0 6px 30px rgba(217, 43, 43, .5); }
+.login-logo { width: 58%; aspect-ratio: 1; border-radius: 18px; background: #fff; box-shadow: 0 10px 50px rgba(0, 0, 0, .5); }
 .login-panel { display: flex; flex-direction: column; padding: 24px; background: var(--bg); }
 .login-top { display: flex; justify-content: flex-end; }
 .login-box { margin: auto; width: min(380px, 100%); display: flex; flex-direction: column; gap: 16px; }
@@ -455,7 +457,6 @@ textarea { resize: vertical; }
   .login { grid-template-columns: 1fr; }
   .login-art { min-height: 200px; }
   .ring { width: 200px; }
-  .login-logo { font-size: 52px; }
   .cal-cell { min-height: 54px; padding: 4px; align-items: center; }
   .cal-events { display: none; }
   .cal-dots { display: flex; }
