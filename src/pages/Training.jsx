@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import { fmtDate, fmtTime } from '../lib/format'
+import { fmtDate, fmtTime, seoulDate } from '../lib/format'
 import { useAuth } from '../lib/auth'
 import { useT } from '../lib/i18n'
 import { LOG_SELECT, LogCard, LogForm } from '../components/TrainingLog'
 import EventForm from '../components/EventForm'
-import { OpenWeeksModal, WeekVoteCard } from '../components/WeeklyTraining'
+import { OpenWeeksModal } from '../components/WeeklyTraining'
 import { useWeeklyTraining } from '../lib/weekly'
 import { Empty, ErrorText, Icon, confirmDelete } from '../components/ui'
 
@@ -58,7 +58,7 @@ export default function Training() {
   }
 
   const logged = new Set(logs.map((l) => l.event_id).filter(Boolean))
-  const unlogged = events.filter((e) => new Date(e.starts_at) <= new Date() && e.status !== 'tentative' && !logged.has(e.id)).slice(0, 8)
+  const unlogged = events.filter((e) => seoulDate(e.starts_at) <= seoulDate() && e.status !== 'tentative' && !logged.has(e.id)).slice(0, 8)
   const shown = filter ? logs.filter((l) => l.training_log_items?.some((i) => i.category_id === filter)) : logs
   const done = () => { setModal(null); load() }
 
@@ -74,15 +74,6 @@ export default function Training() {
           </div>
         )}
       </div>
-
-      {weekly.weeks.length > 0 && (
-        <section>
-          <h2 className="sec-title">{t('wk.section')}</h2>
-          <div className="grid-cards">
-            {weekly.weeks.map((w) => <WeekVoteCard key={w.weekStart} week={w} minPeople={weekly.minPeople} onChange={() => { weekly.reload(); load() }} />)}
-          </div>
-        </section>
-      )}
 
       <div className="training-layout">
         <section>

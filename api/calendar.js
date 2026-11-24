@@ -62,5 +62,6 @@ export default async function handler(req, res) {
   res.setHeader('Content-Type', 'text/calendar; charset=utf-8')
   res.setHeader('Content-Disposition', 'inline; filename="pws.ics"')
   res.setHeader('Cache-Control', 'private, max-age=300')
-  return res.status(200).send(buildIcs(await r.json()))
+  const events = (await r.json()).filter((e) => e.status !== 'tentative') // 모집 중인 훈련은 제외
+  return res.status(200).send(buildIcs(events))
 }

@@ -36,7 +36,7 @@ export default function Dashboard() {
       supabase.from('training_logs').select(LOG_SELECT).order('log_date', { ascending: false }).limit(2),
       supabase.from('training_categories').select('*').order('name'),
     ])
-    const evs = ev.data || []
+    const evs = (ev.data || []).filter((e) => e.status !== 'tentative')
     setEvents(evs)
     setPolls((pl.data || []).filter(isOpen).slice(0, 4))
     setLogs(lg.data || [])

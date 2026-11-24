@@ -121,6 +121,8 @@ const ko = {
   'wk.titleWeekend': '주말 훈련', 'wk.titleWeekday': '평일 훈련', 'wk.slotNewPh': '새 타임 이름', 'wk.minPeople': '평일 훈련 진행 기준 인원', 'wk.slotHint': '시간표를 바꾸면 앞으로 여는 훈련부터 적용됩니다. 이미 열린 훈련은 그대로입니다.',
   'wk.tentativeNote': '모집 중인 훈련입니다. 트레이너가 확정하면 진행됩니다.',
 
+  'wk.deleteWeek': '이 주 전체 삭제', 'wk.deleteWeekConfirm': '이 주에 열린 훈련 {n}개와 투표를 모두 삭제할까요? 되돌릴 수 없습니다.', 'wk.deleteDayConfirm': '{d} 훈련과 그 투표를 삭제할까요?', 'wk.editTitle': '훈련 수정', 'wk.slots': '타임', 'wk.addSlot': '타임 추가', 'wk.slotsDayHint': '이 날에만 적용됩니다. 타임을 지우면 그 타임의 투표도 집계에서 빠집니다.',
+
   'me.nameLocked': '이름 변경은 관리자에게 요청하세요.', 'me.language': '언어', 'me.myAttendance': '내 출석', 'me.last60': '최근 60일',
 }
 
@@ -244,6 +246,8 @@ const en = {
   'wk.titleWeekend': 'Weekend training', 'wk.titleWeekday': 'Weekday training', 'wk.slotNewPh': 'New slot name', 'wk.minPeople': 'People needed for a weekday session', 'wk.slotHint': 'Timetable changes apply to sessions opened from now on.',
   'wk.tentativeNote': 'This session is recruiting. It runs once a trainer confirms it.',
 
+  'wk.deleteWeek': 'Delete this week', 'wk.deleteWeekConfirm': 'Delete the {n} session(s) opened this week and their votes? This cannot be undone.', 'wk.deleteDayConfirm': 'Delete the {d} session and its votes?', 'wk.editTitle': 'Edit session', 'wk.slots': 'Slots', 'wk.addSlot': 'Add slot', 'wk.slotsDayHint': 'Applies to this day only. Removing a slot drops its votes from the count.',
+
   'me.nameLocked': 'Ask an admin to change your name.', 'me.language': 'Language', 'me.myAttendance': 'My attendance', 'me.last60': 'Last 60 days',
 }
 
@@ -366,6 +370,8 @@ const ja = {
   'wk.preview': '登録される練習 {n}件', 'wk.exists': '登録済み', 'wk.hasMatch': '試合あり', 'wk.noDays': '曜日を選んでください', 'wk.create': '{n}件の練習を開く', 'wk.noSlots': '時間割に枠が1つ以上必要です',
   'wk.titleWeekend': '週末練習', 'wk.titleWeekday': '平日練習', 'wk.slotNewPh': '新しい枠の名前', 'wk.minPeople': '平日練習の実施基準人数', 'wk.slotHint': '時間割の変更は今後開く練習から適用されます。',
   'wk.tentativeNote': '募集中の練習です。トレーナーが確定すると実施されます。',
+
+  'wk.deleteWeek': 'この週をすべて削除', 'wk.deleteWeekConfirm': 'この週の練習 {n}件と投票をすべて削除しますか？元に戻せません。', 'wk.deleteDayConfirm': '{d} の練習と投票を削除しますか？', 'wk.editTitle': '練習を編集', 'wk.slots': '枠', 'wk.addSlot': '枠を追加', 'wk.slotsDayHint': 'この日だけに適用されます。枠を削除すると、その枠の投票は集計から外れます。',
 
   'me.nameLocked': '名前の変更は管理者に依頼してください。', 'me.language': '言語', 'me.myAttendance': '自分の出席', 'me.last60': '直近60日',
 }

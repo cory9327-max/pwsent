@@ -6,6 +6,7 @@ import { useT } from '../lib/i18n'
 import { fmtDate, fromLocalInput, seoulDate } from '../lib/format'
 import { addDaysStr, mondayOf, slotLabel } from '../lib/week'
 import { LOCATIONS } from '../lib/presets'
+import ManagedChoice from './ManagedChoice'
 import { ErrorText, Field, Icon, Modal } from './ui'
 
 const pad = (n) => String(n).padStart(2, '0')
@@ -16,7 +17,8 @@ const dayLabel = (d, lang) => fmtDate(`${d}T12:00:00`, lang)
 /* ------------------------------------------------------------------ */
 export function WeekVoteCard({ week, minPeople, onChange }) {
   const { t, lang } = useT()
-  const { user, members, isTrainer, nameOf } = useAuth()
+  const { user, members, canEdit, nameOf } = useAuth()
+  const [editDay, setEditDay] = useState(null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState(null)
   const [detail, setDetail] = useState(false)
@@ -57,6 +59,15 @@ export function WeekVoteCard({ week, minPeople, onChange }) {
   })
 
   const confirmDay = (ev) => run(() => supabase.from('events').update({ status: 'confirmed' }).eq('id', ev.id))
+  const deleteDay = (ev) => {
+    if (!window.confirm(t('wk.deleteDayConfirm', { d: dayLabel(seoulDate(ev.starts_at), lang) }))) return
+    run(() => supabase.from('events').delete().eq('id', ev.id))
+  }
+  const mineToManage = events.filter((e) => canEdit(e.created_by))
+  const deleteWeek = () => {
+    if (!window.confirm(t('wk.deleteWeekConfirm', { n: mineToManage.length }))) return
+    run(() => supabase.from('events').delete().in('id', mineToManage.map((e) => e.id)))
+  }
   const cancelDay = (ev) => {
     if (!window.confirm(t('wk.cancelConfirm'))) return
     run(() => supabase.from('events').delete().eq('id', ev.id))
@@ -71,6 +82,9 @@ export function WeekVoteCard({ week, minPeople, onChange }) {
           <h4>{title} · {t('wk.vote')}</h4>
           <div className="meta">{dayLabel(weekStart, lang)} – {dayLabel(addDaysStr(weekStart, 6), lang)} · {t('wk.deadline')}</div>
         </div>
+        {mineToManage.length > 0 && (
+          <button className="btn ghost small danger-text" disabled={busy} onClick={deleteWeek}><Icon name="trash" size={14} /> {t('wk.deleteWeek')}</button>
+        )}
       </div>
 
       {events.map((ev) => {
@@ -84,6 +98,12 @@ export function WeekVoteCard({ week, minPeople, onChange }) {
               {ev.location && <span className="meta"><Icon name="pin" size={13} /> {ev.location}</span>}
               {tentative && <span className={`pill ${n >= minPeople ? 'att-present' : 'att-late'}`}>{t('wk.recruiting')} {n}/{minPeople}</span>}
               {!open && <span className="pill att-none">{t('poll.closed')}</span>}
+              {canEdit(ev.created_by) && (
+                <span className="row-actions push">
+                  <button className="icon-btn" onClick={() => setEditDay(ev)} aria-label={t('common.edit')}><Icon name="edit" size={15} /></button>
+                  <button className="icon-btn danger" onClick={() => deleteDay(ev)} aria-label={t('common.delete')}><Icon name="trash" size={15} /></button>
+                </span>
+              )}
             </div>
             <div className="wk-slots">
               {(ev.slots || []).map((s) => (
@@ -93,7 +113,7 @@ export function WeekVoteCard({ week, minPeople, onChange }) {
                 </button>
               ))}
             </div>
-            {tentative && isTrainer && (
+            {tentative && canEdit(ev.created_by) && (
               <div className="wk-trainer">
                 <span className="muted small">{n >= minPeople ? t('wk.enough', { n }) : t('wk.notEnough', { n, min: minPeople })}</span>
                 <button className="btn primary small" disabled={busy} onClick={() => confirmDay(ev)}>{t('wk.confirm')}</button>
@@ -124,7 +144,69 @@ export function WeekVoteCard({ week, minPeople, onChange }) {
         </div>
       )}
       <ErrorText error={error} />
+      {editDay && <DayEditModal event={editDay} onClose={() => setEditDay(null)} onSaved={() => { setEditDay(null); onChange?.() }} />}
     </div>
+  )
+}
+
+/* ------------------------------------------------------------------ */
+/*  열린 훈련 하루 수정: 장소 · 그날의 타임                                */
+/* ------------------------------------------------------------------ */
+function DayEditModal({ event, onClose, onSaved }) {
+  const { t, lang } = useT()
+  const date = seoulDate(event.starts_at)
+  const [loc, setLoc] = useState(event.location || '')
+  const [slots, setSlots] = useState((event.slots || []).map((s) => ({ ...s, end: s.end || '' })))
+  const [busy, setBusy] = useState(false)
+  const [error, setError] = useState(null)
+  const setSlot = (i, p) => setSlots(slots.map((s, j) => (j === i ? { ...s, ...p } : s)))
+
+  async function submit(e) {
+    e.preventDefault()
+    const clean = slots.filter((s) => s.name.trim() && s.start).map((s) => ({ id: s.id, name: s.name.trim(), start: s.start, end: s.end || null }))
+    if (!clean.length) return setError(t('wk.noSlots'))
+    setBusy(true); setError(null)
+    const first = clean.map((s) => s.start).sort()[0]
+    const ends = clean.map((s) => s.end).filter(Boolean).sort()
+    const { error } = await supabase.from('events').update({
+      location: loc.trim() || null,
+      slots: clean,
+      starts_at: fromLocalInput(`${date}T${first}`),
+      ends_at: ends.length === clean.length ? fromLocalInput(`${date}T${ends[ends.length - 1]}`) : null,
+    }).eq('id', event.id)
+    setBusy(false)
+    if (error) return setError(error)
+    onSaved()
+  }
+
+  return (
+    <Modal title={`${dayLabel(date, lang)} · ${t('wk.editTitle')}`} onClose={onClose}>
+      <form className="form" onSubmit={submit}>
+        <Field label={t('event.location')}>
+          <ManagedChoice table="locations" fallback={LOCATIONS} value={loc} onChange={setLoc} placeholder={t('event.locationPh')} />
+        </Field>
+        <Field label={t('wk.slots')} hint={t('wk.slotsDayHint')}>
+          <div className="stack tight">
+            {slots.map((s, i) => (
+              <div className="slot-row" key={s.id}>
+                <input value={s.name} maxLength={30} onChange={(e) => setSlot(i, { name: e.target.value })} />
+                <TimeSelect value={s.start} onChange={(v) => v && setSlot(i, { start: v })} />
+                <TimeSelect optional value={s.end} onChange={(v) => setSlot(i, { end: v })} />
+                <button type="button" className="icon-btn danger" disabled={slots.length < 2} onClick={() => setSlots(slots.filter((_, j) => j !== i))} aria-label={t('common.delete')}><Icon name="trash" size={15} /></button>
+              </div>
+            ))}
+            <button type="button" className="btn ghost small left" onClick={() => setSlots([...slots, { id: crypto.randomUUID(), name: '', start: '17:00', end: '' }])}>
+              <Icon name="plus" size={14} /> {t('wk.addSlot')}
+            </button>
+          </div>
+        </Field>
+        <ErrorText error={error} />
+        <div className="form-actions">
+          <button type="button" className="btn ghost" onClick={onClose}>{t('common.cancel')}</button>
+          <button className="btn primary" disabled={busy}>{busy ? t('common.saving') : t('common.save')}</button>
+        </div>
+      </form>
+    </Modal>
   )
 }
 

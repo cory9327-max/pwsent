@@ -6,6 +6,8 @@ import { useT } from '../lib/i18n'
 import { fmtDate, fmtTime, localeOf, seoulDate } from '../lib/format'
 import { useTypes } from '../lib/types'
 import EventForm from '../components/EventForm'
+import { OpenWeeksModal } from '../components/WeeklyTraining'
+import { useWeeklyTraining } from '../lib/weekly'
 import CalendarSubscribe from '../components/CalendarSubscribe'
 import { Empty, Icon, Modal, TypeBadge } from '../components/ui'
 
@@ -14,7 +16,9 @@ const ymd = (y, m, d) => `${y}-${pad(m + 1)}-${pad(d)}`
 
 export default function Schedule() {
   const { t, lang } = useT()
-  const { nameOf } = useAuth()
+  const { nameOf, isTrainer } = useAuth()
+  const [weeksOpen, setWeeksOpen] = useState(false)
+  const weekly = useWeeklyTraining()
   const { types, label, color } = useTypes()
   const now = new Date()
   const [ym, setYm] = useState({ y: now.getFullYear(), m: now.getMonth() })
@@ -30,7 +34,7 @@ export default function Schedule() {
     from.setDate(from.getDate() - 7); to.setDate(to.getDate() + 7)
     const { data } = await supabase.from('events').select('*')
       .gte('starts_at', from.toISOString()).lt('starts_at', to.toISOString()).order('starts_at')
-    setEvents(data || [])
+    setEvents((data || []).filter((e) => e.status !== 'tentative')) // 모집 중인 훈련은 확정된 뒤에 일정표에 표시
   }, [ym])
   useEffect(() => { load() }, [load])
 
@@ -63,6 +67,7 @@ export default function Schedule() {
         <h1>{t('nav.schedule')}</h1>
         <div className="head-actions">
           <button className="btn ghost" onClick={() => setSub(true)}><Icon name="share" size={16} /> {t('calsub.title')}</button>
+          {isTrainer && weekly.available && <button className="btn ghost" onClick={() => setWeeksOpen(true)}><Icon name="dumbbell" size={16} /> {t('wk.open')}</button>}
           <button className="btn primary" onClick={() => setModal({ date: selected })}><Icon name="plus" size={16} /> {t('event.new')}</button>
         </div>
       </div>
@@ -135,6 +140,7 @@ export default function Schedule() {
       </div>
 
       {sub && <Modal title={t('calsub.title')} onClose={() => setSub(false)}><CalendarSubscribe /></Modal>}
+      {weeksOpen && <OpenWeeksModal minPeople={weekly.minPeople} onClose={() => setWeeksOpen(false)} onSaved={(keep) => { load(); if (!keep) setWeeksOpen(false) }} />}
       {modal && <EventForm defaultDate={modal.date} onClose={() => setModal(null)} onSaved={() => { setModal(null); load() }} />}
     </div>
   )
