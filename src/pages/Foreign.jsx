@@ -3,6 +3,7 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/auth'
 import { useT } from '../lib/i18n'
 import { fmtMoney, seoulDate } from '../lib/format'
+import TalentVisits from '../components/TalentVisits'
 import { Empty, ErrorText, Field, Icon, Modal, confirmDelete } from '../components/ui'
 
 const CURRENCIES = ['KRW', 'JPY', 'USD', 'EUR', 'GBP', 'MXN', 'TWD', 'AUD']
@@ -15,8 +16,24 @@ function ageOf(birth) {
   return ty - y - (tm < m || (tm === m && td < d) ? 1 : 0)
 }
 
-/** 해외선수 명단: 선수 한 명에 한 줄. 비용 조건(숙소·항공·개런티)은 비용 권한이 있는 직급에게만 보임 */
+/** 해외선수: [관리] 선수 명단 · [방문 일정] 항공편·숙소 */
 export default function Foreign() {
+  const { t } = useT()
+  const [tab, setTab] = useState('roster')
+  return (
+    <div className="page">
+      <div className="page-head"><h1>{t('nav.foreign')}</h1></div>
+      <div className="tabs">
+        <button className={tab === 'roster' ? 'on' : ''} onClick={() => setTab('roster')}>{t('ft.tabRoster')}</button>
+        <button className={tab === 'visits' ? 'on' : ''} onClick={() => setTab('visits')}>{t('ft.tabVisits')}</button>
+      </div>
+      {tab === 'roster' ? <Roster /> : <TalentVisits />}
+    </div>
+  )
+}
+
+/** 해외선수 명단: 선수 한 명에 한 줄. 비용 조건(숙소·항공·개런티)은 비용 권한이 있는 직급에게만 보임 */
+function Roster() {
   const { t, lang } = useT()
   const { can } = useAuth()
   const canCost = can('foreign_cost')
@@ -41,7 +58,7 @@ export default function Foreign() {
     load()
   }
 
-  if (rows === null) return <div className="page"><div className="spinner" /></div>
+  if (rows === null) return <div className="spinner" />
   const shown = rows
     .filter((r) => !q || `${r.name} ${r.ring_name || ''} ${r.nationality || ''}`.toLowerCase().includes(q.toLowerCase()))
     .sort((a, b) => sort === 'nationality' ? (a.nationality || '~').localeCompare(b.nationality || '~')
@@ -50,14 +67,8 @@ export default function Foreign() {
   const yn = (v, yes, no) => <span className={`pill ${v ? 'att-present' : 'att-none'}`}>{v ? yes : no}</span>
 
   return (
-    <div className="page">
-      <div className="page-head">
-        <div>
-          <h1>{t('nav.foreign')}</h1>
-          <p className="muted"><Icon name="lock" size={14} /> {canCost ? t('ft.hint') : t('ft.hintNoCost')}</p>
-        </div>
-        {!missing && <button className="btn primary" onClick={() => setModal({})}><Icon name="plus" size={16} /> {t('ft.new')}</button>}
-      </div>
+    <div className="stack">
+      <p className="muted small no-margin"><Icon name="lock" size={13} /> {canCost ? t('ft.hint') : t('ft.hintNoCost')}</p>
 
       {missing ? <Empty>{t('admin.needSql', { f: '09_roster_auto_training.sql' })}</Empty> : <>
         <div className="toolbar">
@@ -67,7 +78,8 @@ export default function Foreign() {
             <option value="nationality">{t('ft.sortNat')}</option>
             <option value="recent">{t('ft.sortRecent')}</option>
           </select>
-          <span className="muted small">{t('ft.count', { n: shown.length })}</span>
+          <span className="muted small grow">{t('ft.count', { n: shown.length })}</span>
+          <button className="btn primary" onClick={() => setModal({})}><Icon name="plus" size={16} /> {t('ft.new')}</button>
         </div>
         <ErrorText error={error} />
 

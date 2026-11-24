@@ -147,6 +147,13 @@ const ko = {
   'auto.title': '주말 훈련 자동 등록', 'auto.weeks': '몇 주 앞까지 미리 올려둘지', 'auto.off': '끄기', 'auto.sat': '토요일', 'auto.sun': '일요일',
   'auto.hint': '주말 훈련이 일정에 항상 올라가 있습니다. 경기가 있는 날과 직접 취소(삭제)한 날은 건너뜁니다. 취소한 날을 다시 열려면 "주간 훈련 열기"를 쓰세요.',
 
+  'etype.visit': '해외선수', 'ft.tabRoster': '관리', 'ft.tabVisits': '방문 일정',
+  'tv.hint': '저장하면 일정 탭에 [입국]·[출국]으로 자동 반영됩니다.', 'tv.new': '방문 일정 등록', 'tv.edit': '방문 일정 수정', 'tv.upcoming': '예정', 'tv.past': '지난 방문', 'tv.empty': '등록된 방문 일정이 없습니다',
+  'tv.needTalent': '먼저 "관리" 탭에서 해외선수를 등록하세요.', 'tv.talent': '선수', 'tv.arrive': '입국', 'tv.depart': '출국', 'tv.datetime': '날짜·시간', 'tv.flightNo': '항공편', 'tv.airport': '공항', 'tv.terminal': '터미널',
+  'tv.stay': '숙소', 'tv.stayName': '숙소 이름', 'tv.stayNamePh': '예: PWS 기숙사', 'tv.stayAddress': '숙소 주소', 'tv.addressHint': '주소를 적으면 구글 지도·네이버 지도로 바로 열 수 있습니다.',
+  'tv.google': '구글 지도', 'tv.naver': '네이버 지도', 'tv.inSchedule': '일정에서 보기', 'tv.timeTbd': '시간 미정', 'tv.departBeforeArrive': '출국이 입국보다 빠릅니다',
+  'tv.visibility': '일정 탭 공개 범위', 'tv.visibilityHint': '일정 탭의 [입국]·[출국] 일정을 누가 볼 수 있는지입니다. 항공편과 숙소가 일정 설명에 함께 적힙니다.',
+
   'me.nameLocked': '이름 변경은 관리자에게 요청하세요.', 'me.language': '언어', 'me.myAttendance': '내 출석', 'me.last60': '최근 60일',
 }
 
@@ -296,6 +303,13 @@ const en = {
   'auto.title': 'Automatic weekend training', 'auto.weeks': 'How far ahead to post', 'auto.off': 'Off', 'auto.sat': 'Saturday', 'auto.sun': 'Sunday',
   'auto.hint': 'Weekend training is always on the schedule. Show days and days you cancelled (deleted) are skipped. To reopen a cancelled day, use "Open weekly training".',
 
+  'etype.visit': 'Foreign talent', 'ft.tabRoster': 'Roster', 'ft.tabVisits': 'Visits',
+  'tv.hint': 'Saved visits appear on the Schedule as [Arrival] and [Departure] automatically.', 'tv.new': 'Add visit', 'tv.edit': 'Edit visit', 'tv.upcoming': 'Upcoming', 'tv.past': 'Past', 'tv.empty': 'No visits yet',
+  'tv.needTalent': 'Add foreign talent in the Roster tab first.', 'tv.talent': 'Talent', 'tv.arrive': 'Arrival', 'tv.depart': 'Departure', 'tv.datetime': 'Date and time', 'tv.flightNo': 'Flight', 'tv.airport': 'Airport', 'tv.terminal': 'Terminal',
+  'tv.stay': 'Lodging', 'tv.stayName': 'Lodging name', 'tv.stayNamePh': 'e.g. PWS dorm', 'tv.stayAddress': 'Lodging address', 'tv.addressHint': 'With an address you can open it in Google Maps or Naver Map.',
+  'tv.google': 'Google Maps', 'tv.naver': 'Naver Map', 'tv.inSchedule': 'View in schedule', 'tv.timeTbd': 'Time TBD', 'tv.departBeforeArrive': 'Departure is before arrival',
+  'tv.visibility': 'Who sees it on the Schedule', 'tv.visibilityHint': 'Who can see the [Arrival]/[Departure] events. Flight and lodging are included in the event description.',
+
   'me.nameLocked': 'Ask an admin to change your name.', 'me.language': 'Language', 'me.myAttendance': 'My attendance', 'me.last60': 'Last 60 days',
 }
 
@@ -444,6 +458,13 @@ const ja = {
   'wk.participants': '参加予定 {n}人', 'wk.nobody': 'まだいません', 'wk.moreWeeks': '以降 {n}週を表示', 'wk.lessWeeks': '閉じる',
   'auto.title': '週末練習の自動登録', 'auto.weeks': '何週先まで登録しておくか', 'auto.off': 'オフ', 'auto.sat': '土曜日', 'auto.sun': '日曜日',
   'auto.hint': '週末練習は常に予定に登録されます。試合のある日と、手動でキャンセル（削除）した日は除外されます。キャンセルした日を再び開くには「週間練習を開く」を使ってください。',
+
+  'etype.visit': '海外選手', 'ft.tabRoster': '管理', 'ft.tabVisits': '来日予定',
+  'tv.hint': '保存すると予定タブに［入国］［出国］として自動で反映されます。', 'tv.new': '来日予定を登録', 'tv.edit': '来日予定を編集', 'tv.upcoming': '予定', 'tv.past': '過去', 'tv.empty': '来日予定はありません',
+  'tv.needTalent': '先に「管理」タブで海外選手を登録してください。', 'tv.talent': '選手', 'tv.arrive': '入国', 'tv.depart': '出国', 'tv.datetime': '日時', 'tv.flightNo': '便名', 'tv.airport': '空港', 'tv.terminal': 'ターミナル',
+  'tv.stay': '宿泊', 'tv.stayName': '宿泊先の名前', 'tv.stayNamePh': '例：PWS 寮', 'tv.stayAddress': '宿泊先の住所', 'tv.addressHint': '住所を入力すると Google マップ・NAVER 地図で開けます。',
+  'tv.google': 'Google マップ', 'tv.naver': 'NAVER 地図', 'tv.inSchedule': '予定で見る', 'tv.timeTbd': '時間未定', 'tv.departBeforeArrive': '出国が入国より前です',
+  'tv.visibility': '予定タブでの公開範囲', 'tv.visibilityHint': '予定タブの［入国］［出国］を誰が見られるかです。便名と宿泊先が予定の説明に入ります。',
 
   'me.nameLocked': '名前の変更は管理者に依頼してください。', 'me.language': '言語', 'me.myAttendance': '自分の出席', 'me.last60': '直近60日',
 }

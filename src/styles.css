@@ -271,6 +271,15 @@ textarea { resize: vertical; }
 .slot-people .wk-slot { flex: none; }
 .people { display: flex; flex-wrap: wrap; gap: 5px; padding-left: 2px; }
 .person { background: var(--gray-soft); border-radius: 999px; padding: 2px 10px; font-size: 13px; font-weight: 600; }
+.grow { flex: 1; }
+.visit-card { display: flex; flex-direction: column; gap: 12px; }
+.leg { display: grid; grid-template-columns: 44px 1fr; gap: 10px; align-items: start; border-top: 1px solid var(--line); padding-top: 10px; }
+.leg-label { font-size: 12px; font-weight: 800; color: var(--muted); padding-top: 2px; }
+.leg-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; font-size: 14px; }
+.leg-links { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 2px; }
+.map-links { display: inline-flex; gap: 12px; flex-wrap: wrap; }
+.map-links a, .map-links-a { display: inline-flex; align-items: center; gap: 3px; color: var(--red); font-weight: 600; font-size: 13px; }
+.map-links a:hover, .map-links-a:hover { text-decoration: underline; }
 .role-card { display: flex; flex-direction: column; gap: 10px; border-top: 4px solid var(--line); }
 .role-card.new { border-top-style: dashed; }
 .role-head { display: flex; gap: 8px; align-items: center; }

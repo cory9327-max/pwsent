@@ -2,7 +2,7 @@
 // 구글 캘린더·애플 캘린더가 이 주소를 주기적으로 읽어 PWS 일정을 자동으로 반영합니다.
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
-const TYPE = { general: '기타', training: '훈련', match: '경기', promo: '프로모', shoot: '외부촬영', education: '교육', volunteer: '봉사' }
+const TYPE = { general: '기타', training: '훈련', match: '경기', promo: '프로모', shoot: '외부촬영', education: '교육', volunteer: '봉사', visit: '해외선수' }
 
 const stamp = (d) => new Date(d).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '')
 const esc = (s = '') => String(s).replace(/\\/g, '\\\\').replace(/([,;])/g, '\\$1').replace(/\r?\n/g, '\\n')

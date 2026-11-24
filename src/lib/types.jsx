@@ -11,6 +11,7 @@ const BUILTIN = [
   { key: 'education', color: '#2b8a3e' },
   { key: 'volunteer', color: '#c2255c' },
   { key: 'general', color: '#6b7280' },
+  { key: 'visit', color: '#0c8599' },
 ]
 const BUILTIN_KEYS = BUILTIN.map((b) => b.key)
 
