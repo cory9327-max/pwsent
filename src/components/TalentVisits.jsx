@@ -4,10 +4,20 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/auth'
 import { useT } from '../lib/i18n'
 import { fmtDate, fmtTime, fromLocalInput, toLocalInput } from '../lib/format'
-import { DateTimeInput } from './inputs'
 import { Empty, ErrorText, Field, Icon, Modal, confirmDelete, useRoleLabel } from './ui'
 
-const AIRPORTS = ['인천국제공항', '김포국제공항', '김해국제공항', '제주국제공항']
+const AIRPORTS = ['인천국제공항', '김포국제공항']
+const TERMINALS = ['T1', 'T2']
+
+// '1540', '15:40', '9:5' 같은 입력을 'HH:MM' 으로 정리. 잘못된 값이면 null
+function normTime(v) {
+  const d = v.trim()
+  if (!d) return ''
+  const m = d.includes(':') ? d.match(/^(\d{1,2}):(\d{1,2})$/) : d.match(/^(\d{1,2})(\d{2})$/) || d.match(/^(\d{1,2})()$/)
+  if (!m) return null
+  const h = Number(m[1]), mi = Number(m[2] || 0)
+  return h <= 23 && mi <= 59 ? `${String(h).padStart(2, '0')}:${String(mi).padStart(2, '0')}` : null
+}
 const one = (x) => (Array.isArray(x) ? x[0] : x) || null
 const gmap = (q) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`
 const nmap = (q) => `https://map.naver.com/p/search/${encodeURIComponent(q)}`
@@ -134,10 +144,10 @@ function VisitForm({ visit, talents, onClose, onSaved }) {
   const defaultVis = roles.filter((r) => permsOf(r.key).includes('foreign')).map((r) => r.key)
   const [f, setF] = useState({
     talent_id: visit?.talent_id ?? talents[0]?.id ?? '',
-    arrive_at: visit?.arrive_at ? toLocalInput(visit.arrive_at) : '', arrive_flight: visit?.arrive_flight ?? '',
-    arrive_airport: visit?.arrive_airport ?? '', arrive_terminal: visit?.arrive_terminal ?? '',
-    depart_at: visit?.depart_at ? toLocalInput(visit.depart_at) : '', depart_flight: visit?.depart_flight ?? '',
-    depart_airport: visit?.depart_airport ?? '', depart_terminal: visit?.depart_terminal ?? '',
+    arrive_date: visit?.arrive_at ? toLocalInput(visit.arrive_at).slice(0, 10) : '', arrive_time: visit?.arrive_at ? toLocalInput(visit.arrive_at).slice(11) : '',
+    arrive_flight: visit?.arrive_flight ?? '', arrive_airport: visit ? (visit.arrive_airport ?? '') : AIRPORTS[0], arrive_terminal: visit?.arrive_terminal ?? '',
+    depart_date: visit?.depart_at ? toLocalInput(visit.depart_at).slice(0, 10) : '', depart_time: visit?.depart_at ? toLocalInput(visit.depart_at).slice(11) : '',
+    depart_flight: visit?.depart_flight ?? '', depart_airport: visit ? (visit.depart_airport ?? '') : AIRPORTS[0], depart_terminal: visit?.depart_terminal ?? '',
     stay_name: visit?.stay_name ?? '', stay_address: visit?.stay_address ?? '', notes: visit?.notes ?? '',
   })
   const [vis, setVis] = useState(visit ? (visit.visible_roles || []) : defaultVis)
@@ -148,12 +158,27 @@ function VisitForm({ visit, talents, onClose, onSaved }) {
 
   async function submit(e) {
     e.preventDefault()
-    if (f.arrive_at && f.depart_at && f.depart_at < f.arrive_at) return setError(t('tv.departBeforeArrive'))
+    const leg = (k) => {
+      const time = normTime(f[`${k}_time`])
+      if (time === null) return { bad: true }
+      if (time && !f[`${k}_date`]) return { bad: true }
+      const at = f[`${k}_date`] ? `${f[`${k}_date`]}T${time || '00:00'}` : ''
+      const used = Boolean(at || f[`${k}_flight`].trim()) // 날짜도 항공편도 없으면 그 구간은 비워 둠
+      return {
+        at,
+        row: {
+          [`${k}_at`]: fromLocalInput(at), [`${k}_flight`]: txt(f[`${k}_flight`]),
+          [`${k}_airport`]: used ? txt(f[`${k}_airport`]) : null, [`${k}_terminal`]: used ? txt(f[`${k}_terminal`]) : null,
+        },
+      }
+    }
+    const a = leg('arrive'), d = leg('depart')
+    if (a.bad || d.bad) return setError(t('tv.badTime'))
+    if (a.at && d.at && d.at < a.at) return setError(t('tv.departBeforeArrive'))
     setBusy(true); setError(null)
     const row = {
       talent_id: f.talent_id,
-      arrive_at: fromLocalInput(f.arrive_at), arrive_flight: txt(f.arrive_flight), arrive_airport: txt(f.arrive_airport), arrive_terminal: txt(f.arrive_terminal),
-      depart_at: fromLocalInput(f.depart_at), depart_flight: txt(f.depart_flight), depart_airport: txt(f.depart_airport), depart_terminal: txt(f.depart_terminal),
+      ...a.row, ...d.row,
       stay_name: txt(f.stay_name), stay_address: txt(f.stay_address), notes: txt(f.notes),
       visible_roles: rolesManaged && vis.length ? vis : null,
     }
@@ -168,13 +193,30 @@ function VisitForm({ visit, talents, onClose, onSaved }) {
   const flightBlock = (title, k) => (
     <fieldset className="cost-box">
       <legend>{title}</legend>
-      <Field label={t('tv.datetime')}>
-        <DateTimeInput value={f[`${k}_at`]} fallbackTime="12:00" onChange={(v) => setF({ ...f, [`${k}_at`]: v })} />
-      </Field>
       <div className="row3">
+        <Field label={t('tv.date')}><input type="date" value={f[`${k}_date`]} onChange={set(`${k}_date`)} /></Field>
+        <Field label={t('tv.time')} hint={t('tv.timeHint')}>
+          <input value={f[`${k}_time`]} placeholder="15:40" inputMode="numeric" maxLength={5} onChange={set(`${k}_time`)}
+            onBlur={(e) => { const n = normTime(e.target.value); if (n) setF((p) => ({ ...p, [`${k}_time`]: n })) }} />
+        </Field>
         <Field label={t('tv.flightNo')}><input value={f[`${k}_flight`]} placeholder="KE082" onChange={set(`${k}_flight`)} /></Field>
-        <Field label={t('tv.airport')}><input list="airport-list" value={f[`${k}_airport`]} onChange={set(`${k}_airport`)} /></Field>
-        <Field label={t('tv.terminal')}><input value={f[`${k}_terminal`]} placeholder="T2" onChange={set(`${k}_terminal`)} /></Field>
+      </div>
+      <div className="row2">
+        <Field label={t('tv.airport')}>
+          <div className="chips">
+            {[...AIRPORTS, ...(f[`${k}_airport`] && !AIRPORTS.includes(f[`${k}_airport`]) ? [f[`${k}_airport`]] : [])].map((ap) => (
+              <button type="button" key={ap} className={f[`${k}_airport`] === ap ? 'on' : ''} onClick={() => setF({ ...f, [`${k}_airport`]: ap })}>{ap}</button>
+            ))}
+          </div>
+        </Field>
+        <Field label={t('tv.terminal')}>
+          <div className="chips">
+            {TERMINALS.map((tm) => (
+              <button type="button" key={tm} className={f[`${k}_terminal`] === tm ? 'on' : ''}
+                onClick={() => setF({ ...f, [`${k}_terminal`]: f[`${k}_terminal`] === tm ? '' : tm })}>{tm}</button>
+            ))}
+          </div>
+        </Field>
       </div>
     </fieldset>
   )
@@ -182,7 +224,6 @@ function VisitForm({ visit, talents, onClose, onSaved }) {
   return (
     <Modal title={visit ? t('tv.edit') : t('tv.new')} onClose={onClose} wide>
       <form className="form" onSubmit={submit}>
-        <datalist id="airport-list">{AIRPORTS.map((a) => <option key={a} value={a} />)}</datalist>
         <Field label={t('tv.talent')}>
           <select required value={f.talent_id} onChange={set('talent_id')}>
             {talents.map((x) => <option key={x.id} value={x.id}>{x.ring_name ? `${x.ring_name} (${x.name})` : x.name}</option>)}

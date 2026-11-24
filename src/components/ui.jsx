@@ -103,7 +103,8 @@ export function ErrorText({ error }) {
     forbidden_role: t('err.forbiddenRole'),
     drive_not_configured: t('files.notConfigured'),
   }
-  let text = known[msg]
+  // 화면에서 직접 만든 안내 문구(문자열)는 그대로 보여 줌
+  let text = known[msg] || (typeof error === 'string' ? msg : null)
   if (!text && /row-level security/i.test(msg)) text = t('err.forbidden')
   return <div className="error">{text || `${t('err.generic')} (${msg})`}</div>
 }

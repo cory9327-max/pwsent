@@ -149,7 +149,7 @@ const ko = {
 
   'etype.visit': '해외선수', 'ft.tabRoster': '관리', 'ft.tabVisits': '방문 일정',
   'tv.hint': '저장하면 일정 탭에 [입국]·[출국]으로 자동 반영됩니다.', 'tv.new': '방문 일정 등록', 'tv.edit': '방문 일정 수정', 'tv.upcoming': '예정', 'tv.past': '지난 방문', 'tv.empty': '등록된 방문 일정이 없습니다',
-  'tv.needTalent': '먼저 "관리" 탭에서 해외선수를 등록하세요.', 'tv.talent': '선수', 'tv.arrive': '입국', 'tv.depart': '출국', 'tv.datetime': '날짜·시간', 'tv.flightNo': '항공편', 'tv.airport': '공항', 'tv.terminal': '터미널',
+  'tv.needTalent': '먼저 "관리" 탭에서 해외선수를 등록하세요.', 'tv.talent': '선수', 'tv.arrive': '입국', 'tv.depart': '출국', 'tv.datetime': '날짜·시간', 'tv.date': '날짜', 'tv.time': '시간', 'tv.timeHint': '직접 입력 (예: 15:40 또는 1540)', 'tv.badTime': '시간을 다시 확인해 주세요. 24시간제로 15:40처럼 적고, 시간을 적었다면 날짜도 필요합니다.', 'tv.flightNo': '항공편', 'tv.airport': '공항', 'tv.terminal': '터미널',
   'tv.stay': '숙소', 'tv.stayName': '숙소 이름', 'tv.stayNamePh': '예: PWS 기숙사', 'tv.stayAddress': '숙소 주소', 'tv.addressHint': '주소를 적으면 구글 지도·네이버 지도로 바로 열 수 있습니다.',
   'tv.google': '구글 지도', 'tv.naver': '네이버 지도', 'tv.inSchedule': '일정에서 보기', 'tv.timeTbd': '시간 미정', 'tv.departBeforeArrive': '출국이 입국보다 빠릅니다',
   'tv.visibility': '일정 탭 공개 범위', 'tv.visibilityHint': '일정 탭의 [입국]·[출국] 일정을 누가 볼 수 있는지입니다. 항공편과 숙소가 일정 설명에 함께 적힙니다.',
@@ -305,7 +305,7 @@ const en = {
 
   'etype.visit': 'Foreign talent', 'ft.tabRoster': 'Roster', 'ft.tabVisits': 'Visits',
   'tv.hint': 'Saved visits appear on the Schedule as [Arrival] and [Departure] automatically.', 'tv.new': 'Add visit', 'tv.edit': 'Edit visit', 'tv.upcoming': 'Upcoming', 'tv.past': 'Past', 'tv.empty': 'No visits yet',
-  'tv.needTalent': 'Add foreign talent in the Roster tab first.', 'tv.talent': 'Talent', 'tv.arrive': 'Arrival', 'tv.depart': 'Departure', 'tv.datetime': 'Date and time', 'tv.flightNo': 'Flight', 'tv.airport': 'Airport', 'tv.terminal': 'Terminal',
+  'tv.needTalent': 'Add foreign talent in the Roster tab first.', 'tv.talent': 'Talent', 'tv.arrive': 'Arrival', 'tv.depart': 'Departure', 'tv.datetime': 'Date and time', 'tv.date': 'Date', 'tv.time': 'Time', 'tv.timeHint': 'Type it in (e.g. 15:40 or 1540)', 'tv.badTime': 'Please check the time. Use 24-hour format like 15:40, and add a date if you entered a time.', 'tv.flightNo': 'Flight', 'tv.airport': 'Airport', 'tv.terminal': 'Terminal',
   'tv.stay': 'Lodging', 'tv.stayName': 'Lodging name', 'tv.stayNamePh': 'e.g. PWS dorm', 'tv.stayAddress': 'Lodging address', 'tv.addressHint': 'With an address you can open it in Google Maps or Naver Map.',
   'tv.google': 'Google Maps', 'tv.naver': 'Naver Map', 'tv.inSchedule': 'View in schedule', 'tv.timeTbd': 'Time TBD', 'tv.departBeforeArrive': 'Departure is before arrival',
   'tv.visibility': 'Who sees it on the Schedule', 'tv.visibilityHint': 'Who can see the [Arrival]/[Departure] events. Flight and lodging are included in the event description.',
@@ -461,7 +461,7 @@ const ja = {
 
   'etype.visit': '海外選手', 'ft.tabRoster': '管理', 'ft.tabVisits': '来日予定',
   'tv.hint': '保存すると予定タブに［入国］［出国］として自動で反映されます。', 'tv.new': '来日予定を登録', 'tv.edit': '来日予定を編集', 'tv.upcoming': '予定', 'tv.past': '過去', 'tv.empty': '来日予定はありません',
-  'tv.needTalent': '先に「管理」タブで海外選手を登録してください。', 'tv.talent': '選手', 'tv.arrive': '入国', 'tv.depart': '出国', 'tv.datetime': '日時', 'tv.flightNo': '便名', 'tv.airport': '空港', 'tv.terminal': 'ターミナル',
+  'tv.needTalent': '先に「管理」タブで海外選手を登録してください。', 'tv.talent': '選手', 'tv.arrive': '入国', 'tv.depart': '出国', 'tv.datetime': '日時', 'tv.date': '日付', 'tv.time': '時間', 'tv.timeHint': '直接入力（例：15:40 または 1540）', 'tv.badTime': '時間を確認してください。24時間制で 15:40 のように入力し、時間を入れた場合は日付も必要です。', 'tv.flightNo': '便名', 'tv.airport': '空港', 'tv.terminal': 'ターミナル',
   'tv.stay': '宿泊', 'tv.stayName': '宿泊先の名前', 'tv.stayNamePh': '例：PWS 寮', 'tv.stayAddress': '宿泊先の住所', 'tv.addressHint': '住所を入力すると Google マップ・NAVER 地図で開けます。',
   'tv.google': 'Google マップ', 'tv.naver': 'NAVER 地図', 'tv.inSchedule': '予定で見る', 'tv.timeTbd': '時間未定', 'tv.departBeforeArrive': '出国が入国より前です',
   'tv.visibility': '予定タブでの公開範囲', 'tv.visibilityHint': '予定タブの［入国］［出国］を誰が見られるかです。便名と宿泊先が予定の説明に入ります。',
