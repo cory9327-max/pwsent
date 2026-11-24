@@ -3,7 +3,7 @@ import { supabase } from './supabase'
 
 const AuthCtx = createContext(null)
 
-export const ALL_PERMS = ['post', 'sessions', 'attendance', 'training_log', 'edit_all', 'members', 'settings', 'foreign', 'admin_drive']
+export const ALL_PERMS = ['post', 'sessions', 'attendance', 'training_log', 'edit_all', 'members', 'settings', 'foreign', 'foreign_cost', 'admin_drive']
 export const BUILTIN_ROLE_KEYS = ['admin', 'trainer', 'player', 'staff']
 // 07_roles.sql 을 아직 실행하지 않았을 때 쓰는 내장 직급
 const BUILTIN_ROLES = [

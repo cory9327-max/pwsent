@@ -262,6 +262,7 @@ textarea { resize: vertical; }
 .btn.danger-text { color: var(--red); }
 .stack.tight { gap: 6px; }
 .btn.left { align-self: flex-start; }
+.check.pad { padding: 9px 0; }
 .role-card { display: flex; flex-direction: column; gap: 10px; border-top: 4px solid var(--line); }
 .role-card.new { border-top-style: dashed; }
 .role-head { display: flex; gap: 8px; align-items: center; }

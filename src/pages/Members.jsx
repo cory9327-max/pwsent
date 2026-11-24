@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
-import { useAuth } from '../lib/auth'
+import { ALL_PERMS, useAuth } from '../lib/auth'
 import { useT } from '../lib/i18n'
 import { fmtDate } from '../lib/format'
 import { Empty, ErrorText, Icon, confirmDelete, useRoleLabel } from '../components/ui'
@@ -12,7 +12,7 @@ export default function Members({ embedded }) {
   const roleLabel = useRoleLabel()
   const mine = permsOf(profile.role)
   // 자신보다 권한이 많은 직급은 줄 수 없음 (서버에서도 막힘)
-  const ROLES = roles.filter((r) => r.perms.every((p) => mine.includes(p)) || r.key === 'admin' && mine.length >= 9).map((r) => r.key)
+  const ROLES = roles.filter((r) => r.perms.every((p) => mine.includes(p)) || r.key === 'admin' && mine.length >= ALL_PERMS.length).map((r) => r.key)
   const [rows, setRows] = useState([])
   const [tab, setTab] = useState('pending')
   const [roleFor, setRoleFor] = useState({})
