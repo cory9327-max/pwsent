@@ -164,6 +164,11 @@ const ko = {
   'att.noneYet': '아직 출석 기록이 없습니다', 'att.add': '선수 추가 (참여로 체크)', 'att.rest': '미체크 {n}명 보기', 'att.restPast': '기록 없는 선수 {n}명 보기 (불참으로 집계)',
   'members.byRole': '직급으로 포함', 'members.alsoAthlete': '선수 겸임', 'roles.attendance': '출석 대상 직급', 'roles.attendanceHint': '선수·연습생처럼 훈련 출석을 확인하는 직급. 이 직급의 회원은 모두 출석 명단과 근태 집계에 나옵니다.',
 
+  'notif.title': '알림', 'notif.empty': '알림이 없습니다', 'notif.readAll': '모두 읽음', 'notif.was': '예정이었던 입국: {d}',
+  'notif.dorm_new': '기숙사 사용 예정: {name}', 'notif.dorm_changed': '기숙사 사용 일정 변경: {name}', 'notif.dorm_cancelled': '기숙사 사용 취소: {name}', 'notif.dorm_reminder': '곧 입국 (기숙사 사용): {name}',
+  'tv.dorm': '기숙사', 'tv.usesDorm': '기숙사 사용', 'tv.usesDormHint': '체크하면 기숙사 알림을 받는 직급에게 알림이 갑니다 (등록·변경·취소·입국 전날).',
+  'roles.dormNotify': '기숙사 알림 받는 직급', 'roles.dormNotifyHint': '기숙사를 쓰는 해외선수의 방문 일정이 등록·변경·취소되면 이 직급의 회원에게 알림이 갑니다.',
+
   'me.nameLocked': '이름 변경은 관리자에게 요청하세요.', 'me.language': '언어', 'me.myAttendance': '내 출석', 'me.last60': '최근 60일',
 }
 
@@ -330,6 +335,11 @@ const en = {
   'att.noneYet': 'No attendance recorded yet', 'att.add': 'Add a wrestler (mark present)', 'att.rest': 'Show {n} not checked', 'att.restPast': 'Show {n} with no record (counted absent)',
   'members.byRole': 'Included by role', 'members.alsoAthlete': 'Also a wrestler', 'roles.attendance': 'Attendance role', 'roles.attendanceHint': 'A role whose training attendance is tracked (wrestlers, trainees). Everyone in it appears on rosters and reports.',
 
+  'notif.title': 'Notifications', 'notif.empty': 'No notifications', 'notif.readAll': 'Mark all read', 'notif.was': 'Was arriving: {d}',
+  'notif.dorm_new': 'Dorm stay planned: {name}', 'notif.dorm_changed': 'Dorm stay changed: {name}', 'notif.dorm_cancelled': 'Dorm stay cancelled: {name}', 'notif.dorm_reminder': 'Arriving soon (dorm): {name}',
+  'tv.dorm': 'Dorm', 'tv.usesDorm': 'Uses the dorm', 'tv.usesDormHint': 'When ticked, roles that receive dorm notifications are notified (new, changed, cancelled, day before arrival).',
+  'roles.dormNotify': 'Receives dorm notifications', 'roles.dormNotifyHint': 'Members in this role are notified when a dorm-using foreign talent visit is added, changed or cancelled.',
+
   'me.nameLocked': 'Ask an admin to change your name.', 'me.language': 'Language', 'me.myAttendance': 'My attendance', 'me.last60': 'Last 60 days',
 }
 
@@ -495,6 +505,11 @@ const ja = {
 
   'att.noneYet': 'まだ出席記録がありません', 'att.add': '選手を追加（参加にする）', 'att.rest': '未チェック {n}人を表示', 'att.restPast': '記録のない選手 {n}人を表示（欠席として集計）',
   'members.byRole': '役職で対象', 'members.alsoAthlete': '選手兼任', 'roles.attendance': '出席対象の役職', 'roles.attendanceHint': '選手・練習生など、練習の出席を確認する役職。この役職の会員は全員、出席名簿と勤怠集計に表示されます。',
+
+  'notif.title': 'お知らせ', 'notif.empty': 'お知らせはありません', 'notif.readAll': 'すべて既読', 'notif.was': '予定していた入国: {d}',
+  'notif.dorm_new': '寮の利用予定: {name}', 'notif.dorm_changed': '寮の利用予定の変更: {name}', 'notif.dorm_cancelled': '寮の利用キャンセル: {name}', 'notif.dorm_reminder': 'まもなく入国（寮利用）: {name}',
+  'tv.dorm': '寮', 'tv.usesDorm': '寮を利用', 'tv.usesDormHint': 'チェックすると、寮のお知らせを受け取る役職に通知されます（登録・変更・キャンセル・入国前日）。',
+  'roles.dormNotify': '寮のお知らせを受け取る役職', 'roles.dormNotifyHint': '寮を利用する海外選手の来日予定が登録・変更・キャンセルされると、この役職の会員に通知されます。',
 
   'me.nameLocked': '名前の変更は管理者に依頼してください。', 'me.language': '言語', 'me.myAttendance': '自分の出席', 'me.last60': '直近60日',
 }

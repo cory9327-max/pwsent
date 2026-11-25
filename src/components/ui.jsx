@@ -23,6 +23,7 @@ const PATHS = {
   chevL: 'M15 6l-6 6 6 6',
   chevR: 'M9 6l6 6-6 6',
   chevD: 'M6 9l6 6 6-6',
+  bell: 'M6 9a6 6 0 0 1 12 0c0 6 2.5 7 2.5 7h-17S6 15 6 9zM10 20a2 2 0 0 0 4 0',
   lock: 'M6 11h12a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-8a1 1 0 0 1 1-1zM8 11V7a4 4 0 0 1 8 0v4',
   settings: 'M4 6h10M18 6h2M4 12h2M10 12h10M4 18h8M16 18h4M14 4v4M6 10v4M12 16v4',
   chevU: 'M6 15l6-6 6 6',

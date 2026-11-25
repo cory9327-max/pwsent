@@ -3,6 +3,7 @@ import { NavLink, useLocation } from 'react-router-dom'
 import { useAuth } from '../lib/auth'
 import { useT } from '../lib/i18n'
 import { supabase } from '../lib/supabase'
+import NotificationBell from './NotificationBell'
 import { Icon, LangSwitch, RoleBadge } from './ui'
 
 export default function Layout({ children }) {
@@ -40,6 +41,7 @@ export default function Layout({ children }) {
         <div className="brand">
           <img className="brand-logo" src="/logo-wide.png" alt="PWS" />
           <span className="brand-sub">Portal</span>
+          <span className="brand-bell"><NotificationBell /></span>
         </div>
         <nav className="nav">
           {nav.map((n, i) => (
@@ -70,7 +72,7 @@ export default function Layout({ children }) {
         <header className="topbar">
           <button className="icon-btn" onClick={() => setMenuOpen(true)} aria-label="menu"><Icon name="menu" /></button>
           <img className="brand-logo small" src="/logo-wide.png" alt="PWS" />
-          <LangSwitch compact />
+          <span className="topbar-right"><NotificationBell /><LangSwitch compact /></span>
         </header>
         <main className="content">{children}</main>
       </div>

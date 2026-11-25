@@ -19,7 +19,7 @@ function ageOf(birth) {
 /** 해외선수: [관리] 선수 명단 · [방문 일정] 항공편·숙소 */
 export default function Foreign() {
   const { t } = useT()
-  const [tab, setTab] = useState('roster')
+  const [tab, setTab] = useState(() => (new URLSearchParams(window.location.search).get('tab') === 'visits' ? 'visits' : 'roster'))
   return (
     <div className="page">
       <div className="page-head"><h1>{t('nav.foreign')}</h1></div>

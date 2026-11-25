@@ -67,6 +67,12 @@ export default function RoleManager() {
                   <span><strong>{t('roles.attendance')}</strong><span className="muted small"> {t('roles.attendanceHint')}</span></span>
                 </label>
               )}
+              {'dorm_notify' in r && (
+                <label className="check role-att">
+                  <input type="checkbox" checked={r.dorm_notify} disabled={isAdminRole} onChange={(e) => patch(r, { dorm_notify: e.target.checked })} />
+                  <span><strong>{t('roles.dormNotify')}</strong><span className="muted small"> {t('roles.dormNotifyHint')}</span></span>
+                </label>
+              )}
               <div className="perm-list">
                 {ALL_PERMS.map((p) => (
                   <label key={p} className="check">

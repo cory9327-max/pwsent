@@ -302,6 +302,23 @@ textarea { resize: vertical; }
 .roster.muted-rows { margin-top: 8px; background: transparent; box-shadow: none; }
 .role-att { align-items: flex-start; background: var(--gray-soft); border-radius: 8px; padding: 9px 10px; line-height: 1.35; }
 .role-att input { flex-shrink: 0; margin-top: 1px; }
+.bell-wrap { position: relative; display: inline-flex; }
+.bell { position: relative; }
+.sidebar .bell { color: #e9e9ee; }
+.sidebar .bell:hover { background: var(--side-2); }
+.bell-count { position: absolute; top: 1px; right: 0; min-width: 17px; height: 17px; padding: 0 4px; border-radius: 999px; background: var(--red); color: #fff; font-size: 10.5px; font-weight: 800; display: grid; place-items: center; }
+.brand { justify-content: flex-start; }
+.brand-bell { margin-left: auto; }
+.topbar-right { display: inline-flex; align-items: center; gap: 6px; }
+.bell-scrim { position: fixed; inset: 0; z-index: 60; }
+.bell-panel { position: fixed; z-index: 61; top: 16px; left: 244px; width: min(380px, calc(100vw - 16px)); max-height: min(560px, calc(100vh - 32px)); overflow-y: auto; background: #fff; color: var(--ink); border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 16px 50px rgba(0, 0, 0, .22); }
+.bell-head { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px 10px; position: sticky; top: 0; background: #fff; }
+.bell-panel ul { list-style: none; margin: 0; padding: 0 6px 6px; }
+.bell-item { all: unset; box-sizing: border-box; cursor: pointer; width: 100%; display: flex; flex-direction: column; gap: 2px; padding: 10px 12px; border-radius: 9px; font-size: 13.5px; line-height: 1.45; }
+.bell-item:hover { background: var(--gray-soft); }
+.bell-item.unread { background: #fff4f4; box-shadow: inset 3px 0 0 var(--red); }
+.bell-item em { font-style: normal; font-size: 12px; color: var(--muted); }
+.bell-empty { padding: 26px 16px 30px; text-align: center; color: var(--muted); font-size: 14px; }
 .role-card { display: flex; flex-direction: column; gap: 10px; border-top: 4px solid var(--line); }
 .role-card.new { border-top-style: dashed; }
 .role-head { display: flex; gap: 8px; align-items: center; }
@@ -578,6 +595,8 @@ textarea { resize: vertical; }
     position: sticky; top: 0; z-index: 20; background: rgba(245, 244, 240, .92); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line);
   }
   .content { padding: 20px 16px 96px; }
+  .bell-panel { top: 58px; left: auto; right: 8px; max-height: calc(100vh - 140px); }
+  .brand-bell { display: none; }
   .bottom-nav {
     display: flex; position: fixed; bottom: 0; left: 0; right: 0; z-index: 20; background: #fff; border-top: 1px solid var(--line);
     padding: 6px 4px calc(6px + env(safe-area-inset-bottom));

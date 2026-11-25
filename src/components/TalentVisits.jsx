@@ -41,6 +41,7 @@ export default function TalentVisits() {
   const [rows, setRows] = useState(null)
   const [talents, setTalents] = useState([])
   const [missing, setMissing] = useState(false)
+  const [hasDorm, setHasDorm] = useState(null) // 14 SQL 실행 여부 (null = 아직 모름 → 저장 시 시도)
   const [past, setPast] = useState(false)
   const [modal, setModal] = useState(null)
   const [error, setError] = useState(null)
@@ -48,11 +49,12 @@ export default function TalentVisits() {
   const load = useCallback(async () => {
     const [v, tl] = await Promise.all([
       supabase.from('talent_visits').select('*, foreign_talents(id, name, ring_name, nationality)').order('arrive_at', { ascending: true, nullsFirst: false }),
-      supabase.from('foreign_talents').select('id, name, ring_name').order('name'),
+      supabase.from('foreign_talents').select('id, name, ring_name, foreign_talent_terms(stay_included, dorm_ok)').order('name'),
     ])
     if (v.error) { setMissing(true); setRows([]); return }
     setRows((v.data || []).map((r) => ({ ...r, talent: one(r.foreign_talents) })))
-    setTalents(tl.data || [])
+    setTalents((tl.data || []).map((x) => ({ ...x, dormOk: Boolean(one(x.foreign_talent_terms)?.dorm_ok) })))
+    setHasDorm((v.data || []).length ? 'uses_dorm' in v.data[0] : null)
   }, [])
   useEffect(() => { load() }, [load])
 
@@ -106,6 +108,7 @@ export default function TalentVisits() {
                   <h4>{r.talent?.ring_name || r.talent?.name || '—'}</h4>
                   <div className="meta">
                     {[r.talent?.ring_name && r.talent?.name, r.talent?.nationality].filter(Boolean).join(' · ')}
+                    {r.uses_dorm && <span className="pill att-late">{t('tv.dorm')}</span>}
                     {r.visible_roles?.length > 0 && <span className="vis-note small"> <Icon name="lock" size={12} /> {r.visible_roles.map(roleLabel).join(', ')}</span>}
                   </div>
                 </div>
@@ -131,12 +134,12 @@ export default function TalentVisits() {
           ))}
         </div>
       )}
-      {modal && <VisitForm visit={modal.id ? modal : null} talents={talents} onClose={() => setModal(null)} onSaved={() => { setModal(null); load() }} />}
+      {modal && <VisitForm visit={modal.id ? modal : null} talents={talents} dormField={hasDorm !== false} onClose={() => setModal(null)} onSaved={() => { setModal(null); load() }} />}
     </div>
   )
 }
 
-function VisitForm({ visit, talents, onClose, onSaved }) {
+function VisitForm({ visit, talents, dormField, onClose, onSaved }) {
   const { t } = useT()
   const { user, roles, rolesManaged, permsOf } = useAuth()
   const roleLabel = useRoleLabel()
@@ -149,6 +152,7 @@ function VisitForm({ visit, talents, onClose, onSaved }) {
     depart_date: visit?.depart_at ? toLocalInput(visit.depart_at).slice(0, 10) : '', depart_time: visit?.depart_at ? toLocalInput(visit.depart_at).slice(11) : '',
     depart_flight: visit?.depart_flight ?? '', depart_airport: visit ? (visit.depart_airport ?? '') : AIRPORTS[0], depart_terminal: visit?.depart_terminal ?? '',
     stay_name: visit?.stay_name ?? '', stay_address: visit?.stay_address ?? '', notes: visit?.notes ?? '',
+    uses_dorm: visit ? Boolean(visit.uses_dorm) : Boolean(talents[0]?.dormOk), // 기본값: 선수 명단의 '기숙사 가능'
   })
   const [vis, setVis] = useState(visit ? (visit.visible_roles || []) : defaultVis)
   const [busy, setBusy] = useState(false)
@@ -181,6 +185,7 @@ function VisitForm({ visit, talents, onClose, onSaved }) {
       ...a.row, ...d.row,
       stay_name: txt(f.stay_name), stay_address: txt(f.stay_address), notes: txt(f.notes),
       visible_roles: rolesManaged && vis.length ? vis : null,
+      ...(dormField ? { uses_dorm: f.uses_dorm } : {}),
     }
     const { error } = visit
       ? await supabase.from('talent_visits').update(row).eq('id', visit.id)
@@ -225,7 +230,7 @@ function VisitForm({ visit, talents, onClose, onSaved }) {
     <Modal title={visit ? t('tv.edit') : t('tv.new')} onClose={onClose} wide>
       <form className="form" onSubmit={submit}>
         <Field label={t('tv.talent')}>
-          <select required value={f.talent_id} onChange={set('talent_id')}>
+          <select required value={f.talent_id} onChange={(e) => setF({ ...f, talent_id: e.target.value, uses_dorm: visit ? f.uses_dorm : Boolean(talents.find((x) => x.id === e.target.value)?.dormOk) })}>
             {talents.map((x) => <option key={x.id} value={x.id}>{x.ring_name ? `${x.ring_name} (${x.name})` : x.name}</option>)}
           </select>
         </Field>
@@ -233,6 +238,12 @@ function VisitForm({ visit, talents, onClose, onSaved }) {
         {flightBlock(t('tv.depart'), 'depart')}
         <fieldset className="cost-box">
           <legend>{t('tv.stay')}</legend>
+          {dormField && (
+            <label className="check">
+              <input type="checkbox" checked={f.uses_dorm} onChange={(e) => setF({ ...f, uses_dorm: e.target.checked })} />
+              <span><strong>{t('tv.usesDorm')}</strong> <span className="muted small">{t('tv.usesDormHint')}</span></span>
+            </label>
+          )}
           <div className="row2">
             <Field label={t('tv.stayName')}><input value={f.stay_name} placeholder={t('tv.stayNamePh')} onChange={set('stay_name')} /></Field>
             <Field label={t('tv.stayAddress')} hint={t('tv.addressHint')}><input value={f.stay_address} onChange={set('stay_address')} /></Field>
