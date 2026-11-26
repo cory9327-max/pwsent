@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { LANGS, useT } from '../lib/i18n'
 import { useTypes } from '../lib/types'
 import { BUILTIN_ROLE_KEYS, useAuth } from '../lib/auth'
@@ -44,12 +44,29 @@ export function Icon({ name, size = 18 }) {
 }
 
 export function Modal({ title, onClose, children, wide }) {
+  // onClose 는 화면이 다시 그려질 때마다 새로 만들어지므로, 고정/해제가 반복되지 않게 따로 보관
+  const closeRef = useRef(onClose)
+  closeRef.current = onClose
   useEffect(() => {
-    const k = (e) => e.key === 'Escape' && onClose()
+    const k = (e) => e.key === 'Escape' && closeRef.current()
     window.addEventListener('keydown', k)
-    document.body.style.overflow = 'hidden'
-    return () => { window.removeEventListener('keydown', k); document.body.style.overflow = '' }
-  }, [onClose])
+    // 창이 떠 있는 동안 뒤 화면이 대신 스크롤되지 않게 고정 (아이폰은 overflow 만으로는 막히지 않음)
+    const y = window.scrollY
+    const b = document.body.style
+    const locked = document.body.dataset.modalLock === '1' // 창 위에 창이 뜬 경우에는 바깥 창이 이미 고정함
+    if (!locked) {
+      document.body.dataset.modalLock = '1'
+      b.position = 'fixed'; b.top = `-${y}px`; b.left = '0'; b.right = '0'; b.overflow = 'hidden'
+    }
+    return () => {
+      window.removeEventListener('keydown', k)
+      if (!locked) {
+        delete document.body.dataset.modalLock
+        b.position = ''; b.top = ''; b.left = ''; b.right = ''; b.overflow = ''
+        window.scrollTo(0, y)
+      }
+    }
+  }, [])
   return (
     <div className="modal-backdrop" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
       <div className={`modal ${wide ? 'wide' : ''}`} role="dialog" aria-modal="true" aria-label={title}>

@@ -366,11 +366,14 @@ textarea { resize: vertical; }
 .notice.warn { background: var(--amber-soft); color: #8a4b00; display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
 
 /* ---------- modal ---------- */
-.modal-backdrop { position: fixed; inset: 0; background: rgba(15, 15, 18, .55); display: grid; place-items: center; padding: 20px; z-index: 50; animation: fade .15s; }
-.modal { background: #fff; border-radius: 16px; width: min(520px, 100%); max-height: calc(100vh - 40px); display: flex; flex-direction: column; box-shadow: 0 20px 60px rgba(0, 0, 0, .25); animation: pop .18s; }
+/* 높이는 dvh(주소창을 뺀 실제 보이는 높이) 기준. 휴대폰에서 vh 는 보이는 화면보다 커서 창이 잘리고 스크롤이 안 됨 */
+.modal-backdrop { position: fixed; inset: 0; height: 100vh; height: 100dvh; background: rgba(15, 15, 18, .55); display: grid; place-items: center; padding: 20px; z-index: 50; animation: fade .15s; overflow: hidden; overscroll-behavior: contain; }
+.modal { background: #fff; border-radius: 16px; width: min(520px, 100%); max-height: calc(100vh - 40px); max-height: calc(100dvh - 40px); min-height: 0; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 20px 60px rgba(0, 0, 0, .25); animation: pop .18s; }
 .modal.wide { width: min(720px, 100%); }
-.modal-head { display: flex; justify-content: space-between; align-items: center; padding: 18px 20px 10px; }
-.modal-body { padding: 6px 20px 20px; overflow-y: auto; }
+.modal-head { display: flex; justify-content: space-between; align-items: center; padding: 18px 20px 10px; flex-shrink: 0; }
+.modal-body { padding: 6px 20px 20px; flex: 1 1 auto; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; touch-action: pan-y; }
+/* 저장·취소 버튼은 스크롤해도 창 아래에 항상 보이게 */
+.modal-body > .form > .form-actions:last-child { position: sticky; bottom: -20px; z-index: 2; margin: 4px -20px -20px; padding: 12px 20px calc(12px + env(safe-area-inset-bottom)); background: #fff; border-top: 1px solid var(--line); }
 @keyframes fade { from { opacity: 0; } }
 @keyframes pop { from { transform: translateY(8px) scale(.98); opacity: 0; } }
 
@@ -624,7 +627,7 @@ textarea { resize: vertical; }
 @media (max-width: 520px) {
   .row2, .row3 { grid-template-columns: 1fr; }
   .modal-backdrop { padding: 0; align-items: end; }
-  .modal { border-radius: 16px 16px 0 0; max-height: 92vh; }
+  .modal { border-radius: 16px 16px 0 0; width: 100%; max-height: 92vh; max-height: 92dvh; }
   .ev-date { min-width: 70px; }
   .roster-row .badge { display: none; }
 }
